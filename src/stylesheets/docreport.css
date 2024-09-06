@@ -1,0 +1,68 @@
+.maniContainer {
+    background-color: #b1efec;
+    border-radius: 10px;
+    box-shadow: -1px 2px 12px 1px #1d509d;
+}
+
+.maniContainer h5 {
+    color: #07509D;
+}
+
+
+.basi-details {
+    display: flex;
+    color: #07509D;
+}
+
+.table-heading {
+    color: #1d509d;
+    font-weight: bolder;
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+button.download-btn {
+    border: 0px;
+    padding: 5px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    background: #31c3bb;
+    box-shadow: 1px 0px 7px 1px gray;
+}
+
+button.download-btn:hover {
+    background-color: white;
+    color: #31c3bb;
+}
+
+.keywords_compititors {
+    display: flex;
+}
+
+.review_rating {
+    background-color: white;
+    box-shadow: -1px 2px 12px 1px #1d509d;
+    text-align: center;
+    color: #3883b3;
+    opacity: 0.8;
+}
+
+button.export-btn {
+    border: 0px;
+    margin-right: 30px;
+    padding: 5px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    background: #54cfc9;
+}
+
+button.export-btn:hover {
+    background-color: white;
+    color: #31c3bb;
+}

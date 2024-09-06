@@ -1,0 +1,67 @@
+.login-page {
+    background-image:  url('../assets/background/bi.jpg');
+    background-size: cover;
+    height: 100vh; 
+    width: 100vw;
+}
+
+.logo-session img {
+    width: 20%;
+    text-align: center;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    font-weight: bolder;
+}
+
+.login-main {
+    background-color: #daf6ff;
+    opacity: 0.7;
+    color: #26acc7;
+    border-radius: 12px;
+}
+
+.login-content {
+    display: grid;
+}
+
+.login-main-content {
+    text-align: center;
+    font-size: larger;
+    padding: 10px;
+}
+
+.login-content input {
+    border: none;
+    box-shadow: 4px 8px 20px 4px #1881ab;
+}
+
+.login-button {
+    text-align: center;
+    padding: 10px;
+    margin: 5px;
+}
+
+.login-button button {
+    border: none;
+    background: linear-gradient(180deg, #30C3BB 0%, #07509D 119.23%);
+    color: white;
+    padding: 10px;
+    width: 30%;
+    border-radius: 12px;
+}
+
+.login-content input {
+    border: none;
+    box-shadow: inset 0px 3px 20px 0px #1881ab;
+    border-radius: 12px;
+}
+
+footer {
+    color: #68a2c3;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
