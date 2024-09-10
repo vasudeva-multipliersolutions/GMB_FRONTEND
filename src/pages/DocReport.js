@@ -6,6 +6,8 @@ import BasicDetailsComponent from "../components/BasicDetailsComponent";
 import { SharedContext } from "../context/SharedContext";
 export default function DocReport() {
   var username;
+  const [locationProfiles, setLocationProfiles] = useState([]);
+
 
   const [getDrName, setDrName] = useState("");
   const [analysisData, setAnalysisData] = useState();
@@ -15,7 +17,7 @@ export default function DocReport() {
   const logo = userlogo == "Manipal" ? manipalLogo : careLogo;
   return (
     <Fragment>
-      <SharedContext.Provider value={{ getDrName, setDrName }}>
+      <SharedContext.Provider value={{ getDrName, setDrName , setLocationProfiles}}>
         <Navbar logoimg={logo} username={username} serach={false}></Navbar>
         <BasicDetailsComponent></BasicDetailsComponent>
       </SharedContext.Provider>
