@@ -6,11 +6,10 @@ import { FaCircleRight } from "react-icons/fa6";
 import ExcelJS from "exceljs";
 import * as FileSaver from "file-saver";
 
-
 export default function Navbar(props) {
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity,setLocationProfiles } = useContext(SharedContext);
-  
+  const { setContextCity, setLocationProfiles } = useContext(SharedContext);
+
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
   const [getName, setName] = useState();
@@ -22,7 +21,6 @@ export default function Navbar(props) {
   const [logo, setLogo] = useState("");
   const [email, setEmai] = useState("");
   // const [check, setCheck] = useState(0);
-  
 
   function logoutHandeler() {
     // alert('hello world')
@@ -45,8 +43,6 @@ export default function Navbar(props) {
     // filterApi()
   }
 
- 
-
   async function filterApi() {
     // alert(getState)
     const response = await fetch("" + api + "/getfilterdata", {
@@ -59,19 +55,18 @@ export default function Navbar(props) {
     const data = await response.json();
     // alert("Hello")
     console.log("data: ", data);
-    setLocationProfiles(data.countOfProfiles)
-    setCitys(data.result[0].branches);    
+    setLocationProfiles(data.countOfProfiles);
+    setCitys(data.result[0].branches);
     setAllNames(data.result[0].businessNames);
     if (props.serach) {
       setContextCity(getCity);
     }
+    console.log("567");
   }
   function getCityHandeler(e) {
     setCity(e.target.value);
   }
 
-
-  
   useEffect(() => {
     async function getAllDoctrosNames() {
       const docNames = await fetch("" + api + "/getAllDocNames", {
@@ -81,7 +76,7 @@ export default function Navbar(props) {
         },
       });
       const allNames = await docNames.json();
-     
+
       setAllNames(allNames);
     }
     async function getallLoc() {
@@ -92,7 +87,7 @@ export default function Navbar(props) {
         },
       });
       const getlocdetails = await locDetails.json();
-      console.log('check it --------------------->',getlocdetails)
+      console.log("check it --------------------->", getlocdetails);
       setStates(getlocdetails[0].states);
       setCitys(getlocdetails[0].branches);
     }
@@ -104,8 +99,6 @@ export default function Navbar(props) {
       setLogo(logo);
     }
 
-      
-
     const mail = localStorage.getItem("mail");
     if (mail) {
       setEmai(mail);
@@ -114,7 +107,7 @@ export default function Navbar(props) {
     // for (let i = 0; i < exportBulkEditBtn.length; i++) {
     //   exportBulkEditBtn[i].disabled = true;
     // }
-  }, [getCity,getState]);
+  }, [getCity, getState]);
   // if(getLoc)
   // {
   //   console.log(getLoc)
@@ -284,24 +277,28 @@ export default function Navbar(props) {
                 onChange={getStateHandeler}
                 list="statelist"
                 placeholder="Select State"
-                style={{
-                  // display:
-                  //  email === "aristro@gmail.com"
+                style={
+                  {
+                    // display:
+                    //  email === "aristro@gmail.com"
                     // ||
                     // email  === "microlabs@gmail.com"
-                      // ? "none"
-                      // : "",
-                }}
+                    // ? "none"
+                    // : "",
+                  }
+                }
               />
               <button
                 onClick={filterApi}
-                style={{
-                  // display:
-                  //   email === "aristro@gmail.com" ||
-                  //   email === "microlabs@gmail.com"
-                  //     ? "none"
-                  //     : "",
-                }}
+                style={
+                  {
+                    // display:
+                    //   email === "aristro@gmail.com" ||
+                    //   email === "microlabs@gmail.com"
+                    //     ? "none"
+                    //     : "",
+                  }
+                }
               >
                 <FaCircleRight />
               </button>
@@ -320,23 +317,27 @@ export default function Navbar(props) {
                 onChange={getCityHandeler}
                 list="Cityeslist"
                 placeholder="Select City"
-                style={{
-                  // display:
-                  //   email === "aristro@gmail.com" ||
-                  //   email === "microlabs@gmail.com"
-                  //     ? "none"
-                  //     : "",
-                }}
+                style={
+                  {
+                    // display:
+                    //   email === "aristro@gmail.com" ||
+                    //   email === "microlabs@gmail.com"
+                    //     ? "none"
+                    //     : "",
+                  }
+                }
               />
               <button
                 onClick={filterApi}
-                style={{
-                  // display:
-                  //   email === "aristro@gmail.com" ||
-                  //   email === "microlabs@gmail.com"
-                  //     ? "none"
-                  //     : "",
-                }}
+                style={
+                  {
+                    // display:
+                    //   email === "aristro@gmail.com" ||
+                    //   email === "microlabs@gmail.com"
+                    //     ? "none"
+                    //     : "",
+                  }
+                }
               >
                 <FaCircleRight />
               </button>
@@ -403,4 +404,3 @@ export default function Navbar(props) {
     </Fragment>
   );
 }
-
