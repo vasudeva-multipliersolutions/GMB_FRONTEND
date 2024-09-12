@@ -29,6 +29,7 @@ export default function Dashboard() {
       const response = await fetch(`${api}/${branch}`);
       const data = await response.json();
       setAllData(data);
+      console.log ("+++++++++++++++++ data:"+ data.reviewRating[0].averagerating)
     } catch (error) {
       console.error("Error fetching all data:", error);
     }
@@ -125,7 +126,7 @@ export default function Dashboard() {
             {showAllData && (
               <ReviewRating
                 review={showAllData?.reviewRating[0]?.totalreviews}
-                rating={showAllData?.reviewRating[0]?.averagerating / 95}
+                rating={showAllData?.reviewRating[0]?.averagerating}
               />
             )}
           </div>

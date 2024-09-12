@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import DocReport from "./pages/DocReport";
 import Review from "./pages/Review";
 import "./App.css";
+import Insights from "./pages/Insights";
 
 function App() {
   const isAuthenticated = !!localStorage.getItem("mail");
@@ -20,6 +21,10 @@ function App() {
         <Route
           path="/Doc-report"
           element={isAuthenticated ? <DocReport /> : <Navigate to="/" />}
+        />
+         <Route
+          path="/Insights"
+          element={isAuthenticated ? <Insights/> : <Navigate to="/" />}
         />
         {/* <Route
           path="/Review Management"

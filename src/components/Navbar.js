@@ -9,7 +9,7 @@ import * as FileSaver from "file-saver";
 export default function Navbar(props) {
   const { setDrName } = useContext(SharedContext);
   const { setContextCity, setLocationProfiles } = useContext(SharedContext);
-
+  const { setInsightsState, setInsightsCity } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
   const [getName, setName] = useState();
@@ -35,6 +35,12 @@ export default function Navbar(props) {
   function nameHandelar(e) {
     setName(e.target.value);
   }
+  function cityInsightHandelar(e) {
+    setCity(e.target.value);
+  }
+  function stateInsiteHandelar(e) {
+    setState(e.target.value);
+  }
   function nameseter() {
     setDrName(getName);
   }
@@ -44,25 +50,47 @@ export default function Navbar(props) {
   }
 
   async function filterApi() {
-    // alert(getState)
-    const response = await fetch("" + api + "/getfilterdata", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ state: getState, branch: getCity }),
-    });
-    const data = await response.json();
-    // alert("Hello")
-    console.log("data: ", data);
-    setLocationProfiles(data.countOfProfiles);
-    setCitys(data.result[0].branches);
-    setAllNames(data.result[0].businessNames);
-    if (props.serach) {
-      setContextCity(getCity);
+    try {
+      const response = await fetch(`${api}/getfilterdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ state: getState, branch: getCity }),
+      });
+      const data = await response.json();
+
+      setLocationProfiles(data.countOfProfiles);
+      setCitys(data.result[0].branches);
+      setAllNames(data.result[0].businessNames);
+
+      if (props.serach) {
+        setContextCity(getCity);
+      }
+
+      // Only redirect to Insights page if 'props.serach' is true
+      if (props.insights) {
+        Insightsapicall();
+      } else {
+        // Handle redirection or actions for other pages if necessary
+        // For example, navigate to a different page or update state
+        // navigate(`/SomeOtherPage?state=${getState}&city=${getCity}`);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
-    console.log("567");
   }
+  function Insightsapicall() {
+    setInsightsState(getState);
+    setInsightsCity(getCity);
+    console.log("Insight api call...........", setInsightsState, "@", getCity);
+  }
+
+  useEffect(() => {
+    console.log("Current path:", window.location.pathname);
+    // Your other code here
+  }, []);
+
   function getCityHandeler(e) {
     setCity(e.target.value);
   }
@@ -277,6 +305,7 @@ export default function Navbar(props) {
                 onChange={getStateHandeler}
                 list="statelist"
                 placeholder="Select State"
+                onInputCapture={stateInsiteHandelar}
                 style={
                   {
                     // display:
@@ -317,6 +346,7 @@ export default function Navbar(props) {
                 onChange={getCityHandeler}
                 list="Cityeslist"
                 placeholder="Select City"
+                onInputCapture={cityInsightHandelar}
                 style={
                   {
                     // display:
@@ -393,6 +423,9 @@ export default function Navbar(props) {
           </Link>
           <Link to="/Doc-report" className="p-1 pe-5">
             Doc Report
+          </Link>
+          <Link to="/Insights" className="p-1 pe-5">
+            Insights
           </Link>
           {/* <Link to="/Review-management" className="p-1 pe-5">
             Review Management
