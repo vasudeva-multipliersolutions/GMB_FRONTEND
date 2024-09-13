@@ -302,7 +302,6 @@ export default function Navbar(props) {
             <div className="data_list_selection m-1">
               <input
                 value={getState}
-                onChange={getStateHandeler}
                 list="statelist"
                 placeholder="Select State"
                 onInputCapture={stateInsiteHandelar}
@@ -343,7 +342,6 @@ export default function Navbar(props) {
             <div className="data_list_selection m-1">
               <input
                 value={getCity}
-                onChange={getCityHandeler}
                 list="Cityeslist"
                 placeholder="Select City"
                 onInputCapture={cityInsightHandelar}
