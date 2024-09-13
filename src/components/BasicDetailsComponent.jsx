@@ -242,7 +242,6 @@ export default function BasicDetailsComponent() {
                     <GraphicalContainer gtype={"PieChart"} title={'Maps (Mobile + Desktop)'} callsGraphData={docData.mapsGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
                   </div>
                   <div className="col-4">
-
                     <GraphicalContainer gtype={"PieChart"} title={'Action (Web + Directions + Phone)'} callsGraphData={docData.actionGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
                   </div>
                 </div>
@@ -250,8 +249,6 @@ export default function BasicDetailsComponent() {
             )
           }
         </div>
-
-      
 
           
         <div className="maniContainer p-3 m-3">

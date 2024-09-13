@@ -15,7 +15,7 @@ export default function TableComponent(props) {
             <span className='table-heading'>
                 {props.title}
             </span>
-            {isLoading? <ShimmerTable row={5} col={5} /> :<table className="table table-striped mt-4">
+            {isLoading? <ShimmerTable row={5} col={5}/>:<table className="table table-striped mt-4">
                   <thead>
                       <tr>      
                         {props.head.map((item) => {
