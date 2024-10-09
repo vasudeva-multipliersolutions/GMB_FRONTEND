@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import SlidePreloader from '../components/SlidePreloader'; // Import the preloader component
-import { useContext } from 'react';
-import { SharedContext } from '../context/SharedContext';
+import React, { useState, useEffect } from "react";
+import SlidePreloader from "../components/SlidePreloader"; // Import the preloader component
+import { useContext } from "react";
+import { SharedContext } from "../context/SharedContext";
+
 export default function CardContainer(props) {
   const [loading, setLoading] = useState(true);
-  
 
   useEffect(() => {
     // Set a 2-second delay before showing the actual content
@@ -16,15 +16,41 @@ export default function CardContainer(props) {
     return () => clearTimeout(timer);
   }, []);
 
+  const logoMap = {
+    "Total Profiles": ' bi-puzzle',
+    "Verified Profiles": 'bi-check2-circle',
+    "Unverified Profiles": ' bi-slash-circle',
+    "Not Intrested": 'bi-bookmark-dash',
+    'head4': 'bi-check2-circle',
+    'Google Search Mobile': ' bi-phone',
+    'Google Search Desktop': 'bi-window-dock ',
+    'Google Maps Mobile': 'bi-geo-alt',
+    'Google Maps Desktop': 'bi-pc-display-horizontal',
+    'Calls': 'bi-telephone-inbound',
+    
+    'Directions': 'bi-signpost-split',
+    'Websit Clicks': ' bi-sliders',
+    'Searches' : 'bi-search',
+  };
+
   return (
     <>
-      <div className="view-counts m-2">
-        <div className="rate-heading">
-          <span>{props.head}</span>
+      <div className="view-counts ">
+        <div className="view-card">
+          {" "}
+          <div className="rate-body">
+            {loading ? <SlidePreloader /> : props.val}{" "}
+            {/* Show preloader while loading */}
+          </div>
+
+          <div className="rate-heading">
+            <span>{props.head}</span>
+          </div>
         </div>
-        <div className="rate-body">
-          {loading ? <SlidePreloader /> : props.val} {/* Show preloader while loading */}
-        </div>
+        <div className="docIcon d-flex align-items-center ">
+            <i class={`bi ${logoMap[props.head]}`} style={{ fontSize: '1.5rem', color: '#16A34A', display : window.innerWidth > 768 ? 'block' : 'none'
+ }}></i>
+          </div>
       </div>
     </>
   );

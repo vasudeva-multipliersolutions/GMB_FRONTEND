@@ -2,13 +2,20 @@ import React, { Fragment, useEffect, useState, useContext } from "react";
 import logoutlogo from "../assets/Logos/logout.png";
 import { useNavigate, Link } from "react-router-dom";
 import { SharedContext } from "../context/SharedContext";
-import { FaCircleRight } from "react-icons/fa6";
+import { FaAlignJustify, FaAnglesLeft, FaDashcube } from "react-icons/fa6";
+
 import ExcelJS from "exceljs";
 import * as FileSaver from "file-saver";
+import { FaChartBar, FaSearch, FaUserMd } from "react-icons/fa";
+import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
+import { MdTableChart } from "react-icons/md";
+import { GiTimeBomb } from "react-icons/gi";
+import { SidebarContext } from "../SidebarContext";
 
 export default function Navbar(props) {
+  const { isCollapsed, toggleSidebar } = useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles } = useContext(SharedContext);
+  const { setContextCity, setLocationProfiles, setContextMonth} = useContext(SharedContext);
   const { setInsightsState, setInsightsCity } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
@@ -17,10 +24,19 @@ export default function Navbar(props) {
   const [getStates, setStates] = useState();
   const [getCity, setCity] = useState();
   const [getCitys, setCitys] = useState();
+  const [getMonth, setMonth] = useState();
   const api = localStorage.getItem("API");
   const [logo, setLogo] = useState("");
   const [email, setEmai] = useState("");
+  const [isNavContentsVisible, setNavContentsVisible] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   // const [check, setCheck] = useState(0);
+
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    const value = localStorage.getItem(key);
+  }
 
   function logoutHandeler() {
     // alert('hello world')
@@ -32,6 +48,29 @@ export default function Navbar(props) {
     navigate("/");
     console.log("logged out after navifated");
   }
+
+  // function toggleSidebar() {
+  //   setIsCollapsed(!isCollapsed);
+  // }
+
+  useEffect(() => {
+    const storedLogo = localStorage.getItem("logo");
+    const storedEmail = localStorage.getItem("mail");
+    if (storedLogo) setLogo(storedLogo);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   function nameHandelar(e) {
     setName(e.target.value);
   }
@@ -40,15 +79,32 @@ export default function Navbar(props) {
   }
   function stateInsiteHandelar(e) {
     setState(e.target.value);
+    setCity("");
   }
   function nameseter() {
     setDrName(getName);
   }
   async function getStateHandeler(e) {
     setState(e.target.value);
-    // filterApi()
+    setCity("");
+    filterApi();
   }
 
+  function monthHandelar(e) {
+    setMonth(e.target.value);
+  }
+
+  function monthseter() {
+    setContextMonth(getMonth);
+   }
+
+
+
+
+  function toggleNavContents() {
+    setNavContentsVisible(!isNavContentsVisible);
+  }
+  console.log("API : " + api);
   async function filterApi() {
     try {
       const response = await fetch(`${api}/getfilterdata`, {
@@ -61,29 +117,28 @@ export default function Navbar(props) {
       const data = await response.json();
 
       setLocationProfiles(data.countOfProfiles);
-      setCitys(data.result[0].branches);
+      if (data.result[0].branches && data.result[0].branches.length > 0) {
+        setCitys(data.result[0].branches);
+      }
       setAllNames(data.result[0].businessNames);
 
       if (props.serach) {
         setContextCity(getCity);
       }
-
-      // Only redirect to Insights page if 'props.serach' is true
-      if (props.insights) {
-        Insightsapicall();
-      } else {
-        // Handle redirection or actions for other pages if necessary
-        // For example, navigate to a different page or update state
-        // navigate(`/SomeOtherPage?state=${getState}&city=${getCity}`);
-      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }
+
   function Insightsapicall() {
     setInsightsState(getState);
     setInsightsCity(getCity);
     console.log("Insight api call...........", setInsightsState, "@", getCity);
+  }
+  function insightsChecker() {
+    if (props.insights) {
+      Insightsapicall();
+    }
   }
 
   useEffect(() => {
@@ -135,7 +190,7 @@ export default function Navbar(props) {
     // for (let i = 0; i < exportBulkEditBtn.length; i++) {
     //   exportBulkEditBtn[i].disabled = true;
     // }
-  }, [getCity, getState]);
+  }, [getState]);
   // if(getLoc)
   // {
   //   console.log(getLoc)
@@ -269,168 +324,343 @@ export default function Navbar(props) {
   }
   return (
     <Fragment>
-      <div className="navigation-bar P-1">
-        <div className="nav-logo">
-          <img src={logo} alt="logo"></img>
+      {/* Sidebar */}
+
+      <div className="sidebar-comp">
+        <Sidebar
+          collapsed={isCollapsed}
+          className={isCollapsed ? "sidebar-transparent" : ""}
+          style={{
+            height: "100%",
+            position: "fixed",
+            top: "0",
+            transition: "width 0.5s ease",
+          }}
+        >
+          <Menu iconShape="square" className="sidemenu">
+            <MenuItem
+              icon={isCollapsed ? <FaAlignJustify /> : <FaAnglesLeft />}
+              onClick={() => toggleSidebar()}
+            >
+              <img src={logo} alt="logo" />
+            </MenuItem>
+
+            <MenuItem
+              className="menu-item"
+              icon={<FaDashcube />}
+              onClick={() => navigate("/Dashboard")}
+            >
+              {isCollapsed && <span className="tooltip">Dashboard</span>}
+              <Link to="/Dashboard">Dashboard</Link>
+            </MenuItem>
+
+            <MenuItem
+              className="menu-item"
+              icon={<FaUserMd />}
+              onClick={() => navigate("/Doc-report")}
+            >
+              {isCollapsed && <span className="tooltip">Doc Report</span>}
+              <Link to="/Doc-report">Doc Report</Link>
+            </MenuItem>
+
+            <MenuItem
+              className="menu-item"
+              icon={<FaChartBar />}
+              onClick={() => navigate("/Insights")}
+            >
+              {isCollapsed && <span className="tooltip">Insights</span>}
+              <Link to="/Insights">Insights</Link>
+            </MenuItem>
+
+            {[
+              "astrio@gmail.com",
+              "lupin@gmail.com",
+              "care@gmail.com",
+              "mankind@gmail.com",
+            ].includes(email) ? (
+              <MenuItem
+                className="menu-item"
+                icon={<GiTimeBomb />}
+                onClick={() => navigate("/WorkTracker")}
+              >
+                {isCollapsed && <span className="tooltip">Work Tracker</span>}
+                <Link to="/WorkTracker">Work Tracker</Link>
+              </MenuItem>
+            ) : (
+              <MenuItem
+                className="menu-item"
+                icon={<MdTableChart />}
+                onClick={() => navigate("/Matrics")}
+              >
+                {isCollapsed && <span className="tooltip">Metrics</span>}
+                <Link to="/Matrics">Metrics</Link>
+              </MenuItem>
+            )}
+          </Menu>
+        </Sidebar>
+      </div>
+
+      <div
+        className="navigation-bar"
+        style={{
+          marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
+          transition: "margin-left 0.5s ease",
+        }}
+      >
+        <div
+          className="menu-button-1"
+          onClick={() => setNavContentsVisible(!isNavContentsVisible)}
+        >
+          <i class="bi bi-list"></i>
         </div>
-        <div className="nav-caption">
-          <span style={{ color: "#07509D" }}>GOOGLE MY</span>&nbsp;
-          <span style={{ color: "#30C3BB" }}> BUSINESS PERFORMANCE</span>
-        </div>
-        <div className="nav-l">
-          <img src={logoutlogo} alt="logo" onClick={logoutHandeler}></img>
+        <div className="nav-caption">GOOGLE MY BUSINESS PERFORMANCE</div>
+
+        <div className="logout-icon">
+          <i className="bi bi-person-circle" onClick={logoutHandeler}></i>
         </div>
       </div>
-      <hr />
-      <div className="sub-nav">
-        {/* <div className="filter-contents p-1"style={{display: (props.username === 'Manipal' && props.serach ? 'block' : 'none') }}>
-          <select className="ms-4 p-2 mb-2" name="" id="">
-              <option value="">By Cluster</option>
-              <option value="North">North</option>
-              <option value="South">South</option>
-              <option value="Central">Central</option>
-          </select>
-          <select className="ms-4 p-2 mb-2" name="" id="">
-              <option value="">By Unit</option>
-              <option value="North">Old Airport Road</option>
-              <option value="South">Doddaballapura</option>
-               <option value="Central">Central</option> 
-          </select>
-        </div> */}
-        <div className="filter-contents p-1">
-          <div className="filers_sprding">
-            <div className="data_list_selection m-1">
-              <input
-                value={getState}
-                list="statelist"
-                placeholder="Select State"
-                onInputCapture={stateInsiteHandelar}
-                style={
-                  {
-                    // display:
-                    //  email === "aristro@gmail.com"
-                    // ||
-                    // email  === "microlabs@gmail.com"
-                    // ? "none"
-                    // : "",
-                  }
-                }
-              />
-              <button
-                onClick={filterApi}
-                style={
-                  {
-                    // display:
-                    //   email === "aristro@gmail.com" ||
-                    //   email === "microlabs@gmail.com"
-                    //     ? "none"
-                    //     : "",
-                  }
-                }
-              >
-                <FaCircleRight />
-              </button>
-            </div>
 
-            <datalist id="statelist">
-              {getStates &&
-                getStates.map((item) => {
-                  if (item != "#N/A")
-                    return <option value={item}>{item}</option>;
-                })}
-            </datalist>
-            <div className="data_list_selection m-1">
-              <input
-                value={getCity}
-                list="Cityeslist"
-                placeholder="Select City"
-                onInputCapture={cityInsightHandelar}
-                style={
-                  {
-                    // display:
-                    //   email === "aristro@gmail.com" ||
-                    //   email === "microlabs@gmail.com"
-                    //     ? "none"
-                    //     : "",
-                  }
-                }
-              />
-              <button
-                onClick={filterApi}
-                style={
-                  {
-                    // display:
-                    //   email === "aristro@gmail.com" ||
-                    //   email === "microlabs@gmail.com"
-                    //     ? "none"
-                    //     : "",
-                  }
-                }
-              >
-                <FaCircleRight />
-              </button>
-            </div>
+      {/* Page Content */}
+      <div
+        style={{
+          marginLeft:
+            window.innerWidth > 768 ? (isCollapsed ? "5%" : "20%") : 0,
+          padding: window.innerWidth > 768 ? "20px" : 0,
+          transition: "margin-left 0.5s ease",
+        }}
+      >
+        {/* Place your page content here */}
 
-            <datalist id="Cityeslist">
-              {getCitys &&
-                getCitys.map((item) => {
-                  if (item != "#N/A")
+        <div className="sub-nav">
+          <div
+            className={`filter-contents  ${isNavContentsVisible ? "show" : ""}`}
+            style={{
+              display: props.worktracker ? "none" : "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div className="filers_sprding">
+              <div className="data_list_selection m-1">
+                <div className="input-group">
+                  <select
+                    value={getState}
+                    onChange={getStateHandeler}
+                    onInputCapture={stateInsiteHandelar}
+                    style={{
+                      width: "150px",
+                      borderRadius: " 10px 0px 0 10px",
+                      padding: "4px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                    }}
+                  >
+                    <option value="">Select State...</option>
+                    {getStates &&
+                      getStates.map((item, index) => {
+                        if (item != "#N/A")
+                          return (
+                            <option key={index} value={item}>
+                              {item}
+                            </option>
+                          );
+                      })}
+                  </select>
+
+                  <button
+                    onClick={() => {
+                      filterApi();
+                      insightsChecker();
+                    }}
+                    style={{
+                      borderRadius: " 0px 10px 10px 0px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                    }}
+                  >
+                    <FaSearch className="CircleRightIcon" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="data_list_selection m-1">
+                <div className="input-group">
+                  <select
+                    value={getCity}
+                    onChange={getCityHandeler}
+                    onInputCapture={cityInsightHandelar}
+                    style={{
+                      width: "150px",
+                      borderRadius: " 10px 0px 0 10px",
+                      padding: "4px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                    }}
+                  >
+                    <option value="">Select City...</option>
+                    {getCitys &&
+                      getCitys.map((item, index) => {
+                        if (item != "#N/A")
+                          return (
+                            <option key={index} value={item}>
+                              {item}
+                            </option>
+                          );
+                      })}
+                  </select>
+                  <button
+                    onClick={() => {
+                      filterApi();
+                      insightsChecker();
+                    }}
+                    style={{
+                      borderRadius: " 0px 10px 10px 0px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                    }}
+                  >
+                    <FaSearch className="CircleRightIcon" />
+                  </button>
+                </div>
+              </div>
+
+              {/* <label>Select Doctor:</label>&nbsp; */}
+              <div
+                className="data_list_selection m-1"
+                style={{ display: !props.serach ? "block" : "none" }}
+              >
+                <div className="input-group">
+                  <input
+                    type="text"
+                    list="getDoctor"
+                    placeholder="Doctor Name"
+                    value={getName}
+                    onInputCapture={nameHandelar}
+                    style={{
+                      width: "150px",
+                      borderRadius: " 10px 0px 0 10px",
+                      padding: "4px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                    }}
+                  />
+                  <button
+                    onClick={nameseter}
+                    style={{
+                      borderRadius: " 0px 10px 10px 0px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                      // display:
+                      //   email === "aristro@gmail.com" ||
+                      //   email === "microlabs@gmail.com"
+                      //     ? "none"
+                      //     : "",
+                    }}
+                  >
+                    <FaSearch className="CircleRightIcon" />
+                  </button>
+                </div>
+              </div>
+              {getAllnames && (
+                <datalist id="getDoctor">
+                  {getAllnames.map((item) => {
                     return <option value={item}>{item}</option>;
-                })}
-            </datalist>
-            {/* <label>Select Doctor:</label>&nbsp; */}
+                  })}
+                </datalist>
+              )}
+            </div>
+          </div>
+
+          {isNavContentsVisible && (
             <div
-              className="data_list_selection m-1"
-              style={{ display: !props.serach ? "block" : "none" }}
+              className={`nav-contents ${isNavContentsVisible ? "show" : ""}`}
             >
-              <input
-                type="text"
-                list="getDoctor"
-                placeholder="Doctor Name"
-                value={getName}
-                onInputCapture={nameHandelar}
-              />
-              <button onClick={nameseter}>
-                <FaCircleRight />
-              </button>
+              <p
+                style={{
+                  display: email !== "care@gmail.com" ? "none" : "block",
+                }}
+              >
+                <button
+                  className="export-btn"
+                  style={{
+                    display: !props.serach ? "block" : "none",
+                  }}
+                  onClick={bulkExport}
+                  disabled={!getState}
+                >
+                  Bulk Download
+                </button>
+              </p>
+              <Link to="/Dashboard" className="p-1 pe-5">
+                Dashboard
+              </Link>
+              <Link to="/Doc-report" className="p-1 pe-5">
+                Doc Report
+              </Link>
+              <Link to="/Insights" className="p-1 pe-5">
+                Insights
+              </Link>
+              {email === "astrio@gmail.com" ||
+              email === "lupin@gmail.com" ||
+              email === "care@gmail.com" ||
+              email === "mankind@gmail.com" ? (
+                <Link to="/WorkTracker " className="p-1 pe-5">
+                  WorkTracker
+                </Link>
+              ) : (
+                <Link to="/Matrics" className="p-1 pe-5">
+                  Metrics
+                </Link>
+              )}
+
+              {/* <Link to="/Review-management" className="p-1 pe-5">
+            Review Management
+          </Link>  */}
+              {/* <Link to="/Review Management" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Review Management</Link> */}
+              {/* <Link to="/gen-ai" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Gen AI</Link>  */}
             </div>
-            {getAllnames && (
-              <datalist id="getDoctor">
-                {getAllnames.map((item) => {
-                  return <option value={item}>{item}</option>;
-                })}
-              </datalist>
-            )}
+          )}
+
+          <div className="datepicker">
+            <div className="data_list_selection m-1">
+              <div className="input-group">
+                <select
+                  value={getMonth}
+                  onChange={monthHandelar}
+                   onInputCapture={monthHandelar}
+                  style={{
+                    width: "150px",
+                    borderRadius: " 10px 0px 0 10px",
+                    padding: "4px",
+                    border: "1px solid #ccc",
+                    outline: "none",
+                  }}
+                >
+                  <option value="">Select Month...</option>
+                  <option value="May">May</option>
+                  <option value="June">June</option>
+                  <option value="July">July</option>
+                 
+                </select>
+
+                <button
+                  onClick={() => {
+                    monthseter();
+                  }}
+                  style={{
+                    borderRadius: " 0px 10px 10px 0px",
+                    border: "1px solid #ccc",
+                    outline: "none",
+                  }}
+                >
+                  <FaSearch className="CircleRightIcon" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="nav-contents p-2">
-          <p style={{ display: email !== "care@gmail.com" ? "none" : "block" }}>
-            <button
-              className="export-btn"
-              style={{
-                display: !props.serach ? "block" : "none",
-              }}
-              onClick={bulkExport}
-              disabled={!getState}
-            >
-              Bulk Download
-            </button>
-          </p>
-          <Link to="/Dashboard" className="p-1 pe-5">
-            Dashboard
-          </Link>
-          <Link to="/Doc-report" className="p-1 pe-5">
-            Doc Report
-          </Link>
-          <Link to="/Insights" className="p-1 pe-5">
-            Insights
-          </Link>
-          {/* <Link to="/Review-management" className="p-1 pe-5">
-            Review Management
-          </Link> */}
-          {/* <Link to="/Review Management" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Review Management</Link>
-          <Link to="/gen-ai" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Gen AI</Link> */}
-        </div>
+
+        {props.children}
       </div>
     </Fragment>
   );

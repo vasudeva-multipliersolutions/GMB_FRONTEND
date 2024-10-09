@@ -1,10 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-import manipalLogo from "../assets/Logos/manipalLogo.png";
-import careLogo from "../assets/Logos/careLogo.png";
-import InsightDetails from "../pages/InsightsDetails"
-import { SharedContext } from "../context/SharedContext";
-export default function DocReport() {
+import Navbar from "../Navbar";
+import manipalLogo from "../../assets/Logos/manipalLogo.png";
+import careLogo from "../../assets/Logos/careLogo.png";
+import InsightDetails from "../../pages/InsightsDetails"
+import { SharedContext } from "../../context/SharedContext";
+import WorkTrackerMetrics from "./WorkTrackerMetrics";
+export default function Matrics() {
   var username;
   const [locationProfiles, setLocationProfiles] = useState([]);
 
@@ -19,7 +20,7 @@ export default function DocReport() {
     <Fragment>
       <SharedContext.Provider value={{getInsightState, setInsightsState, getInsightsCity, setInsightsCity, getDrName, setDrName , setLocationProfiles}}>
         <Navbar logoimg={logo} username={username} serach={false} insights={true}></Navbar>
-        <InsightDetails></InsightDetails>
+        <WorkTrackerMetrics></WorkTrackerMetrics>
       </SharedContext.Provider>
     </Fragment>
   );

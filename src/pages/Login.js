@@ -15,7 +15,7 @@ export default function Login(props) {
   async function signin(e) {
     e.preventDefault();
     console.log(cred);
-    const loginHandeler = await fetch(`https://googlemybusiness.gmbapi.multipliersolutions.in/api/login`, {
+    const loginHandeler = await fetch(`http://localhost:2024/api/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,6 +29,9 @@ export default function Login(props) {
       localStorage.setItem("mail", response[0].mail);
       localStorage.setItem("logo", response[0].Logo);
       localStorage.setItem("API", response[0].API);
+      localStorage.setItem("user", response[0].user);
+      console.log()
+
       navigate("/Dashboard");
     } else {
       console.log("false");

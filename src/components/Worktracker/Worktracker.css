@@ -1,0 +1,60 @@
+/* WorkTracker.css */
+.form-container {
+  display: flex;
+  justify-content: center;
+  height: 100vh; /* Adjust if needed */
+}
+
+.form-control,
+.form-select {
+  box-shadow: 5px 2px rgb(84, 207, 201); /* Blue shadow */
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+.worktracker-container {
+  margin: 5%;
+}
+.bg-custom {
+  /* background: rgb(2, 0, 36);
+  background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(44, 133, 8, 1) 0%,
+    rgba(8, 102, 93, 1) 0%,
+    rgba(9, 77, 113, 1) 0%,
+    rgba(12, 186, 184, 1) 0%,
+    rgba(43, 117, 172, 1) 50%,
+    rgba(0, 212, 255, 1) 100%
+  ); */
+ background-color: aliceblue;
+  padding: 100px;
+  height: 1000px
+}
+
+/*----------------------- Css for Calendar---------------------------- */
+@media  screen and (max-width : 480px) {
+
+  .bg-custom {
+    
+   background-color: aliceblue;
+    padding: 10px;
+    height: 1000px;
+    font-size: 20px;
+  }
+  .button {
+    font-size: 2vh;
+  }
+  .table {
+    font-size: 10px;
+  }
+}
+

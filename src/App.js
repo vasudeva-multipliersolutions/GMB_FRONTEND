@@ -6,11 +6,18 @@ import DocReport from "./pages/DocReport";
 import Review from "./pages/Review";
 import "./App.css";
 import Insights from "./pages/Insights";
+import WorkTracker from "./components/Worktracker/WorkTracker";
+
+import Matrics from "./components/Worktracker/Matrics"
+import { SidebarProvider } from "./SidebarContext";
+
 
 function App() {
   const isAuthenticated = !!localStorage.getItem("mail");
 
   return (
+    <SidebarProvider>
+
     <HashRouter>
       <Routes>
         <Route path="/" element={<Login />} />
@@ -22,17 +29,27 @@ function App() {
           path="/Doc-report"
           element={isAuthenticated ? <DocReport /> : <Navigate to="/" />}
         />
-         <Route
+        <Route
           path="/Insights"
-          element={isAuthenticated ? <Insights/> : <Navigate to="/" />}
+          element={isAuthenticated ? <Insights /> : <Navigate to="/" />}
         />
-        {/* <Route
+        <Route
+          path="/WorkTracker"
+          element={isAuthenticated ? <WorkTracker /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/Matrics"
+          element={isAuthenticated ? <Matrics></Matrics> : <Navigate to="/" />}
+        />
+      
+        {/* {<Route
           path="/Review Management"
           element={isAuthenticated ? <Review /> : <Navigate to="/" />}
-        /> */}
-        {/* <Route path="/Review-management" element={<Review/>}/> */}
+        /> } */}
+        {/*<Route path="/Review-management" element={<Review/>}/> */}
       </Routes>
     </HashRouter>
+    </SidebarProvider>
   );
 }
 

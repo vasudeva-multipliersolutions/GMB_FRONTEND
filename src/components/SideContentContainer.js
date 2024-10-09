@@ -2,7 +2,7 @@ import React, { Fragment, useContext, useEffect, useState } from "react";
 import CardContainer from "./CardContainer";
 import { SidebarContext } from "../SidebarContext";
 
-export default function ContentContainer(props) {
+export default function SideContentContainer(props) {
   // Access isCollapsed from SidebarContext
   const { isCollapsed } = useContext(SidebarContext);
   const { windowWidth } = useContext(SidebarContext);
@@ -26,11 +26,7 @@ export default function ContentContainer(props) {
     <Fragment>
       <div
         className="content-container-2"
-        style={{
-          marginLeft:
-          windowWidth > 768 ? (isCollapsed ? "5%" : "20%") : 0,
-          transition: "margin-left 0.5s ease",
-        }}
+        
       >
         {props.data.map((item) => {
           return Object.entries(item).map(([key, value]) => {

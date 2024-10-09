@@ -11,11 +11,11 @@ export default function TableComponent(props) {
     
   return (
     <>
-        <div className="p-3 m-2" style={{ backgroundColor: props.bcolor, opacity: 0.7 }}>
-            <span className='table-heading'>
+        <div className="table-component  m-2" style={{ backgroundColor: props.bcolor, opacity: 0.7 }}>
+            <span className='table-heading graphs'>
                 {props.title}
             </span>
-            {isLoading? <ShimmerTable row={5} col={5}/>:<table className="table table-striped mt-4">
+            {isLoading? <ShimmerTable row={5} col={5}/>:<table className="table table-striped mt-4 ">
                   <thead>
                       <tr>      
                         {props.head.map((item) => {

@@ -1,30 +1,45 @@
 {
-  "proxy":"https://googlemybusiness.gmbapi.multipliersolutions.in",
+  "proxy": "https://googlemybusiness.gmbapi.multipliersolutions.in",
   "name": "frontend",
   "main": "index.js",
   "version": "0.1.0",
   "homepage": "./",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.11.4",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@mui/material": "^6.1.1",
+    "@mui/x-date-pickers": "^7.18.0",
+    "@mui/x-date-pickers-pro": "^7.18.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
-    "react": "^18.3.1",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-bootstrap": "^2.10.4",
+    "react-bootstrap-icons": "^1.11.4",
+    "react-calendar": "^5.0.0",
     "react-countup": "^6.5.3",
-    "react-dom": "^18.3.1",
+    "react-datepicker": "^7.3.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
     "react-google-charts": "^4.0.1",
     "react-icons": "^5.2.1",
+    "react-pro-sidebar": "^1.1.0",
     "react-scripts": "5.0.1",
+    "react-select": "^5.8.1",
     "react-shimmer-effects": "^1.0.3",
+    "react-sidebar": "^3.0.2",
     "styled-components": "^6.1.9",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -50,8 +65,11 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": 
-  {
+  "devDependencies": {
     "react-router-dom": "^6.23.0"
+  },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
   }
 }
