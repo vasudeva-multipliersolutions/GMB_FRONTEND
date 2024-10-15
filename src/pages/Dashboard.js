@@ -14,6 +14,7 @@ import { Container } from "react-bootstrap";
 import { propTypes } from "react-bootstrap/esm/Image";
 import { SidebarContext } from "../SidebarContext";
 import SideContentContainer from "../components/SideContentContainer";
+import TopDoctor from "./TopDoctor";
 
 export default function Dashboard(props) {
   const navigate = useNavigate();
@@ -26,6 +27,8 @@ export default function Dashboard(props) {
   const [use, setUse] = useState([]);
   const { isCollapsed } = useContext(SidebarContext);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [getInsightState, setInsightsState] = useState([]);
+  const [getInsightsCity, setInsightsCity] = useState([]);
 
 
  
@@ -133,6 +136,7 @@ export default function Dashboard(props) {
         { "Verified Profiles": locationProfiles[0]["Verified Profiles"] },
         { "Unverified Profiles": locationProfiles[0]["Unverfied Profiles"] },
         { "Not Intrested": locationProfiles[0]["Not Intrested"] },
+        { "Out of Organization": locationProfiles[0]["Total Profiles"] },
       ];
       setUse(verificationData);
     } else if (analysisData && analysisData[0]) {
@@ -141,6 +145,7 @@ export default function Dashboard(props) {
         { "Verified Profiles": analysisData[0]["Total Verified"] },
         { "Unverified Profiles": analysisData[0]["Unverified"] },
         { "Not Intrested": analysisData[0]["Not Intrested"] },
+        { "Out of Organization": analysisData[0]["Total Profiles"] },
       ];
       setUse(verificationData);
     }
@@ -151,17 +156,25 @@ export default function Dashboard(props) {
     if (contextCity) {
       getAllData(contextCity);
     }
-  }, [contextCity]);
-
-  useEffect(() => {
-    console.log("getContextMonth@@@@@@@@ : "+contextMonth);
     if (contextMonth) {
-      getMonthData(contextMonth);
-    }
-  }, [contextMonth]);
+       getMonthData(contextMonth);
+       }
+  }, [contextCity, contextMonth]);
+
+  // useEffect(() => {
+  //   console.log("getContextMonth@@@@@@@@ : "+contextMonth);
+  //   if (contextMonth) {
+  //     getMonthData(contextMonth);
+  //   }
+  // }, [contextMonth]);
 
   const username = analysisData?.[0]?.user;
   const logo = username === "Manipal" ? manipalLogo : careLogo;
+
+  useEffect(() => { 
+    console.log("1234getInsightState : " + getInsightState + "and my123getInsighCity : " + getInsightsCity);
+})
+
 
   return (
     <SharedContext.Provider
@@ -170,20 +183,22 @@ export default function Dashboard(props) {
         setContextCity,
         locationProfiles,
         setLocationProfiles,
-        setContextMonth
+        setContextMonth,
+        getInsightState,
+        setInsightsState,
+        getInsightsCity,
+        setInsightsCity,
       }}
     >
       <div className="Container-fluid" style={{ background: "#EFEFEF" }}>
-        <Navbar logoimg={logo ? logo : ""} username={username} serach={true} />
+        <Navbar logoimg={logo ? logo : ""} username={username} serach={true} topdoc={true} />
         {use && <ContentContainer data={use} />}
-        <div
-          className="content-container-1 "
-          style={{
-            marginLeft:
-            windowWidth > 768 ? (isCollapsed ? "5%" : "20%") : 0,
-            transition: "margin-left 0.5s ease",
-          }}
-        >
+      <div   style={{
+          marginLeft:
+          windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
+          transition: "margin-left 0.5s ease",
+          display: "flex"
+        }} > 
           <div className="left-container m-2">
             {showAllData && (
               <ReviewRating
@@ -192,17 +207,28 @@ export default function Dashboard(props) {
               />
             )}
           </div>
-
           {showAllData && <SideContentContainer data={showAllData.analysis} />}
+          
+        
+        </div> 
+        
+        <div
+         
+        >
+          
+         
         
         </div>
+ 
+        <TopDoctor ></TopDoctor>
          <div className="grapharea" style={{
             marginLeft:
-            windowWidth > 768 ? (isCollapsed ? "5%" : "20%") : 0,
+            windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
             width:
-            windowWidth > 768 ? (isCollapsed ? "95%" : "80%") : 0,
+            windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : 0,
             transition: "margin-left 0.5s ease",
-          }}>
+        }}>
+           
         <div className="right-container "   >
             {isLoading ? (
               <ShimmerThumbnail height={420} width={2000} rounded />
@@ -210,14 +236,14 @@ export default function Dashboard(props) {
               showAllData && (
                 <>
                   <GraphicalContainer
-                    gtype={"Bar"}
+                    gtype={"ColumnChart"}
                     title={"Calls"}
                     callsGraphData={showAllData.graphDataCalls[0]}
                     bcolor={"#FFFFFF"}
                     width={"50%"}
                   />
                   <GraphicalContainer
-                    gtype={"Bar"}
+                    gtype={"ColumnChart"}
                     title={"Searches"}
                     callsGraphData={showAllData.graphDataSearches[0]}
                     bcolor={"#FFFFFF"}
@@ -234,14 +260,14 @@ export default function Dashboard(props) {
               showAllData && (
                 <>
                   <GraphicalContainer
-                    gtype={"Bar"}
+                    gtype={"ColumnChart"}
                     title={"Mobile Searches"}
                     callsGraphData={showAllData.graphDataSearchesMobils[0]}
                     bcolor={"#FFFFFF"}
                     width={"50%"}
                   />
                   <GraphicalContainer
-                    gtype={"Bar"}
+                    gtype={"ColumnChart"}
                     title={"Website Clicks"}
                     callsGraphData={showAllData.graphDataWebsiteClicks[0]}
                     bcolor={"#FFFFFF"}
@@ -254,6 +280,8 @@ export default function Dashboard(props) {
           </div>
         <br />
       </div>
+
+
     </SharedContext.Provider>
   );
 }

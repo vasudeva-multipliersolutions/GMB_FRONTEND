@@ -3,7 +3,7 @@ import CardContainer from "./CardContainer";
 import { SidebarContext } from "../SidebarContext";
 import SecondCardContainer from "./SecondCardContainer";
 
-export default function SideContentContainer(props) {
+export default function SecondComponentContainer(props) {
   // Access isCollapsed from SidebarContext
   const { isCollapsed } = useContext(SidebarContext);
   const { windowWidth } = useContext(SidebarContext);
@@ -23,12 +23,18 @@ export default function SideContentContainer(props) {
 
   return (
     <Fragment>
-      <div className="right-container-1">
+      <div
+        className="content-container-2"
+        style={{
+          marginLeft: windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
+          transition: "margin-left 0.5s ease",
+        }}
+      >
         {props.data.map((item) => {
           return Object.entries(item).map(([key, value]) => {
             // Skip the "_id" field
             if (key !== "_id") {
-              return <SecondCardContainer head={key} val={value} key={key} />;
+              return < SecondCardContainer head={key} val={value} key={key} />;
             }
             return null;
           });

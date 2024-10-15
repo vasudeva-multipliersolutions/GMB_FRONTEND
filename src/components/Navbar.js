@@ -133,11 +133,12 @@ export default function Navbar(props) {
   function Insightsapicall() {
     setInsightsState(getState);
     setInsightsCity(getCity);
-    console.log("Insight api call...........", setInsightsState, "@", getCity);
+    console.log("Insight api call..........." +setInsightsState+ "@" +getCity);
   }
   function insightsChecker() {
-    if (props.insights) {
+    if (props.insights || props.topdoc ) {
       Insightsapicall();
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
     }
   }
 
@@ -421,17 +422,17 @@ export default function Navbar(props) {
       </div>
 
       {/* Page Content */}
-      <div
+      { !props.blockmenu && <div
         style={{
           marginLeft:
-            window.innerWidth > 768 ? (isCollapsed ? "5%" : "20%") : 0,
-          padding: window.innerWidth > 768 ? "20px" : 0,
+            window.innerWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
+          padding: window.innerWidth > 768 ? "10px" : 0,
           transition: "margin-left 0.5s ease",
         }}
       >
         {/* Place your page content here */}
 
-        <div className="sub-nav">
+        <div className="sub-nav me-4">
           <div
             className={`filter-contents  ${isNavContentsVisible ? "show" : ""}`}
             style={{
@@ -445,7 +446,7 @@ export default function Navbar(props) {
                 <div className="input-group">
                   <select
                     value={getState}
-                    onChange={getStateHandeler}
+                    onChange={ getStateHandeler}
                     onInputCapture={stateInsiteHandelar}
                     style={{
                       width: "150px",
@@ -621,7 +622,7 @@ export default function Navbar(props) {
             </div>
           )}
 
-          <div className="datepicker">
+          <div className="datepicker"  style={{ display: props.serach ? "block" : "none" }}>
             <div className="data_list_selection m-1">
               <div className="input-group">
                 <select
@@ -661,7 +662,7 @@ export default function Navbar(props) {
         </div>
 
         {props.children}
-      </div>
+      </div>}
     </Fragment>
   );
 }

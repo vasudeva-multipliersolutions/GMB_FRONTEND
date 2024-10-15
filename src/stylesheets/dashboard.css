@@ -32,7 +32,7 @@ body {
 }
 
 .view-counts {
-  width: 22.6%;
+  width: 18.6%;
   margin: 0.5rem !important;  
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
@@ -41,6 +41,18 @@ body {
   transform: scale(1.05);
   background-color: #E0FBEE;
 }
+
+.view-counts-2 {
+  width: 23.2%;
+  margin: 0.5rem !important;  
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.view-counts-2:hover {
+  transform: scale(1.05);
+  background-color: #E0FBEE;
+}
+
 
 .nav-caption {
   width: 30%;
@@ -56,7 +68,7 @@ body {
   width: 10%;
   padding-left: 1%;
   display: flex;
- 
+
 
 }
 
@@ -140,20 +152,20 @@ body {
 
 .content-container-1 {
   display: flex;
-  justify-content:space-between;
-  z-index: 0;
+  /* justify-content:space-between;
+  z-index: 0; */
 }
 
 .left-container {
   display: flex;
-  width:  15%;
+  width:  23.0%;
   flex-direction: column;
 }
 
 .right-container {
   display: flex;
   width: 100%;
-  margin-right: 50px;
+  margin-right: 10vh;
 }
 
 .vertical-card,
@@ -170,12 +182,13 @@ body {
   margin: 0;
   padding: 1vh;
   border-radius: 1em 1em 0em 0em;
-  background-color: #b1c4e9 ;
+  background-color: #8D89BF ;
   /* background-color: #3366CC; */
   
 }
 .grapharea {
-  width: 100%;
+  width: 90%;
+  margin-right: 50%;
 }
 
 .vertical-card {
@@ -199,7 +212,7 @@ body {
 }
 
 .rating-container,
-.view-counts {
+.view-counts, .view-counts-2{
   /* padding: 1em; */
   border-radius: 1em;
   border: 2px solid #cecece;
@@ -212,7 +225,14 @@ body {
   justify-content: space-between;
   background-color: #ffffff;
   /* height: 5%; */
- 
+
+}
+
+.view-counts-2 {
+  display: flex;
+  justify-content: space-between;
+  background-color: #ffffff;
+  /* height: 5%; */
 
 }
 
@@ -266,6 +286,12 @@ body {
   border-radius: 1em;
   flex-wrap: wrap;
   z-index: 1;
+  /* width: 100%; */
+}
+.right-container-1 {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 

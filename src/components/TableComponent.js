@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { ShimmerTable } from "react-shimmer-effects"
 
-export default function TableComponent(props) {
+export default function DoctorTableComponent(props) {
 
     const [isLoading, setIsLoading] = useState(true)
 
@@ -11,7 +11,7 @@ export default function TableComponent(props) {
     
   return (
     <>
-        <div className="table-component  m-2" style={{ backgroundColor: props.bcolor, opacity: 0.7 }}>
+        <div className="table-component  m-2" style={{ backgroundColor: props.bcolor, opacity: 0.7,     borderRadius : '1rem'  }}>
             <span className='table-heading graphs'>
                 {props.title}
             </span>
@@ -42,3 +42,4 @@ export default function TableComponent(props) {
     </>
   )
 }
+//here i have a table build it in such a way that every header column include a button which filter the whole data in acending or decending order 

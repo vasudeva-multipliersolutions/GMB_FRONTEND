@@ -8,7 +8,6 @@ export default function ContentContainer(props) {
   const { windowWidth } = useContext(SidebarContext);
   // const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-
   // useEffect(() => {
   //   const handleResize = () => {
   //     setWindowWidth(window.innerWidth);
@@ -21,14 +20,12 @@ export default function ContentContainer(props) {
   //   };
   // }, []);
 
-
   return (
     <Fragment>
       <div
         className="content-container-2"
         style={{
-          marginLeft:
-          windowWidth > 768 ? (isCollapsed ? "5%" : "20%") : 0,
+          marginLeft: windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
           transition: "margin-left 0.5s ease",
         }}
       >
