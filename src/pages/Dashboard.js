@@ -29,9 +29,7 @@ export default function Dashboard(props) {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [getInsightState, setInsightsState] = useState([]);
   const [getInsightsCity, setInsightsCity] = useState([]);
-
-
- 
+  const [contextHospitals, setcontextHospitals] = useState();
 
   const username1 = localStorage.getItem("username");
   const psw1 = localStorage.getItem("psw");
@@ -41,46 +39,35 @@ export default function Dashboard(props) {
     try {
       const response = await fetch(`${api}/${branch}`);
       const data = await response.json();
-      console.log("1234 : "+data[0])
+      //console.log("1234 : "+data[0])
       setAllData(data);
-      console.log(
-        "+++++++++++++++++ data:" + data.reviewRating[0].averagerating
-      );
+      //console.log( "+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
     } catch (error) {
       console.error("Error fetching all data:", error);
     }
   }
-
-
-
 
   async function getMonthData(month) {
     try {
       const response = await fetch(`${api}/monthdata/${month}`);
       const data = await response.json();
       setAllData(data);
-      console.log(
-        "+++++++++++++++++ data:" + data.reviewRating[0].averagerating
-      );
-      console.log(
-        "333333333333 data:" + data.analysis[0]
-      );
+      // console.log( "+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
+      // console.log(  "333333333333 data:" + data.analysis[0]);
     } catch (error) {
       console.error("Error fetching all data:", error);
     }
   }
-
-
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -101,11 +88,14 @@ export default function Dashboard(props) {
 
     async function getAnalysisData() {
       try {
-        const response = await fetch("http://localhost:2024/api/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: username1, psw: psw1 }),
-        });
+        const response = await fetch(
+          "http://localhost:2024/api/login",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: username1, psw: psw1 }),
+          }
+        );
         const result = await response.json();
         setAnalysisData(result);
       } catch (error) {
@@ -152,14 +142,17 @@ export default function Dashboard(props) {
   }, [analysisData, locationProfiles]);
 
   useEffect(() => {
-    console.log("getContextCity@@@@@@@@ : "+contextCity);
+    //console.log("getContextCity@@@@@@@@ : "+contextCity);
     if (contextCity) {
       getAllData(contextCity);
     }
     if (contextMonth) {
-       getMonthData(contextMonth);
-       }
-  }, [contextCity, contextMonth]);
+      getMonthData(contextMonth);
+    }
+    if (contextHospitals) { 
+      getAllData(contextHospitals)
+    }
+  }, [contextCity, contextMonth, contextHospitals]);
 
   // useEffect(() => {
   //   console.log("getContextMonth@@@@@@@@ : "+contextMonth);
@@ -171,10 +164,9 @@ export default function Dashboard(props) {
   const username = analysisData?.[0]?.user;
   const logo = username === "Manipal" ? manipalLogo : careLogo;
 
-  useEffect(() => { 
-    console.log("1234getInsightState : " + getInsightState + "and my123getInsighCity : " + getInsightsCity);
-})
-
+  useEffect(() => {
+    // console.log("1234getInsightState : " + getInsightState + "and my123getInsighCity : " + getInsightsCity);
+  });
 
   return (
     <SharedContext.Provider
@@ -188,17 +180,25 @@ export default function Dashboard(props) {
         setInsightsState,
         getInsightsCity,
         setInsightsCity,
+        setcontextHospitals
       }}
     >
       <div className="Container-fluid" style={{ background: "#EFEFEF" }}>
-        <Navbar logoimg={logo ? logo : ""} username={username} serach={true} topdoc={true} />
+        <Navbar
+          logoimg={logo ? logo : ""}
+          username={username}
+          serach={true}
+          topdoc={true}
+          monthfilter={true}
+        />
         {use && <ContentContainer data={use} />}
-      <div   style={{
-          marginLeft:
-          windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
-          transition: "margin-left 0.5s ease",
-          display: "flex"
-        }} > 
+        <div
+          style={{
+            marginLeft: windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
+            transition: "margin-left 0.5s ease",
+            display: "flex",
+          }}
+        >
           <div className="left-container m-2">
             {showAllData && (
               <ReviewRating
@@ -208,28 +208,20 @@ export default function Dashboard(props) {
             )}
           </div>
           {showAllData && <SideContentContainer data={showAllData.analysis} />}
-          
-        
-        </div> 
-        
-        <div
-         
-        >
-          
-         
-        
         </div>
- 
-        <TopDoctor ></TopDoctor>
-         <div className="grapharea" style={{
-            marginLeft:
-            windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
-            width:
-            windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : 0,
+
+        <div></div>
+
+        <TopDoctor></TopDoctor>
+        <div
+          className="grapharea"
+          style={{
+            marginLeft: windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
+            width: windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : 0,
             transition: "margin-left 0.5s ease",
-        }}>
-           
-        <div className="right-container "   >
+          }}
+        >
+          <div className="right-container ">
             {isLoading ? (
               <ShimmerThumbnail height={420} width={2000} rounded />
             ) : (
@@ -252,8 +244,8 @@ export default function Dashboard(props) {
                 </>
               )
             )}
-        </div>
-        <div className="right-container "   >
+          </div>
+          <div className="right-container ">
             {isLoading ? (
               <ShimmerThumbnail height={420} width={2000} rounded />
             ) : (
@@ -277,11 +269,9 @@ export default function Dashboard(props) {
               )
             )}
           </div>
-          </div>
+        </div>
         <br />
       </div>
-
-
     </SharedContext.Provider>
   );
 }

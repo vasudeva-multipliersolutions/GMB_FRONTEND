@@ -19,7 +19,7 @@ export default function Matrics() {
   return (
     <Fragment>
       <SharedContext.Provider value={{getInsightState, setInsightsState, getInsightsCity, setInsightsCity, getDrName, setDrName , setLocationProfiles}}>
-        <Navbar logoimg={logo} username={username} serach={false} insights={true}></Navbar>
+        <Navbar logoimg={logo} username={username} serach={false} insights={true}  blockmenu={ true}></Navbar>
         <WorkTrackerMetrics></WorkTrackerMetrics>
       </SharedContext.Provider>
     </Fragment>

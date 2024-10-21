@@ -23,7 +23,7 @@ export default function TopDOctorDetails() {
   const { windowWidth } = useContext(SidebarContext);
 
     useEffect(() => { 
-        console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity);
+       // console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity);
     })
     
   // Fetch doctor data when getDrName changes

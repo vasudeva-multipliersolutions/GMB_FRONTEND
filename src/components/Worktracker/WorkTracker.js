@@ -9,6 +9,7 @@ import * as XLSX from "xlsx";
 
 import WorkUpload from "./WorkUpload";
 import WorkTrackerMetrics from "./WorkTrackerMetrics";
+
 import { SidebarContext } from "../../SidebarContext";
 
 export default function WorkTracker() {
@@ -87,7 +88,7 @@ export default function WorkTracker() {
         },
         body: JSON.stringify({ tasks, date: currentDate }),
       });
-      console.log("00000000 : " + tasks);
+     //console.log ("00000000 : " + tasks);
 
       if (response.ok) {
         setShowSuccessModal(true);
@@ -98,7 +99,7 @@ export default function WorkTracker() {
     } catch (error) {
       console.error("Error submitting tasks:", error);
     }
-    console.log("Submitted tasks:", tasks);
+    //console.log("Submitted tasks:", tasks);
   };
 
   const LoadToExcel = (tasks) => {
@@ -145,7 +146,7 @@ export default function WorkTracker() {
       if (data.result[0].businessNames) {
         setAllNames(data.result[0].businessNames); // Update getAllnames state
       }
-      console.log("123: " + setCitys);
+      //console.log("123: " + setCitys);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -164,7 +165,7 @@ export default function WorkTracker() {
           }
         );
         const locDetails = await response.json();
-        console.log("check it --------------------->", locDetails);
+        //console.log("check it --------------------->", locDetails);
         setStates(locDetails[0].states);
         setCitys(locDetails[0].branches);
       } catch (error) {
@@ -429,7 +430,7 @@ export default function WorkTracker() {
           </Col>
         </Row>
       </div>
-
+      
       {/* Success Modal */}
       <Modal show={showSuccessModal} onHide={handleCloseSuccessModal}>
         <Modal.Header closeButton>

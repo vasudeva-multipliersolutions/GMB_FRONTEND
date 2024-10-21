@@ -12,8 +12,7 @@ export default function BasicDetailsComponent() {
   const [isLoading, setIsLoading] = useState(true);
   const [insightdata, setInsightData] = useState(null);
 
-  const { getDrName, getInsightState, getInsightsCity } =
-    useContext(SharedContext);
+  const { getDrName, getInsightState, getInsightsCity, contextHospitals } = useContext(SharedContext);
   const api = localStorage.getItem("API");
 
   const { isCollapsed } = useContext(SidebarContext);
@@ -45,7 +44,7 @@ export default function BasicDetailsComponent() {
   // Fetch filtered data when getInsightState or getInsightsCity changes
   useEffect(() => {
     async function fetchDataFilter() {
-      if (getInsightState || getInsightsCity) {
+      if (contextHospitals) {
         try {
           const response = await fetch(`${api}/datafilter`, {
             method: "POST",
@@ -53,13 +52,13 @@ export default function BasicDetailsComponent() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              state: getInsightState,
-              branch: getInsightsCity,
+              //state: getInsightState,
+              branch: contextHospitals,
             }),
           });
           const data = await response.json();
           setInsightData(data);
-          if (getInsightState.length > 0 || getInsightsCity.length > 0) {
+          if (contextHospitals.length > 0) {
             setIsLoading(false);
           }
           // setIsLoading(false)
@@ -69,7 +68,7 @@ export default function BasicDetailsComponent() {
       }
     }
     fetchDataFilter();
-  }, [getInsightState, getInsightsCity]);
+  }, [contextHospitals]);
 
   // Handle loading state
   // useEffect(() => {

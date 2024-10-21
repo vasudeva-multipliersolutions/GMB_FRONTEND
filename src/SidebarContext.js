@@ -6,6 +6,7 @@ export const SidebarContext = createContext();
 export const SidebarProvider = ({ children }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [drNameContext, setDrNameContext] = useState([]);
 
   const toggleSidebar = () => {
     setIsCollapsed(prevState => !prevState);
@@ -22,11 +23,13 @@ export const SidebarProvider = ({ children }) => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []); 
 
+    
+  }, []); 
+  console.log("Hello"+ drNameContext)
 
   return (
-    <SidebarContext.Provider value={{ isCollapsed, toggleSidebar,  windowWidth}}>
+    <SidebarContext.Provider value={{ isCollapsed, toggleSidebar,  windowWidth, drNameContext, setDrNameContext}}>
       {children}
     </SidebarContext.Provider>
   );

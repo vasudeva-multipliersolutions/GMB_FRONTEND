@@ -24,7 +24,7 @@ export default function ReviewManagement() {
       result['FIVE']['Reply'] = getReply.Five
       for (let i = 0; i < docData.fullReview.FIVE.length; i++)
       {
-        console.log(docData.fullReview.FIVE[i].loc)
+        //console.log(docData.fullReview.FIVE[i].loc)
         result['FIVE']['accounts'].push(docData.fullReview.FIVE[i].loc)
       }
     }
@@ -35,7 +35,7 @@ export default function ReviewManagement() {
       result['FOUR']['Reply'] = getReply.Four
       for (let i = 0; i < docData.fullReview.FOUR.length; i++)
       {
-        console.log(docData.fullReview.FOUR[i].loc)
+        //console.log(docData.fullReview.FOUR[i].loc)
         result['FOUR']['accounts'].push(docData.fullReview.FOUR[i].loc)
       }
     }
@@ -46,7 +46,7 @@ export default function ReviewManagement() {
       result['THREE']['Reply'] = getReply.Three
       for (let i = 0; i < docData.fullReview.THREE.length; i++)
       {
-        console.log(docData.fullReview.THREE[i].loc)
+       //console.log(docData.fullReview.THREE[i].loc)
         result['THREE']['accounts'].push(docData.fullReview.THREE[i].loc)
       }
     }
@@ -57,7 +57,7 @@ export default function ReviewManagement() {
       result['TWO']['Reply'] = getReply.Two
       for (let i = 0; i < docData.fullReview.TWO.length; i++)
       {
-        console.log(docData.fullReview.TWO[i].loc)
+        //console.log(docData.fullReview.TWO[i].loc)
         result['TWO']['accounts'].push(docData.fullReview.TWO[i].loc)
       }
     }
@@ -68,11 +68,11 @@ export default function ReviewManagement() {
       result['ONE']['Reply'] = getReply.One
       for (let i = 0; i < docData.fullReview.ONE.length; i++)
       {
-        console.log(docData.fullReview.ONE[i].loc)
+        //console.log(docData.fullReview.ONE[i].loc)
         result['ONE']['accounts'].push(docData.fullReview.ONE[i].loc)
       }
     }
-    console.log("result: ",result)
+   // console.log("result: ",result)
   }
   useEffect(() => {
     if (getDrName) {
@@ -86,7 +86,7 @@ export default function ReviewManagement() {
           body: JSON.stringify({ businessName: getDrName }),
         });
         const data = await response.json();
-        console.log(data);
+        //console.log(data);
         if (
           data.fullReview?.FIVE?.length == 0 &&
           data.fullReview?.FOUR?.length == 0 &&

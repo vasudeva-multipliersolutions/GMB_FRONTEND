@@ -10,6 +10,7 @@ export default function DocReport() {
 
   const [getInsightState, setInsightsState] = useState([]);
   const [getInsightsCity, setInsightsCity] = useState([]);
+  const [contextHospitals, setcontextHospitals] = useState();
   const [getDrName, setDrName] = useState("");
   const userlogo = localStorage.getItem("username");
   // alert(userlogo)
@@ -17,8 +18,8 @@ export default function DocReport() {
   const logo = userlogo == "Manipal" ? manipalLogo : careLogo;
   return (
     <Fragment>
-      <SharedContext.Provider value={{getInsightState, setInsightsState, getInsightsCity, setInsightsCity, getDrName, setDrName , setLocationProfiles}}>
-        <Navbar logoimg={logo} username={username} serach={false} insights={true}></Navbar>
+      <SharedContext.Provider value={{getInsightState, setInsightsState, getInsightsCity, contextHospitals, setcontextHospitals, setInsightsCity, getDrName, setDrName , setLocationProfiles}}>
+        <Navbar logoimg={logo} username={username} serach={true} insights={true}></Navbar>
         <InsightDetails></InsightDetails>
       </SharedContext.Provider>
     </Fragment>

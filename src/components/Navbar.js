@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState, useContext } from "react";
-import logoutlogo from "../assets/Logos/logout.png";
+
 import { useNavigate, Link } from "react-router-dom";
 import { SharedContext } from "../context/SharedContext";
 import { FaAlignJustify, FaAnglesLeft, FaDashcube } from "react-icons/fa6";
@@ -11,9 +11,14 @@ import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { MdTableChart } from "react-icons/md";
 import { GiTimeBomb } from "react-icons/gi";
 import { SidebarContext } from "../SidebarContext";
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import FilterPopover, { NewMenuBar } from "./FilterPopover";
+
 
 export default function Navbar(props) {
-  const { isCollapsed, toggleSidebar } = useContext(SidebarContext); // Use the correct context
+  const { isCollapsed, toggleSidebar, drNameContext } = useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
   const { setContextCity, setLocationProfiles, setContextMonth} = useContext(SharedContext);
   const { setInsightsState, setInsightsCity } = useContext(SharedContext);
@@ -31,11 +36,26 @@ export default function Navbar(props) {
   const [isNavContentsVisible, setNavContentsVisible] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+
   // const [check, setCheck] = useState(0);
 
   for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    const value = localStorage.getItem(key);
+    //const key = localStorage.key(i);
+   //const value = localStorage.getItem(key);
   }
 
   function logoutHandeler() {
@@ -44,9 +64,9 @@ export default function Navbar(props) {
     localStorage.removeItem("logo");
     localStorage.removeItem("username");
     localStorage.removeItem("psw");
-    console.log("logged out before navifated");
+    //console.log("logged out before navifated");
     navigate("/");
-    console.log("logged out after navifated");
+    //console.log("logged out after navifated");
   }
 
   // function toggleSidebar() {
@@ -55,7 +75,7 @@ export default function Navbar(props) {
 
   useEffect(() => {
     const storedLogo = localStorage.getItem("logo");
-    const storedEmail = localStorage.getItem("mail");
+    
     if (storedLogo) setLogo(storedLogo);
   }, []);
 
@@ -101,10 +121,6 @@ export default function Navbar(props) {
 
 
 
-  function toggleNavContents() {
-    setNavContentsVisible(!isNavContentsVisible);
-  }
-  console.log("API : " + api);
   async function filterApi() {
     try {
       const response = await fetch(`${api}/getfilterdata`, {
@@ -133,17 +149,17 @@ export default function Navbar(props) {
   function Insightsapicall() {
     setInsightsState(getState);
     setInsightsCity(getCity);
-    console.log("Insight api call..........." +setInsightsState+ "@" +getCity);
+   //console.log("Insight api call..........." +setInsightsState+ "@" +getCity);
   }
   function insightsChecker() {
     if (props.insights || props.topdoc ) {
       Insightsapicall();
-      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+     // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
     }
   }
 
   useEffect(() => {
-    console.log("Current path:", window.location.pathname);
+    //console.log("Current path:", window.location.pathname);
     // Your other code here
   }, []);
 
@@ -171,7 +187,7 @@ export default function Navbar(props) {
         },
       });
       const getlocdetails = await locDetails.json();
-      console.log("check it --------------------->", getlocdetails);
+      //console.log("check it --------------------->", getlocdetails);
       setStates(getlocdetails[0].states);
       setCitys(getlocdetails[0].branches);
     }
@@ -187,16 +203,9 @@ export default function Navbar(props) {
     if (mail) {
       setEmai(mail);
     }
-    // const exportBulkEditBtn = document.getElementsByClassName("export-btn");
-    // for (let i = 0; i < exportBulkEditBtn.length; i++) {
-    //   exportBulkEditBtn[i].disabled = true;
-    // }
+    
   }, [getState]);
-  // if(getLoc)
-  // {
-  //   console.log(getLoc)
-  // }
-  // alert(email);
+  
   const exportExcel = (excelData) => {
     const title = "Doctor Details";
     // const details = excelData.result[0]["details"];
@@ -317,13 +326,14 @@ export default function Navbar(props) {
       body: JSON.stringify({ state: getState, branch: getCity }),
     });
     const allDetails = await docDetails.json();
-    console.log("All Doctor details State and branch wise : ", allDetails);
+    //console.log("All Doctor details State and branch wise : ", allDetails);
     exportExcel(allDetails);
   }
   function bulkExport() {
     getAllDoctrosDetails(getState, getCity);
   }
   return (
+
     <Fragment>
       {/* Sidebar */}
 
@@ -415,10 +425,33 @@ export default function Navbar(props) {
           <i class="bi bi-list"></i>
         </div>
         <div className="nav-caption">GOOGLE MY BUSINESS PERFORMANCE</div>
+       
 
-        <div className="logout-icon">
+        {/* <div className="logout-icon">
           <i className="bi bi-person-circle" onClick={logoutHandeler}></i>
-        </div>
+        </div> */}
+
+<div className="logout-icon">
+      <Button aria-describedby={id}  onClick={handleClick}>
+      <i className="bi bi-person-circle fa-3x" ></i>
+      </Button>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+            }}
+            style={{
+              cursor: 'pointer'
+               }
+            }
+      >
+        <Typography onClick={logoutHandeler} sx={{ p: 2 }}>Logout   <i className="bi bi-person-circle" ></i></Typography>
+      </Popover>
+    </div>
       </div>
 
       {/* Page Content */}
@@ -441,12 +474,12 @@ export default function Navbar(props) {
               alignItems: "center",
             }}
           >
-            <div className="filers_sprding">
+           <div className="filers_sprding">
               <div className="data_list_selection m-1">
-                <div className="input-group">
+               {!props.serach && <div className="input-group">
                   <select
                     value={getState}
-                    onChange={ getStateHandeler}
+                    onChange={getStateHandeler}
                     onInputCapture={stateInsiteHandelar}
                     style={{
                       width: "150px",
@@ -481,10 +514,10 @@ export default function Navbar(props) {
                   >
                     <FaSearch className="CircleRightIcon" />
                   </button>
-                </div>
+                </div>}
               </div>
 
-              <div className="data_list_selection m-1">
+              {!props.serach && <div className="data_list_selection m-1">
                 <div className="input-group">
                   <select
                     value={getCity}
@@ -523,12 +556,13 @@ export default function Navbar(props) {
                     <FaSearch className="CircleRightIcon" />
                   </button>
                 </div>
-              </div>
+              </div>}
+              {props.serach &&  <NewMenuBar></NewMenuBar>}
 
               {/* <label>Select Doctor:</label>&nbsp; */}
               <div
                 className="data_list_selection m-1"
-                style={{ display: !props.serach ? "block" : "none" }}
+                style={{ display: props.docreport || props.insights ? "block" : "none" }}
               >
                 <div className="input-group">
                   <input
@@ -562,9 +596,9 @@ export default function Navbar(props) {
                   </button>
                 </div>
               </div>
-              {getAllnames && (
+              {drNameContext && (
                 <datalist id="getDoctor">
-                  {getAllnames.map((item) => {
+                  {drNameContext.map((item) => {
                     return <option value={item}>{item}</option>;
                   })}
                 </datalist>
@@ -622,7 +656,9 @@ export default function Navbar(props) {
             </div>
           )}
 
-          <div className="datepicker"  style={{ display: props.serach ? "block" : "none" }}>
+
+
+          <div className="datepicker"  style={{ display: props.monthfilter ? "block" : "none" }}>
             <div className="data_list_selection m-1">
               <div className="input-group">
                 <select
@@ -663,6 +699,10 @@ export default function Navbar(props) {
 
         {props.children}
       </div>}
+
+      <div className="d-flex justify-content-center">
+        
+      </div>
     </Fragment>
   );
 }

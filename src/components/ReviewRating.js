@@ -10,7 +10,7 @@ export default function ReviewRating(props) {
             <center className="m-4">Overall</center>
             <div className="rating-container  m-3">
                 <div className="rate-body">
-                <CountUp start ={0} end={props.rating.toFixed(2)} duration={3} delay={1}/>
+                      {props.rating && <CountUp start={0} end={props.rating.toFixed(2)} duration={3} delay={1} />}
                 </div>
                 <div className="rate-heading">
                     Average Rating

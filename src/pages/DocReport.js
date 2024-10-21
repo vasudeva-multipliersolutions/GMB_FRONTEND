@@ -7,6 +7,7 @@ import { SharedContext } from "../context/SharedContext";
 export default function DocReport() {
   var username;
   const [locationProfiles, setLocationProfiles] = useState([]);
+  const [contextHospitals, setcontextHospitals] = useState();
 
 
   const [getDrName, setDrName] = useState("");
@@ -17,8 +18,8 @@ export default function DocReport() {
   const logo = userlogo == "Manipal" ? manipalLogo : careLogo;
   return (
     <Fragment>
-      <SharedContext.Provider value={{ getDrName, setDrName , setLocationProfiles}}>
-        <Navbar logoimg={logo} username={username} serach={false}></Navbar>
+      <SharedContext.Provider value={{ getDrName, setDrName , setLocationProfiles, setcontextHospitals}}>
+        <Navbar logoimg={logo} username={username} serach={true} docreport={true} ></Navbar>
         <BasicDetailsComponent></BasicDetailsComponent>
       </SharedContext.Provider>
     </Fragment>

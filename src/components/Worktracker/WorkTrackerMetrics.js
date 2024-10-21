@@ -11,9 +11,6 @@ import { StaticDateRangePicker } from "@mui/x-date-pickers-pro";
 import dayjs from "dayjs";
 import { SidebarContext } from "../../SidebarContext";
 
-
-
-
 const date = new Date();
 export default function WorkTrackerMetrics() {
   const [getTableData, setTableData] = useState([]);
@@ -27,7 +24,7 @@ export default function WorkTrackerMetrics() {
   const user = localStorage.getItem("user");
 
   const { isCollapsed } = useContext(SidebarContext);
-const { windowWidth } = useContext(SidebarContext);
+  const { windowWidth } = useContext(SidebarContext);
 
   //const api = localStorage.getItem("API");
 
@@ -73,9 +70,7 @@ const { windowWidth } = useContext(SidebarContext);
   ];
 
   useEffect(() => {
-    console.log(
-      "********" + getInsightState + " ######### : " + getInsightsCity
-    );
+    //console.log("********" + getInsightState + " ######### : " + getInsightsCity);
   }, [getInsightsCity, getInsightState]);
 
   async function gettrackerdata(date) {
@@ -90,7 +85,7 @@ const { windowWidth } = useContext(SidebarContext);
       );
       const data = await response.json();
       setTableData(data);
-      console.log("Work Tracker Data : " + data);
+      //console.log("Work Tracker Data : " + data);
     } catch (error) {
       console.error("error in fetching data :", error);
     }
@@ -125,28 +120,28 @@ const { windowWidth } = useContext(SidebarContext);
 
   const LoadToExcel = () => {
     const tableData = [];
-    const tableHeaders = document.querySelectorAll('table thead th');
-    const tableRows = document.querySelectorAll('table tbody tr');
-  
+    const tableHeaders = document.querySelectorAll("table thead th");
+    const tableRows = document.querySelectorAll("table tbody tr");
+
     // Get table headers
     const headerData = [];
     tableHeaders.forEach((header) => {
       headerData.push(header.textContent);
     });
     tableData.push(headerData);
-  
+
     // Get table rows
     tableRows.forEach((row) => {
       const rowData = [];
-      const cells = row.querySelectorAll('td');
-  
+      const cells = row.querySelectorAll("td");
+
       cells.forEach((cell) => {
         rowData.push(cell.textContent);
       });
-  
+
       tableData.push(rowData);
     });
-  
+
     const worksheet = XLSX.utils.aoa_to_sheet(tableData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
@@ -175,7 +170,7 @@ const { windowWidth } = useContext(SidebarContext);
           }
         );
         const data = await response.json();
-        console.log("********" + data);
+        //console.log("********" + data);
         setTableData(data);
       } catch (error) {
         console.error("Something Went Wrong" + error);
@@ -184,14 +179,17 @@ const { windowWidth } = useContext(SidebarContext);
     matricsfilterdata();
   }, [getInsightsCity, getInsightState, getDrName]);
 
-  console.log("12@@@@ ; " + user);
+  //console.log("12@@@@ ; " + user);
 
   return (
     <div>
-      <div className="bg-custom" style={{
+      <div
+        className="bg-custom"
+        style={{
           marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
           transition: "margin-left 0.5s ease",
-        }}>
+        }}
+      >
         <div className="">
           <div className="d-flex justify-content-between">
             <div>
@@ -222,8 +220,6 @@ const { windowWidth } = useContext(SidebarContext);
                       }}
                     />
                   </LocalizationProvider>
-
-              
                 </Modal.Body>
                 <Modal.Footer className="d-flex justify-content-center">
                   {" "}

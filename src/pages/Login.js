@@ -14,14 +14,17 @@ export default function Login(props) {
   }
   async function signin(e) {
     e.preventDefault();
-    console.log(cred);
-    const loginHandeler = await fetch(`http://localhost:2024/api/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: cred.username, psw: cred.psw }),
-    });
+    //console.log(cred);
+    const loginHandeler = await fetch(
+      `http://localhost:2024/api/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username: cred.username, psw: cred.psw }),
+      }
+    );
     const response = await loginHandeler.json();
     if (response.length != 0) {
       localStorage.setItem("username", cred.username);
@@ -30,11 +33,12 @@ export default function Login(props) {
       localStorage.setItem("logo", response[0].Logo);
       localStorage.setItem("API", response[0].API);
       localStorage.setItem("user", response[0].user);
-      console.log()
+      //console.log()
 
       navigate("/Dashboard");
+      window.location.reload();
     } else {
-      console.log("false");
+      //console.log("false");
     }
   }
 

@@ -30,7 +30,7 @@ export default function BasicDetailsComponent() {
           body: JSON.stringify({ "businessName": getDrName })
         });
         const data = await response.json();
-        console.log("datyaK: ", data);
+        //console.log("datyaK: ", data);
         setDocData(data);
       }
       getDocData();
@@ -49,7 +49,7 @@ export default function BasicDetailsComponent() {
   const topreview_body = []
   const lestreview_body = []
   if (docData) {
-    console.log(docData)
+    //console.log(docData)
     rows.push(docData.result)
     cRows.push(docData.cRank)
     lRows.push(docData.keywordsRanking)
@@ -60,7 +60,7 @@ export default function BasicDetailsComponent() {
       }
     }
     if (docData.goodreviews.length !== 0 && docData.goodreviews[0] != null) {
-      console.log(docData.goodreviews[0])
+      //console.log(docData.goodreviews[0])
       if (docData.goodreviews[0][1] != null) {
         topreview_body.push(docData.goodreviews)
       }
@@ -144,12 +144,12 @@ export default function BasicDetailsComponent() {
 
   return (
     <>
-      {isLoading ?
+      { docData && isLoading ?
         <div>
           <ShimmerThumbnail className="m-2 p-2" height={200} rounded />
           <ShimmerTitle line={2} gap={10} variant="primary" />
         </div> :
-        getDrName &&
+       getDrName &&
         <div id='capture' style={{
           marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
           transition: "margin-left 0.5s ease",
