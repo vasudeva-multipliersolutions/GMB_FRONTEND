@@ -30,6 +30,7 @@ export default function Dashboard(props) {
   const [getInsightState, setInsightsState] = useState([]);
   const [getInsightsCity, setInsightsCity] = useState([]);
   const [contextHospitals, setcontextHospitals] = useState();
+  const mail = localStorage.getItem("mail");
 
   const username1 = localStorage.getItem("username");
   const psw1 = localStorage.getItem("psw");
@@ -187,7 +188,7 @@ export default function Dashboard(props) {
         <Navbar
           logoimg={logo ? logo : ""}
           username={username}
-          serach={true}
+          serach={mail === "manipal@gmail.com" ? true : false}
           topdoc={true}
           monthfilter={true}
         />

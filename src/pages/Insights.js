@@ -13,13 +13,14 @@ export default function DocReport() {
   const [contextHospitals, setcontextHospitals] = useState();
   const [getDrName, setDrName] = useState("");
   const userlogo = localStorage.getItem("username");
+  const mail = localStorage.getItem("mail");
   // alert(userlogo)
   const psw1 = localStorage.getItem("psw");
   const logo = userlogo == "Manipal" ? manipalLogo : careLogo;
   return (
     <Fragment>
       <SharedContext.Provider value={{getInsightState, setInsightsState, getInsightsCity, contextHospitals, setcontextHospitals, setInsightsCity, getDrName, setDrName , setLocationProfiles}}>
-        <Navbar logoimg={logo} username={username} serach={true} insights={true}></Navbar>
+        <Navbar logoimg={logo} username={username} serach={mail === "manipal@gmail.com" ? true : false} insights={true}></Navbar>
         <InsightDetails></InsightDetails>
       </SharedContext.Provider>
     </Fragment>

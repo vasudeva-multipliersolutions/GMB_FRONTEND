@@ -11,16 +11,17 @@ import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { MdTableChart } from "react-icons/md";
 import { GiTimeBomb } from "react-icons/gi";
 import { SidebarContext } from "../SidebarContext";
-import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import Popover from "@mui/material/Popover";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import FilterPopover, { NewMenuBar } from "./FilterPopover";
 
-
 export default function Navbar(props) {
-  const { isCollapsed, toggleSidebar, drNameContext } = useContext(SidebarContext); // Use the correct context
+  const { isCollapsed, toggleSidebar, drNameContext } =
+    useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles, setContextMonth} = useContext(SharedContext);
+  const { setContextCity, setLocationProfiles, setContextMonth } =
+    useContext(SharedContext);
   const { setInsightsState, setInsightsCity } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
@@ -36,7 +37,6 @@ export default function Navbar(props) {
   const [isNavContentsVisible, setNavContentsVisible] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -48,14 +48,13 @@ export default function Navbar(props) {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-
+  const id = open ? "simple-popover" : undefined;
 
   // const [check, setCheck] = useState(0);
 
   for (let i = 0; i < localStorage.length; i++) {
     //const key = localStorage.key(i);
-   //const value = localStorage.getItem(key);
+    //const value = localStorage.getItem(key);
   }
 
   function logoutHandeler() {
@@ -75,7 +74,7 @@ export default function Navbar(props) {
 
   useEffect(() => {
     const storedLogo = localStorage.getItem("logo");
-    
+
     if (storedLogo) setLogo(storedLogo);
   }, []);
 
@@ -116,10 +115,7 @@ export default function Navbar(props) {
 
   function monthseter() {
     setContextMonth(getMonth);
-   }
-
-
-
+  }
 
   async function filterApi() {
     try {
@@ -138,7 +134,7 @@ export default function Navbar(props) {
       }
       setAllNames(data.result[0].businessNames);
 
-      if (props.serach) {
+      if (!props.serach) {
         setContextCity(getCity);
       }
     } catch (error) {
@@ -149,12 +145,12 @@ export default function Navbar(props) {
   function Insightsapicall() {
     setInsightsState(getState);
     setInsightsCity(getCity);
-   //console.log("Insight api call..........." +setInsightsState+ "@" +getCity);
+    //console.log("Insight api call..........." +setInsightsState+ "@" +getCity);
   }
   function insightsChecker() {
-    if (props.insights || props.topdoc ) {
+    if (props.insights || props.topdoc) {
       Insightsapicall();
-     // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+      // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
     }
   }
 
@@ -203,9 +199,8 @@ export default function Navbar(props) {
     if (mail) {
       setEmai(mail);
     }
-    
   }, [getState]);
-  
+
   const exportExcel = (excelData) => {
     const title = "Doctor Details";
     // const details = excelData.result[0]["details"];
@@ -333,7 +328,6 @@ export default function Navbar(props) {
     getAllDoctrosDetails(getState, getCity);
   }
   return (
-
     <Fragment>
       {/* Sidebar */}
 
@@ -425,284 +419,308 @@ export default function Navbar(props) {
           <i class="bi bi-list"></i>
         </div>
         <div className="nav-caption">GOOGLE MY BUSINESS PERFORMANCE</div>
-       
 
         {/* <div className="logout-icon">
           <i className="bi bi-person-circle" onClick={logoutHandeler}></i>
         </div> */}
 
-<div className="logout-icon">
-      <Button aria-describedby={id}  onClick={handleClick}>
-      <i className="bi bi-person-circle fa-3x" ></i>
-      </Button>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
+        <div className="logout-icon">
+          <Button aria-describedby={id} onClick={handleClick}>
+            <i className="bi bi-person-circle fa-3x"></i>
+          </Button>
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
             }}
             style={{
-              cursor: 'pointer'
-               }
-            }
-      >
-        <Typography onClick={logoutHandeler} sx={{ p: 2 }}>Logout   <i className="bi bi-person-circle" ></i></Typography>
-      </Popover>
-    </div>
+              cursor: "pointer",
+            }}
+          >
+            <Typography onClick={logoutHandeler} sx={{ p: 2 }}>
+              Logout <i className="bi bi-person-circle"></i>
+            </Typography>
+          </Popover>
+        </div>
       </div>
 
       {/* Page Content */}
-      { !props.blockmenu && <div
-        style={{
-          marginLeft:
-            window.innerWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
-          padding: window.innerWidth > 768 ? "10px" : 0,
-          transition: "margin-left 0.5s ease",
-        }}
-      >
-        {/* Place your page content here */}
+      {!props.blockmenu && (
+        <div
+          style={{
+            marginLeft:
+              window.innerWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
+            padding: window.innerWidth > 768 ? "10px" : 0,
+            transition: "margin-left 0.5s ease",
+          }}
+        >
+          {/* Place your page content here */}
 
-        <div className="sub-nav me-4">
-          <div
-            className={`filter-contents  ${isNavContentsVisible ? "show" : ""}`}
-            style={{
-              display: props.worktracker ? "none" : "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-           <div className="filers_sprding">
-              <div className="data_list_selection m-1">
-               {!props.serach && <div className="input-group">
-                  <select
-                    value={getState}
-                    onChange={getStateHandeler}
-                    onInputCapture={stateInsiteHandelar}
-                    style={{
-                      width: "150px",
-                      borderRadius: " 10px 0px 0 10px",
-                      padding: "4px",
-                      border: "1px solid #ccc",
-                      outline: "none",
-                    }}
-                  >
-                    <option value="">Select State...</option>
-                    {getStates &&
-                      getStates.map((item, index) => {
-                        if (item != "#N/A")
-                          return (
-                            <option key={index} value={item}>
-                              {item}
-                            </option>
-                          );
-                      })}
-                  </select>
-
-                  <button
-                    onClick={() => {
-                      filterApi();
-                      insightsChecker();
-                    }}
-                    style={{
-                      borderRadius: " 0px 10px 10px 0px",
-                      border: "1px solid #ccc",
-                      outline: "none",
-                    }}
-                  >
-                    <FaSearch className="CircleRightIcon" />
-                  </button>
-                </div>}
-              </div>
-
-              {!props.serach && <div className="data_list_selection m-1">
-                <div className="input-group">
-                  <select
-                    value={getCity}
-                    onChange={getCityHandeler}
-                    onInputCapture={cityInsightHandelar}
-                    style={{
-                      width: "150px",
-                      borderRadius: " 10px 0px 0 10px",
-                      padding: "4px",
-                      border: "1px solid #ccc",
-                      outline: "none",
-                    }}
-                  >
-                    <option value="">Select City...</option>
-                    {getCitys &&
-                      getCitys.map((item, index) => {
-                        if (item != "#N/A")
-                          return (
-                            <option key={index} value={item}>
-                              {item}
-                            </option>
-                          );
-                      })}
-                  </select>
-                  <button
-                    onClick={() => {
-                      filterApi();
-                      insightsChecker();
-                    }}
-                    style={{
-                      borderRadius: " 0px 10px 10px 0px",
-                      border: "1px solid #ccc",
-                      outline: "none",
-                    }}
-                  >
-                    <FaSearch className="CircleRightIcon" />
-                  </button>
-                </div>
-              </div>}
-              {props.serach &&  <NewMenuBar></NewMenuBar>}
-
-              {/* <label>Select Doctor:</label>&nbsp; */}
-              <div
-                className="data_list_selection m-1"
-                style={{ display: props.docreport || props.insights ? "block" : "none" }}
-              >
-                <div className="input-group">
-                  <input
-                    type="text"
-                    list="getDoctor"
-                    placeholder="Doctor Name"
-                    value={getName}
-                    onInputCapture={nameHandelar}
-                    style={{
-                      width: "150px",
-                      borderRadius: " 10px 0px 0 10px",
-                      padding: "4px",
-                      border: "1px solid #ccc",
-                      outline: "none",
-                    }}
-                  />
-                  <button
-                    onClick={nameseter}
-                    style={{
-                      borderRadius: " 0px 10px 10px 0px",
-                      border: "1px solid #ccc",
-                      outline: "none",
-                      // display:
-                      //   email === "aristro@gmail.com" ||
-                      //   email === "microlabs@gmail.com"
-                      //     ? "none"
-                      //     : "",
-                    }}
-                  >
-                    <FaSearch className="CircleRightIcon" />
-                  </button>
-                </div>
-              </div>
-              {drNameContext && (
-                <datalist id="getDoctor">
-                  {drNameContext.map((item) => {
-                    return <option value={item}>{item}</option>;
-                  })}
-                </datalist>
-              )}
-            </div>
-          </div>
-
-          {isNavContentsVisible && (
+          <div className="sub-nav me-4">
             <div
-              className={`nav-contents ${isNavContentsVisible ? "show" : ""}`}
+              className={`filter-contents  ${
+                isNavContentsVisible ? "show" : ""
+              }`}
+              style={{
+                display: props.worktracker ? "none" : "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
-              <p
-                style={{
-                  display: email !== "care@gmail.com" ? "none" : "block",
-                }}
-              >
-                <button
-                  className="export-btn"
-                  style={{
-                    display: !props.serach ? "block" : "none",
-                  }}
-                  onClick={bulkExport}
-                  disabled={!getState}
-                >
-                  Bulk Download
-                </button>
-              </p>
-              <Link to="/Dashboard" className="p-1 pe-5">
-                Dashboard
-              </Link>
-              <Link to="/Doc-report" className="p-1 pe-5">
-                Doc Report
-              </Link>
-              <Link to="/Insights" className="p-1 pe-5">
-                Insights
-              </Link>
-              {email === "astrio@gmail.com" ||
-              email === "lupin@gmail.com" ||
-              email === "care@gmail.com" ||
-              email === "mankind@gmail.com" ? (
-                <Link to="/WorkTracker " className="p-1 pe-5">
-                  WorkTracker
-                </Link>
-              ) : (
-                <Link to="/Matrics" className="p-1 pe-5">
-                  Metrics
-                </Link>
-              )}
+              <div className="filers_sprding">
+                <div className="data_list_selection m-1">
+                  {!props.serach && (
+                    <div className="input-group">
+                      <select
+                        value={getState}
+                        onChange={getStateHandeler}
+                        onInputCapture={stateInsiteHandelar}
+                        style={{
+                          width: "150px",
+                          borderRadius: " 10px 0px 0 10px",
+                          padding: "4px",
+                          border: "1px solid #ccc",
+                          outline: "none",
+                        }}
+                      >
+                        <option value="">Select State...</option>
+                        {getStates &&
+                          getStates.map((item, index) => {
+                            if (item != "#N/A")
+                              return (
+                                <option key={index} value={item}>
+                                  {item}
+                                </option>
+                              );
+                          })}
+                      </select>
 
-              {/* <Link to="/Review-management" className="p-1 pe-5">
+                      <button
+                        onClick={() => {
+                          filterApi();
+                          insightsChecker();
+                        }}
+                        style={{
+                          borderRadius: " 0px 10px 10px 0px",
+                          border: "1px solid #ccc",
+                          outline: "none",
+                        }}
+                      >
+                        <FaSearch className="CircleRightIcon" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {!props.serach && (
+                  <div className="data_list_selection m-1">
+                    <div className="input-group">
+                      <select
+                        value={getCity}
+                        onChange={getCityHandeler}
+                        onInputCapture={cityInsightHandelar}
+                        style={{
+                          width: "150px",
+                          borderRadius: " 10px 0px 0 10px",
+                          padding: "4px",
+                          border: "1px solid #ccc",
+                          outline: "none",
+                        }}
+                      >
+                        <option value="">Select City...</option>
+                        {getCitys &&
+                          getCitys.map((item, index) => {
+                            if (item != "#N/A")
+                              return (
+                                <option key={index} value={item}>
+                                  {item}
+                                </option>
+                              );
+                          })}
+                      </select>
+                      <button
+                        onClick={() => {
+                          filterApi();
+                          insightsChecker();
+                        }}
+                        style={{
+                          borderRadius: " 0px 10px 10px 0px",
+                          border: "1px solid #ccc",
+                          outline: "none",
+                        }}
+                      >
+                        <FaSearch className="CircleRightIcon" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {props.serach && (
+                  <div
+                    style={{
+                      display: email == "care@gmail.com" ? "none" : "block",
+                    }}
+                  >
+                    <NewMenuBar></NewMenuBar>
+                  </div>
+                )}
+
+                {/* <label>Select Doctor:</label>&nbsp; */}
+                <div
+                  className="data_list_selection m-1"
+                  style={{
+                    display:
+                      props.docreport || props.insights ? "block" : "none",
+                  }}
+                >
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      list="getDoctor"
+                      placeholder="Doctor Name"
+                      value={getName}
+                      onInputCapture={nameHandelar}
+                      style={{
+                        width: "150px",
+                        borderRadius: " 10px 0px 0 10px",
+                        padding: "4px",
+                        border: "1px solid #ccc",
+                        outline: "none",
+                      }}
+                    />
+                    <button
+                      onClick={nameseter}
+                      style={{
+                        borderRadius: " 0px 10px 10px 0px",
+                        border: "1px solid #ccc",
+                        outline: "none",
+                        // display:
+                        //   email === "aristro@gmail.com" ||
+                        //   email === "microlabs@gmail.com"
+                        //     ? "none"
+                        //     : "",
+                      }}
+                    >
+                      <FaSearch className="CircleRightIcon" />
+                    </button>
+                  </div>
+                </div>
+                {(drNameContext?.length > 0 ? drNameContext : getAllnames) && (
+                  <datalist id="getDoctor">
+                    {(drNameContext?.length > 0
+                      ? drNameContext
+                      : getAllnames
+                    ).map((item, index) => {
+                      return (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      );
+                    })}
+                  </datalist>
+                )}
+              </div>
+            </div>
+
+            {isNavContentsVisible && (
+              <div
+                className={`nav-contents ${isNavContentsVisible ? "show" : ""}`}
+              >
+                <p
+                  style={{
+                    display: email !== "care@gmail.com" ? "none" : "block",
+                  }}
+                >
+                  <button
+                    className="export-btn"
+                    style={{
+                      display: !props.serach ? "block" : "none",
+                    }}
+                    onClick={bulkExport}
+                    disabled={!getState}
+                  >
+                    Bulk Download
+                  </button>
+                </p>
+                <Link to="/Dashboard" className="p-1 pe-5">
+                  Dashboard
+                </Link>
+                <Link to="/Doc-report" className="p-1 pe-5">
+                  Doc Report
+                </Link>
+                <Link to="/Insights" className="p-1 pe-5">
+                  Insights
+                </Link>
+                {email === "astrio@gmail.com" ||
+                email === "lupin@gmail.com" ||
+                email === "care@gmail.com" ||
+                email === "mankind@gmail.com" ? (
+                  <Link to="/WorkTracker " className="p-1 pe-5">
+                    WorkTracker
+                  </Link>
+                ) : (
+                  <Link to="/Matrics" className="p-1 pe-5">
+                    Metrics
+                  </Link>
+                )}
+
+                {/* <Link to="/Review-management" className="p-1 pe-5">
             Review Management
           </Link>  */}
-              {/* <Link to="/Review Management" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Review Management</Link> */}
-              {/* <Link to="/gen-ai" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Gen AI</Link>  */}
-            </div>
-          )}
+                {/* <Link to="/Review Management" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Review Management</Link> */}
+                {/* <Link to="/gen-ai" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Gen AI</Link>  */}
+              </div>
+            )}
 
+            <div
+              className="datepicker"
+              style={{ display: props.monthfilter ? "block" : "none" }}
+            >
+              <div className="data_list_selection m-1">
+                <div className="input-group">
+                  <select
+                    value={getMonth}
+                    onChange={monthHandelar}
+                    onInputCapture={monthHandelar}
+                    style={{
+                      width: "150px",
+                      borderRadius: " 10px 0px 0 10px",
+                      padding: "4px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                    }}
+                  >
+                    <option value="">Select Month...</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                  </select>
 
-
-          <div className="datepicker"  style={{ display: props.monthfilter ? "block" : "none" }}>
-            <div className="data_list_selection m-1">
-              <div className="input-group">
-                <select
-                  value={getMonth}
-                  onChange={monthHandelar}
-                   onInputCapture={monthHandelar}
-                  style={{
-                    width: "150px",
-                    borderRadius: " 10px 0px 0 10px",
-                    padding: "4px",
-                    border: "1px solid #ccc",
-                    outline: "none",
-                  }}
-                >
-                  <option value="">Select Month...</option>
-                  <option value="May">May</option>
-                  <option value="June">June</option>
-                  <option value="July">July</option>
-                 
-                </select>
-
-                <button
-                  onClick={() => {
-                    monthseter();
-                  }}
-                  style={{
-                    borderRadius: " 0px 10px 10px 0px",
-                    border: "1px solid #ccc",
-                    outline: "none",
-                  }}
-                >
-                  <FaSearch className="CircleRightIcon" />
-                </button>
+                  <button
+                    onClick={() => {
+                      monthseter();
+                    }}
+                    style={{
+                      borderRadius: " 0px 10px 10px 0px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                    }}
+                  >
+                    <FaSearch className="CircleRightIcon" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+
+          {props.children}
         </div>
+      )}
 
-        {props.children}
-      </div>}
-
-      <div className="d-flex justify-content-center">
-        
-      </div>
+      <div className="d-flex justify-content-center"></div>
     </Fragment>
   );
 }
