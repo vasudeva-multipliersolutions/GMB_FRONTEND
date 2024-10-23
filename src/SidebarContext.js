@@ -26,7 +26,7 @@ export const SidebarProvider = ({ children }) => {
 
     
   }, []); 
-  console.log("Hello"+ drNameContext)
+  //console.log("Hello"+ drNameContext)
 
   return (
     <SidebarContext.Provider value={{ isCollapsed, toggleSidebar,  windowWidth, drNameContext, setDrNameContext}}>

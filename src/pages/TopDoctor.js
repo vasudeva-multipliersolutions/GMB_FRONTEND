@@ -1,27 +1,23 @@
-//TopDoctor
 import React, { Fragment, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import manipalLogo from "../assets/Logos/manipalLogo.png";
 import careLogo from "../assets/Logos/careLogo.png";
-import InsightDetails from "../pages/InsightsDetails"
+import BasicDetailsComponent from "../components/BasicDetailsComponent";
 import { SharedContext } from "../context/SharedContext";
-import TopDOctorDetails from "./TopDoctorDetails";
-export default function TopDoctor() {
-  var username;
-  const [locationProfiles, setLocationProfiles] = useState([]);
+import TopDoctorDetails from "../pages/TopDoctorDetails"
 
-  const [getInsightState, setInsightsState] = useState([]);
-  const [getInsightsCity, setInsightsCity] = useState([]);
-  const [getDrName, setDrName] = useState("");
+export default function TopDoctor({contextHospitals}) {
+  var username;
   const userlogo = localStorage.getItem("username");
   // alert(userlogo)
-  const psw1 = localStorage.getItem("psw");
+
   const logo = userlogo == "Manipal" ? manipalLogo : careLogo;
   return (
     <Fragment>
-          <Navbar logoimg={logo} username={username} serach={false} topdoc={true} blockmenu={ true}></Navbar>
-        <TopDOctorDetails></TopDOctorDetails>
       
+      <Navbar logoimg={logo} username={username} serach={false} topdoc={true} blockmenu={true}></Navbar>
+      <TopDoctorDetails contextHospitals={contextHospitals}  ></TopDoctorDetails>  
+        
     </Fragment>
   );
 }

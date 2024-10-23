@@ -16,6 +16,8 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import FilterPopover, { NewMenuBar } from "./FilterPopover";
 
+
+
 export default function Navbar(props) {
   const { isCollapsed, toggleSidebar, drNameContext } =
     useContext(SidebarContext); // Use the correct context
@@ -32,6 +34,7 @@ export default function Navbar(props) {
   const [getCitys, setCitys] = useState();
   const [getMonth, setMonth] = useState();
   const api = localStorage.getItem("API");
+  const user = localStorage.getItem("user");
   const [logo, setLogo] = useState("");
   const [email, setEmai] = useState("");
   const [isNavContentsVisible, setNavContentsVisible] = useState(true);
@@ -342,12 +345,12 @@ export default function Navbar(props) {
             transition: "width 0.5s ease",
           }}
         >
-          <Menu iconShape="square" className="sidemenu">
+          <Menu iconShape="square"   className = "sidemenu">
             <MenuItem
               icon={isCollapsed ? <FaAlignJustify /> : <FaAnglesLeft />}
               onClick={() => toggleSidebar()}
             >
-              <img src={logo} alt="logo" />
+              <img src={logo} width={"130px"} height={ "40px"} />
             </MenuItem>
 
             <MenuItem

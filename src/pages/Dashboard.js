@@ -213,7 +213,7 @@ export default function Dashboard(props) {
 
         <div></div>
 
-        <TopDoctor></TopDoctor>
+        <TopDoctor contextHospitals={contextHospitals}></TopDoctor>
         <div
           className="grapharea"
           style={{

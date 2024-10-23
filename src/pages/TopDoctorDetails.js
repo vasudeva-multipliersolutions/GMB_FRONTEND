@@ -8,14 +8,13 @@ import { ShimmerThumbnail, ShimmerTitle } from "react-shimmer-effects";
 import { SidebarContext } from "../SidebarContext";
 import DoctorTableComponent from "../components/DoctorTableComponent";
 
-export default function TopDOctorDetails() {
+export default function TopDoctorDetails({contextHospitals }) {
   const [docData, setDocData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [insightdata, setInsightData] = useState(null);
   
-
-  const { getDrName, getInsightState, getInsightsCity } =
-        useContext(SharedContext);
+ 
+  const { getDrName, getInsightState, getInsightsCity} =  useContext(SharedContext);
     
   const api = localStorage.getItem("API");
 
@@ -23,39 +22,15 @@ export default function TopDOctorDetails() {
   const { windowWidth } = useContext(SidebarContext);
 
     useEffect(() => { 
-       // console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity);
+        console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals);
     })
     
-  // Fetch doctor data when getDrName changes
-//   useEffect(() => {
-//     if (getDrName) {
-//       async function fetchDocData() {
-//         try {
-//           const response = await fetch(`${api}/docData`, {
-//             method: "POST",
-//             headers: {
-//               "Content-Type": "application/json",
-//             },
-//             body: JSON.stringify({ businessName: getDrName }),
-//           });
-//           const data = await response.json();
-//           setDocData(data);
-//           setIsLoading(false);
-//         } catch (error) {
-//           console.error("Error fetching doctor data:", error);
-//         }
-//       }
-//       fetchDocData();
-//     }
-//   }, [getDrName]);
 
-    // Fetch filtered data when getInsightState or getInsightsCity changes
- 
-    
 
   useEffect(() => {
     async function fetchDataFilter() {
-      if (getInsightState || getInsightsCity) {
+      if (getInsightState || getInsightsCity || contextHospitals) {
+        console.log("Hello"+ 1)
         try {
           const response = await fetch(`${api}/topdoc`, {
             method: "POST",
@@ -63,13 +38,13 @@ export default function TopDOctorDetails() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              state: getInsightState,
-              branch: getInsightsCity,
+              state: "",
+              branch: contextHospitals,
             }),
           });
           const data = await response.json();
           setInsightData(data);
-          if (getInsightState.length > 0 || getInsightsCity.length > 0) {
+          if (getInsightState.length > 0 || getInsightsCity.length > 0 || contextHospitals > 0) {
             setIsLoading(false);
           }
           // setIsLoading(false)
@@ -79,13 +54,12 @@ export default function TopDOctorDetails() {
       }
     }
     fetchDataFilter();
-  }, [getInsightState, getInsightsCity]);
+  }, [getInsightState, getInsightsCity, contextHospitals]);
     
     
        
-  useEffect(() => {
+ useEffect(() => {
     async function fetchTopDocdata() {
-     
         try {
           const response = await fetch(`${api}/topdoc`, {
             method: "POST",
@@ -106,14 +80,7 @@ export default function TopDOctorDetails() {
     fetchTopDocdata();
 }, []);
 
-  // Handle loading state
-  // useEffect(() => {
-  //   if (docData || insightdata) {
-  //     setIsLoading(false);
-  //   }
-  // }, [docData, insightdata]);
 
-  // Prepare rows for TableComponent
   const rows = docData?.result
     ? [docData.result]
     : insightdata
@@ -159,7 +126,7 @@ export default function TopDOctorDetails() {
           <ShimmerTitle line={2} gap={10} variant="primary" /> */}
         </div>
       ) : (
-        (getDrName || getInsightState || getInsightsCity) && (
+        (getDrName || getInsightState || getInsightsCity || contextHospitals  ) && (
           <div
             id="capture"
             style={{
@@ -193,13 +160,6 @@ export default function TopDOctorDetails() {
               </div>
             ) : (
               <div className="maniContainer p-2">
-                {/* <div className="details">
-                  <div className="p-2 download">
-                    <button className="download-btn" onClick={downloadPDF}>
-                      Download Report
-                    </button>
-                  </div>
-                </div> */}
                 {rows.length > 0 && (
                   <DoctorTableComponent
                     bcolor="white"
