@@ -44,7 +44,11 @@ export default function BasicDetailsComponent() {
   // Fetch filtered data when getInsightState or getInsightsCity changes
   useEffect(() => {
     async function fetchDataFilter() {
-      if (contextHospitals) {
+      console.log("789: : "+getInsightState)
+      const location = contextHospitals ? contextHospitals : getInsightsCity;
+      const cluster = contextHospitals ? "" : getInsightState;
+
+      if (getInsightState || getInsightsCity || contextHospitals) {
         try {
           const response = await fetch(`${api}/datafilter`, {
             method: "POST",
@@ -52,13 +56,13 @@ export default function BasicDetailsComponent() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              //state: getInsightState,
-              branch: contextHospitals,
+              state: cluster,
+              branch: location,
             }),
           });
           const data = await response.json();
           setInsightData(data);
-          if (contextHospitals.length > 0) {
+          if (contextHospitals.length > 0 || getInsightState > 0 || getInsightsCity > 0 ) {
             setIsLoading(false);
           }
           // setIsLoading(false)
@@ -68,7 +72,7 @@ export default function BasicDetailsComponent() {
       }
     }
     fetchDataFilter();
-  }, [contextHospitals]);
+  }, [getInsightsCity, getInsightState, contextHospitals]);
 
   // Handle loading state
   // useEffect(() => {
@@ -123,7 +127,7 @@ export default function BasicDetailsComponent() {
           <ShimmerTitle line={2} gap={10} variant="primary" /> */}
         </div>
       ) : (
-        (getDrName || getInsightState || getInsightsCity) && (
+        (getDrName || getInsightState || getInsightsCity || contextHospitals) && (
           <div
             id="capture"
             style={{

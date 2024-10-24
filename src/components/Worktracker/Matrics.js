@@ -5,10 +5,11 @@ import careLogo from "../../assets/Logos/careLogo.png";
 import InsightDetails from "../../pages/InsightsDetails"
 import { SharedContext } from "../../context/SharedContext";
 import WorkTrackerMetrics from "./WorkTrackerMetrics";
+
 export default function Matrics() {
   var username;
   const [locationProfiles, setLocationProfiles] = useState([]);
-
+  const [contextHospitals, setcontextHospitals] = useState();
   const [getInsightState, setInsightsState] = useState([]);
   const [getInsightsCity, setInsightsCity] = useState([]);
   const [getDrName, setDrName] = useState("");
@@ -18,8 +19,8 @@ export default function Matrics() {
   const logo = userlogo == "Manipal" ? manipalLogo : careLogo;
   return (
     <Fragment>
-      <SharedContext.Provider value={{getInsightState, setInsightsState, getInsightsCity, setInsightsCity, getDrName, setDrName , setLocationProfiles}}>
-        <Navbar logoimg={logo} username={username} serach={false} insights={true}  blockmenu={ true}></Navbar>
+      <SharedContext.Provider value={{getInsightState, setInsightsState, getInsightsCity, setInsightsCity, getDrName, setDrName, contextHospitals, setLocationProfiles, setcontextHospitals}}>
+        <Navbar logoimg={logo} username={username} serach={true} docreport={true}></Navbar>
         <WorkTrackerMetrics></WorkTrackerMetrics>
       </SharedContext.Provider>
     </Fragment>

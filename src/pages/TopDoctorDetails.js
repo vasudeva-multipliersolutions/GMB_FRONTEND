@@ -29,6 +29,10 @@ export default function TopDoctorDetails({contextHospitals }) {
 
   useEffect(() => {
     async function fetchDataFilter() {
+
+      const location = contextHospitals ? contextHospitals : getInsightsCity;
+      const cluster = contextHospitals ? "" : getInsightState;
+
       if (getInsightState || getInsightsCity || contextHospitals) {
         console.log("Hello"+ 1)
         try {
@@ -38,8 +42,8 @@ export default function TopDoctorDetails({contextHospitals }) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              state: "",
-              branch: contextHospitals,
+              state: cluster,
+              branch: location,
             }),
           });
           const data = await response.json();

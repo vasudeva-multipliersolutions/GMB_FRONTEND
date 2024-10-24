@@ -39,7 +39,7 @@ export default function BasicDetailsComponent() {
   }, [getDrName])
   const head = ['Month', "GS - Mobile", "GS - Desktop", "GM - Mobile", "GM - Desktop", "Website Cliks", "Directions Clicks", "Phone Calls"]
   const rows = []
-  const cHead = ["S.No: ", "Competitor name"]
+  const cHead = [  "S.No: ", "Competitor name"]
   const cRows = []
   const lHead = ["Keywords", "Rank"]
   const lRows = []
@@ -191,7 +191,7 @@ export default function BasicDetailsComponent() {
               <h5>Comparision with other clinicians</h5>
               {
                 cRows.length !== 0 && (
-                  <TableComponent bcolor="white" title="Competitores" head={cHead} rows={cRows}></TableComponent>
+                  <TableComponent bcolor="white" title="Competitors" head={cHead} rows={cRows}></TableComponent>
                 )
               }
             </div>

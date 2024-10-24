@@ -17,6 +17,8 @@ export default function DocReport() {
   // alert(userlogo)
   const psw1 = localStorage.getItem("psw");
   const logo = userlogo == "Manipal" ? manipalLogo : careLogo;
+
+ 
   return (
     <Fragment>
       <SharedContext.Provider value={{getInsightState, setInsightsState, getInsightsCity, contextHospitals, setcontextHospitals, setInsightsCity, getDrName, setDrName , setLocationProfiles}}>

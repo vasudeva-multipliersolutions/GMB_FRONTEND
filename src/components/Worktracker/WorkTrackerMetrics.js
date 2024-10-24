@@ -19,7 +19,7 @@ export default function WorkTrackerMetrics() {
   const [endDate, setEndDate] = useState(dayjs());
   const [showCalendar, setShowCalendarModal] = useState(false);
   const [getCalenderData, setCalenderData] = useState([]);
-  const { getDrName, getInsightState, getInsightsCity } =
+  const { getDrName, getInsightState, getInsightsCity, contextHospitals } =
     useContext(SharedContext);
   const user = localStorage.getItem("user");
 
@@ -70,8 +70,8 @@ export default function WorkTrackerMetrics() {
   ];
 
   useEffect(() => {
-    //console.log("********" + getInsightState + " ######### : " + getInsightsCity);
-  }, [getInsightsCity, getInsightState]);
+    console.log("********" + getInsightState + " ######### : " + getInsightsCity + "contextHospitals : "+ contextHospitals);
+  }, [getInsightsCity, getInsightState, contextHospitals]);
 
   async function gettrackerdata(date) {
     try {
@@ -154,6 +154,10 @@ export default function WorkTrackerMetrics() {
 
   useEffect(() => {
     async function matricsfilterdata() {
+      // Set location based on contextHospitals or getInsightsCity
+      const location = contextHospitals ? contextHospitals : getInsightsCity;
+      const cluster = contextHospitals ? "" : getInsightState;
+  
       try {
         const response = await fetch(
           `http://localhost:2024/api/manipal/matricsfilterdata`,
@@ -163,8 +167,8 @@ export default function WorkTrackerMetrics() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              cluster: getInsightState,
-              location: getInsightsCity,
+              cluster: cluster,
+              location: location, // Dynamically set location
               doctorname: getDrName,
             }),
           }
@@ -176,8 +180,10 @@ export default function WorkTrackerMetrics() {
         console.error("Something Went Wrong" + error);
       }
     }
+  
     matricsfilterdata();
-  }, [getInsightsCity, getInsightState, getDrName]);
+  }, [getInsightsCity, getInsightState, getDrName, contextHospitals]);
+  
 
   //console.log("12@@@@ ; " + user);
 
