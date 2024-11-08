@@ -40,8 +40,10 @@ export default function Dashboard(props) {
     try {
       const response = await fetch(`${api}/${branch}`);
       const data = await response.json();
-      //console.log("1234 : "+data[0])
-      setAllData(data);
+      console.log("1234 : "+data[0])
+      if (data) {
+        setAllData(data);
+      }
       //console.log( "+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
     } catch (error) {
       console.error("Error fetching all data:", error);
@@ -184,95 +186,113 @@ export default function Dashboard(props) {
         setcontextHospitals
       }}
     >
-      <div className="Container-fluid" style={{ background: "#EFEFEF" }}>
-        <Navbar
-          logoimg={logo ? logo : ""}
-          username={username}
-          serach={mail === "manipal@gmail.com" ? true : false}
-          topdoc={true}
-          monthfilter={true}
-        />
-        {use && <ContentContainer data={use} />}
-        <div
-          style={{
-            marginLeft: windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
-            transition: "margin-left 0.5s ease",
-            display: "flex",
-          }}
-        >
-          <div className="left-container m-2">
-            {showAllData && (
-              <ReviewRating
-                review={showAllData?.reviewRating[0]?.totalreviews}
-                rating={showAllData?.reviewRating[0]?.averagerating}
-              />
-            )}
-          </div>
-          {showAllData && <SideContentContainer data={showAllData.analysis} />}
+     <div className="container-fluid" style={{ background: "#EFEFEF" }}>
+  <Navbar
+    logoimg={logo ? logo : ""}
+    username={username}
+    serach={mail === "manipal@gmail.com" ? true : false}
+    topdoc={true}
+    monthfilter={true}
+  />
+  
+  {/* Root-level check for showAllData */}
+  {showAllData && showAllData.length !== 0 ? (
+    <>
+      {use && <ContentContainer data={use} />}
+      <div className="second-container"
+        style={{
+          marginLeft: windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
+          transition: "margin-left 0.5s ease",
+        }}
+      >
+        <div className="left-container m-2">
+          {showAllData?.reviewRating?.length > 0 ? (
+            <ReviewRating
+              review={showAllData.reviewRating[0]?.totalreviews ?? "No reviews"}
+              rating={showAllData.reviewRating[0]?.averagerating ?? "No rating available"}
+            />
+          ) : (
+            <div>No reviews or ratings available</div>
+          )}
         </div>
 
-        <div></div>
-
-        <TopDoctor contextHospitals={contextHospitals}></TopDoctor>
-        <div
-          className="grapharea"
-          style={{
-            marginLeft: windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
-            width: windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : 0,
-            transition: "margin-left 0.5s ease",
-          }}
-        >
-          <div className="right-container ">
-            {isLoading ? (
-              <ShimmerThumbnail height={420} width={2000} rounded />
-            ) : (
-              showAllData && (
-                <>
-                  <GraphicalContainer
-                    gtype={"ColumnChart"}
-                    title={"Calls"}
-                    callsGraphData={showAllData.graphDataCalls[0]}
-                    bcolor={"#FFFFFF"}
-                    width={"50%"}
-                  />
-                  <GraphicalContainer
-                    gtype={"ColumnChart"}
-                    title={"Searches"}
-                    callsGraphData={showAllData.graphDataSearches[0]}
-                    bcolor={"#FFFFFF"}
-                    width={"50%"}
-                  />
-                </>
-              )
-            )}
-          </div>
-          <div className="right-container ">
-            {isLoading ? (
-              <ShimmerThumbnail height={420} width={2000} rounded />
-            ) : (
-              showAllData && (
-                <>
-                  <GraphicalContainer
-                    gtype={"ColumnChart"}
-                    title={"Mobile Searches"}
-                    callsGraphData={showAllData.graphDataSearchesMobils[0]}
-                    bcolor={"#FFFFFF"}
-                    width={"50%"}
-                  />
-                  <GraphicalContainer
-                    gtype={"ColumnChart"}
-                    title={"Website Clicks"}
-                    callsGraphData={showAllData.graphDataWebsiteClicks[0]}
-                    bcolor={"#FFFFFF"}
-                    width={"50%"}
-                  />
-                </>
-              )
-            )}
-          </div>
-        </div>
-        <br />
+        {showAllData?.analysis?.length > 0 ? (
+          <SideContentContainer data={showAllData.analysis} />
+        ) : (
+          <div>No analysis data available</div>
+        )}
       </div>
+
+      <TopDoctor contextHospitals={contextHospitals} />
+
+      <div
+        className="grapharea"
+        style={{
+          marginLeft: windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
+          width: windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
+          transition: "margin-left 0.5s ease",
+        }}
+      >
+        <div className="right-container">
+          {isLoading ? (
+            <ShimmerThumbnail height={420} width={2000} rounded />
+          ) : (
+            <>
+              {showAllData?.graphDataCalls?.length > 0 && (
+                <GraphicalContainer
+                  gtype={"ColumnChart"}
+                  title={"Calls"}
+                  callsGraphData={showAllData.graphDataCalls[0]}
+                  bcolor={"#FFFFFF"}
+                  width={"50%"}
+                />
+              )}
+              {showAllData?.graphDataSearches?.length > 0 && (
+                <GraphicalContainer
+                  gtype={"ColumnChart"}
+                  title={"Searches"}
+                  callsGraphData={showAllData.graphDataSearches[0]}
+                  bcolor={"#FFFFFF"}
+                  width={"50%"}
+                />
+              )}
+            </>
+          )}
+        </div>
+
+        <div className="right-container">
+          {isLoading ? (
+            <ShimmerThumbnail height={420} width={2000} rounded />
+          ) : (
+            <>
+              {showAllData?.graphDataSearchesMobils?.length > 0 && (
+                <GraphicalContainer
+                  gtype={"ColumnChart"}
+                  title={"Mobile Searches"}
+                  callsGraphData={showAllData.graphDataSearchesMobils[0]}
+                  bcolor={"#FFFFFF"}
+                  width={"50%"}
+                />
+              )}
+              {showAllData?.graphDataWebsiteClicks?.length > 0 && (
+                <GraphicalContainer
+                  gtype={"ColumnChart"}
+                  title={"Website Clicks"}
+                  callsGraphData={showAllData.graphDataWebsiteClicks[0]}
+                  bcolor={"#FFFFFF"}
+                  width={"50%"}
+                />
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </>
+  ) : (
+    <div>No data available</div> // Message if showAllData is empty or missing
+  )}
+</div>
+
     </SharedContext.Provider>
   );
 }

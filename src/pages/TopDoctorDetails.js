@@ -135,9 +135,9 @@ export default function TopDoctorDetails({contextHospitals }) {
             id="capture"
             style={{
                 marginLeft:
-                windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
+                windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
                 width:
-                windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : 0,
+                windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
                 transition: "margin-left 0.5s ease",
             }}
           >

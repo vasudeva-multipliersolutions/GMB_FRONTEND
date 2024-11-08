@@ -62,12 +62,12 @@ export default function Navbar(props) {
 
   function logoutHandeler() {
     // alert('hello world')
-    localStorage.removeItem("API");
-    localStorage.removeItem("logo");
-    localStorage.removeItem("username");
-    localStorage.removeItem("psw");
-    //console.log("logged out before navifated");
-    navigate("/");
+      localStorage.removeItem("API");
+      localStorage.removeItem("logo");
+      localStorage.removeItem("username");
+      localStorage.removeItem("psw");
+      //console.log("logged out before navifated");
+      navigate("/");
     //console.log("logged out after navifated");
   }
 
@@ -330,11 +330,13 @@ export default function Navbar(props) {
   function bulkExport() {
     getAllDoctrosDetails(getState, getCity);
   }
+
+  
   return (
     <Fragment>
       {/* Sidebar */}
 
-      <div className="sidebar-comp">
+      <div >
         <Sidebar
           collapsed={isCollapsed}
           className={isCollapsed ? "sidebar-transparent" : ""}
@@ -343,6 +345,7 @@ export default function Navbar(props) {
             position: "fixed",
             top: "0",
             transition: "width 0.5s ease",
+        
           }}
         >
           <Menu iconShape="square"   className = "sidemenu">
@@ -350,7 +353,7 @@ export default function Navbar(props) {
               icon={isCollapsed ? <FaAlignJustify /> : <FaAnglesLeft />}
               onClick={() => toggleSidebar()}
             >
-              <img src={logo} width={"130px"} height={ "40px"} />
+              <img src={logo} />
             </MenuItem>
 
             <MenuItem
@@ -411,7 +414,7 @@ export default function Navbar(props) {
       <div
         className="navigation-bar"
         style={{
-          marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
+          marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : "15%",
           transition: "margin-left 0.5s ease",
         }}
       >
@@ -456,7 +459,7 @@ export default function Navbar(props) {
         <div
           style={{
             marginLeft:
-              window.innerWidth > 768 ? (isCollapsed ? "8%" : "20%") : 0,
+              window.innerWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
             padding: window.innerWidth > 768 ? "10px" : 0,
             transition: "margin-left 0.5s ease",
           }}
@@ -689,7 +692,7 @@ export default function Navbar(props) {
                     onChange={monthHandelar}
                     onInputCapture={monthHandelar}
                     style={{
-                      width: "150px",
+                      width: "80%",
                       borderRadius: " 10px 0px 0 10px",
                       padding: "4px",
                       border: "1px solid #ccc",
