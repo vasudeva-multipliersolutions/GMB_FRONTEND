@@ -238,7 +238,7 @@ export default function Dashboard(props) {
           transition: "margin-left 0.5s ease",
         }}
       >
-        <div className="right-container">
+        <div className="right-container me-5">
           {isLoading ? (
             <ShimmerThumbnail height={420} width={2000} rounded />
           ) : (

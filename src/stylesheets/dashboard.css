@@ -28,12 +28,14 @@ body {
   display: flex;
   justify-content: space-between;
   margin-top: 5%;
+  padding: 20px 0px 20px 10px;
+  margin-right: 4.2%;
 
 }
 
 
 .view-counts {
-  width: 18.6%;
+  width: 18.2%;
   margin: 0.5rem !important;  
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
@@ -44,7 +46,7 @@ body {
 }
 
 .view-counts-2 {
-  width: 23.2%;
+  width: 22.6%;
   margin: 0.5rem !important;  
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
@@ -164,14 +166,15 @@ body {
 
 .left-container {
   display: flex;
-  width:  23.0%;
+  width:  22.6%;
   flex-direction: column;
 }
 
 .right-container {
   display: flex;
   width: 100%;
-  margin-right: 10vh;
+  margin-right: 20%;
+  padding-right: 2.8%;
 }
 
 .vertical-card,
@@ -488,23 +491,14 @@ select {
 } */
   /* --------------------------------------------------------------------
 
-
- 
-
-
-
-
-
-
-
 /* --------------------------------------------------------------------
 
 /* Media Queries */
 
 
-@media screen and (max-width: 1450px) {
+@media screen and (max-width: 1255px) {
   .navigation-bar {
-    width: 60%;   
+      
     padding: 2%;
     height: 6vh;
   }
@@ -531,7 +525,7 @@ font-size: 5px;
  
   
   .view-counts-2 {
-    width: 18.2%;
+    width: 18.3%;
     margin: 0.5rem !important;  
     transition: background-color 0.3s ease, transform 0.3s ease;
   }

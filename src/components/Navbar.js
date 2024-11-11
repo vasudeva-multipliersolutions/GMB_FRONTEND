@@ -457,13 +457,13 @@ export default function Navbar(props) {
           style={{
             marginLeft:
               window.innerWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
-            padding: window.innerWidth > 768 ? "10px" : 0,
+            //padding: window.innerWidth > 768 ? "10px" : 0,
             transition: "margin-left 0.5s ease",
           }}
         >
           {/* Place your page content here */}
 
-          <div className="sub-nav me-4">
+          <div className="sub-nav">
             <div
               className={`filter-contents  ${
                 isNavContentsVisible ? "show" : ""
