@@ -41,9 +41,9 @@ export default function Dashboard(props) {
       const response = await fetch(`${api}/${branch}`);
       const data = await response.json();
       console.log("1234 : "+data[0])
-      if (data) {
+     
         setAllData(data);
-      }
+      
       //console.log( "+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
     } catch (error) {
       console.error("Error fetching all data:", error);
@@ -167,9 +167,13 @@ export default function Dashboard(props) {
   const username = analysisData?.[0]?.user;
   const logo = username === "Manipal" ? manipalLogo : careLogo;
 
-  useEffect(() => {
+  
     // console.log("1234getInsightState : " + getInsightState + "and my123getInsighCity : " + getInsightsCity);
-  });
+    //console.log("^^^^^^^^^^^^^^^^^------------>"+ showAllData.graphDataCalls[0])
+    const monthsCalls = showAllData?.graphDataCalls?.[0] ? Object.keys(showAllData.graphDataCalls[0]) : [];
+    console.log("Months for Calls:", monthsCalls);
+    
+
 
   return (
     <SharedContext.Provider
@@ -192,7 +196,8 @@ export default function Dashboard(props) {
     username={username}
     serach={mail === "manipal@gmail.com" ? true : false}
     topdoc={true}
-    monthfilter={true}
+          monthfilter={true}
+          monthsCalls={monthsCalls}
   />
   
   {/* Root-level check for showAllData */}

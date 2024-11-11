@@ -39,7 +39,7 @@ export default function BasicDetailsComponent() {
   }, [getDrName])
   const head = ['Month', "GS - Mobile", "GS - Desktop", "GM - Mobile", "GM - Desktop", "Website Cliks", "Directions Clicks", "Phone Calls"]
   const rows = []
-  const cHead = [  "S.No: ", "Competitor name"]
+  const cHead = ["S.No: ", "Competitor name"]
   const cRows = []
   const lHead = ["Keywords", "Rank"]
   const lRows = []
@@ -144,12 +144,12 @@ export default function BasicDetailsComponent() {
 
   return (
     <>
-      { docData && isLoading ?
+      {docData && isLoading ?
         <div>
           <ShimmerThumbnail className="m-2 p-2" height={200} rounded />
           <ShimmerTitle line={2} gap={10} variant="primary" />
         </div> :
-       getDrName &&
+        getDrName &&
         <div id='capture' style={{
           marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
           transition: "margin-left 0.5s ease",
@@ -300,8 +300,15 @@ export default function BasicDetailsComponent() {
                             <span>{ratingsuggestion}</span>
                             <h6 className='mt-3'>Total Reviews</h6>
                             <span>{docData.basicDetails[0].totalReviewCount}</span><br />
-                            <span><a href="https://search.google.com/local/writereview?placeid=ChIJWyQ_LWJfrTsR6MJbrV4JF_s">Click Here</a> to Know a compleate log of Reviews and Rating</span>
-                          </>
+                            <span>
+                              <a
+                                href={`https://www.google.com/search?q=${docData.finalDetails[0].name.replace(/ /g, '+')}+reviews+rating`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                Click Here
+                              </a> to see a complete log of Reviews and Rating
+                            </span>                          </>
                         }
                       </div>
                     </div>

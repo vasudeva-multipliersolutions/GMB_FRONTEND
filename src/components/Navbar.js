@@ -16,8 +16,6 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import FilterPopover, { NewMenuBar } from "./FilterPopover";
 
-
-
 export default function Navbar(props) {
   const { isCollapsed, toggleSidebar, drNameContext } =
     useContext(SidebarContext); // Use the correct context
@@ -62,12 +60,12 @@ export default function Navbar(props) {
 
   function logoutHandeler() {
     // alert('hello world')
-      localStorage.removeItem("API");
-      localStorage.removeItem("logo");
-      localStorage.removeItem("username");
-      localStorage.removeItem("psw");
-      //console.log("logged out before navifated");
-      navigate("/");
+    localStorage.removeItem("API");
+    localStorage.removeItem("logo");
+    localStorage.removeItem("username");
+    localStorage.removeItem("psw");
+    //console.log("logged out before navifated");
+    navigate("/");
     //console.log("logged out after navifated");
   }
 
@@ -331,12 +329,11 @@ export default function Navbar(props) {
     getAllDoctrosDetails(getState, getCity);
   }
 
-  
   return (
     <Fragment>
       {/* Sidebar */}
 
-      <div >
+      <div>
         <Sidebar
           collapsed={isCollapsed}
           className={isCollapsed ? "sidebar-transparent" : ""}
@@ -345,10 +342,9 @@ export default function Navbar(props) {
             position: "fixed",
             top: "0",
             transition: "width 0.5s ease",
-        
           }}
         >
-          <Menu iconShape="square"   className = "sidemenu">
+          <Menu iconShape="square" className="sidemenu">
             <MenuItem
               icon={isCollapsed ? <FaAlignJustify /> : <FaAnglesLeft />}
               onClick={() => toggleSidebar()}
@@ -414,7 +410,8 @@ export default function Navbar(props) {
       <div
         className="navigation-bar"
         style={{
-          marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : "15%",
+          marginLeft:
+            windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : "15%",
           transition: "margin-left 0.5s ease",
         }}
       >
@@ -700,9 +697,12 @@ export default function Navbar(props) {
                     }}
                   >
                     <option value="">Select Month...</option>
-                    <option value="May">May</option>
-                    <option value="June">June</option>
-                    <option value="July">July</option>
+                    {/* Map over monthsCalls array to create options */}
+                    {props.monthsCalls?.map((month, index) => (
+                      <option key={index} value={month}>
+                        {month}
+                      </option>
+                    ))}
                   </select>
 
                   <button
