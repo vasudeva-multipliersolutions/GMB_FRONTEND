@@ -40,10 +40,10 @@ export default function Dashboard(props) {
     try {
       const response = await fetch(`${api}/${branch}`);
       const data = await response.json();
-      console.log("1234 : "+data[0])
-     
-        setAllData(data);
-      
+      console.log("1234 : " + data[0]);
+
+      setAllData(data);
+
       //console.log( "+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
     } catch (error) {
       console.error("Error fetching all data:", error);
@@ -52,11 +52,19 @@ export default function Dashboard(props) {
 
   async function getMonthData(month) {
     try {
-      const response = await fetch(`${api}/monthdata/${month}`);
+     
+      const response = await fetch(`${api}/monthdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ month: month, branch: contextHospitals }),
+      });
       const data = await response.json();
+      setAllData("");
       setAllData(data);
-      // console.log( "+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
-      // console.log(  "333333333333 data:" + data.analysis[0]);
+      console.log( "+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
+       console.log(  "333333333333 data:" + data.analysis[0]);
     } catch (error) {
       console.error("Error fetching all data:", error);
     }
@@ -91,14 +99,11 @@ export default function Dashboard(props) {
 
     async function getAnalysisData() {
       try {
-        const response = await fetch(
-          "http://localhost:2024/api/login",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: username1, psw: psw1 }),
-          }
-        );
+        const response = await fetch("http://localhost:2024/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: username1, psw: psw1 }),
+        });
         const result = await response.json();
         setAnalysisData(result);
       } catch (error) {
@@ -152,8 +157,8 @@ export default function Dashboard(props) {
     if (contextMonth) {
       getMonthData(contextMonth);
     }
-    if (contextHospitals) { 
-      getAllData(contextHospitals)
+    if (contextHospitals) {
+      getAllData(contextHospitals);
     }
   }, [contextCity, contextMonth, contextHospitals]);
 
@@ -167,13 +172,12 @@ export default function Dashboard(props) {
   const username = analysisData?.[0]?.user;
   const logo = username === "Manipal" ? manipalLogo : careLogo;
 
-  
-    // console.log("1234getInsightState : " + getInsightState + "and my123getInsighCity : " + getInsightsCity);
-    //console.log("^^^^^^^^^^^^^^^^^------------>"+ showAllData.graphDataCalls[0])
-    const monthsCalls = showAllData?.graphDataCalls?.[0] ? Object.keys(showAllData.graphDataCalls[0]) : [];
-    console.log("Months for Calls:", monthsCalls);
-    
-
+  // console.log("1234getInsightState : " + getInsightState + "and my123getInsighCity : " + getInsightsCity);
+  //console.log("^^^^^^^^^^^^^^^^^------------>"+ showAllData.graphDataCalls[0])
+  const monthsCalls = showAllData?.graphDataCalls?.[0]
+    ? Object.keys(showAllData.graphDataCalls[0])
+    : [];
+  console.log("Months for Calls:", monthsCalls);
 
   return (
     <SharedContext.Provider
@@ -187,117 +191,126 @@ export default function Dashboard(props) {
         setInsightsState,
         getInsightsCity,
         setInsightsCity,
-        setcontextHospitals
+        setcontextHospitals,
       }}
     >
-     <div className="container-fluid" style={{ background: "#EFEFEF" }}>
-  <Navbar
-    logoimg={logo ? logo : ""}
-    username={username}
-    serach={mail === "manipal@gmail.com" ? true : false}
-    topdoc={true}
+      <div className="container-fluid" style={{ background: "#EFEFEF" }}>
+        <Navbar
+          logoimg={logo ? logo : ""}
+          username={username}
+          serach={mail === "manipal@gmail.com" ? true : false}
+          topdoc={true}
           monthfilter={true}
           monthsCalls={monthsCalls}
-  />
-  
-  {/* Root-level check for showAllData */}
-  {showAllData && showAllData.length !== 0 ? (
-    <>
-      {use && <ContentContainer data={use} />}
-      <div className="second-container"
-        style={{
-          marginLeft: windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
-          transition: "margin-left 0.5s ease",
-        }}
-      >
-        <div className="left-container m-2">
-          {showAllData?.reviewRating?.length > 0 ? (
-            <ReviewRating
-              review={showAllData.reviewRating[0]?.totalreviews ?? "No reviews"}
-              rating={showAllData.reviewRating[0]?.averagerating ?? "No rating available"}
-            />
-          ) : (
-            <div>No reviews or ratings available</div>
-          )}
-        </div>
+          contextHospitals={contextHospitals}
+        />
 
-        {showAllData?.analysis?.length > 0 ? (
-          <SideContentContainer data={showAllData.analysis} />
+        {/* Root-level check for showAllData */}
+        {showAllData && showAllData.length !== 0 ? (
+          <>
+            {use && <ContentContainer data={use} />}
+            <div
+              className="second-container"
+              style={{
+                marginLeft:
+                  windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
+                transition: "margin-left 0.5s ease",
+              }}
+            >
+              <div className="left-container m-2">
+                {showAllData?.reviewRating?.length > 0 ? (
+                  <ReviewRating
+                    review={
+                      showAllData.reviewRating[0]?.totalreviews ?? "No reviews"
+                    }
+                    rating={
+                      showAllData.reviewRating[0]?.averagerating ??
+                      "No rating available"
+                    }
+                  />
+                ) : (
+                  <div>No reviews or ratings available</div>
+                )}
+              </div>
+
+              {showAllData?.analysis?.length > 0 ? (
+                <SideContentContainer data={showAllData.analysis} />
+              ) : (
+                <div>No analysis data available</div>
+              )}
+            </div>
+
+            <TopDoctor contextHospitals={contextHospitals} />
+
+            <div
+              className="grapharea"
+              style={{
+                marginLeft:
+                  windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
+                width:
+                  windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
+                transition: "margin-left 0.5s ease",
+              }}
+            >
+              <div className="right-container me-5">
+                {isLoading ? (
+                  <ShimmerThumbnail height={420} width={2000} rounded />
+                ) : (
+                  <>
+                    {showAllData?.graphDataCalls?.length > 0 && (
+                      <GraphicalContainer
+                        gtype={"ColumnChart"}
+                        title={"Calls"}
+                        callsGraphData={showAllData.graphDataCalls[0]}
+                        bcolor={"#FFFFFF"}
+                        width={"50%"}
+                      />
+                    )}
+                    {showAllData?.graphDataSearches?.length > 0 && (
+                      <GraphicalContainer
+                        gtype={"ColumnChart"}
+                        title={"Searches"}
+                        callsGraphData={showAllData.graphDataSearches[0]}
+                        bcolor={"#FFFFFF"}
+                        width={"50%"}
+                      />
+                    )}
+                  </>
+                )}
+              </div>
+
+              <div className="right-container">
+                {isLoading ? (
+                  <ShimmerThumbnail height={420} width={2000} rounded />
+                ) : (
+                  <>
+                    {showAllData?.graphDataSearchesMobils?.length > 0 && (
+                      <GraphicalContainer
+                        gtype={"ColumnChart"}
+                        title={"Mobile Searches"}
+                        callsGraphData={showAllData.graphDataSearchesMobils[0]}
+                        bcolor={"#FFFFFF"}
+                        width={"50%"}
+                      />
+                    )}
+                    {showAllData?.graphDataWebsiteClicks?.length > 0 && (
+                      <GraphicalContainer
+                        gtype={"ColumnChart"}
+                        title={"Website Clicks"}
+                        callsGraphData={showAllData.graphDataWebsiteClicks[0]}
+                        bcolor={"#FFFFFF"}
+                        width={"50%"}
+                      />
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </>
         ) : (
-          <div>No analysis data available</div>
+          <div>No data available</div> // Message if showAllData is empty or missing
         )}
       </div>
-
-      <TopDoctor contextHospitals={contextHospitals} />
-
-      <div
-        className="grapharea"
-        style={{
-          marginLeft: windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
-          width: windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
-          transition: "margin-left 0.5s ease",
-        }}
-      >
-        <div className="right-container me-5">
-          {isLoading ? (
-            <ShimmerThumbnail height={420} width={2000} rounded />
-          ) : (
-            <>
-              {showAllData?.graphDataCalls?.length > 0 && (
-                <GraphicalContainer
-                  gtype={"ColumnChart"}
-                  title={"Calls"}
-                  callsGraphData={showAllData.graphDataCalls[0]}
-                  bcolor={"#FFFFFF"}
-                  width={"50%"}
-                />
-              )}
-              {showAllData?.graphDataSearches?.length > 0 && (
-                <GraphicalContainer
-                  gtype={"ColumnChart"}
-                  title={"Searches"}
-                  callsGraphData={showAllData.graphDataSearches[0]}
-                  bcolor={"#FFFFFF"}
-                  width={"50%"}
-                />
-              )}
-            </>
-          )}
-        </div>
-
-        <div className="right-container">
-          {isLoading ? (
-            <ShimmerThumbnail height={420} width={2000} rounded />
-          ) : (
-            <>
-              {showAllData?.graphDataSearchesMobils?.length > 0 && (
-                <GraphicalContainer
-                  gtype={"ColumnChart"}
-                  title={"Mobile Searches"}
-                  callsGraphData={showAllData.graphDataSearchesMobils[0]}
-                  bcolor={"#FFFFFF"}
-                  width={"50%"}
-                />
-              )}
-              {showAllData?.graphDataWebsiteClicks?.length > 0 && (
-                <GraphicalContainer
-                  gtype={"ColumnChart"}
-                  title={"Website Clicks"}
-                  callsGraphData={showAllData.graphDataWebsiteClicks[0]}
-                  bcolor={"#FFFFFF"}
-                  width={"50%"}
-                />
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </>
-  ) : (
-    <div>No data available</div> // Message if showAllData is empty or missing
-  )}
-</div>
-
     </SharedContext.Provider>
   );
 }

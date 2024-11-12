@@ -81,7 +81,7 @@ export function NewMenuBar() {
                 callback: handleItemClick, // Use the handler for clicks
               },
               {
-                label: "Gurugram",
+                label: "Palamvihar",
                 leftIcon: <FaRegHospital className="text-green-500" />,
                 callback: handleItemClick, // Use the handler for clicks
               },
@@ -211,11 +211,11 @@ export function NewMenuBar() {
             leftIcon: <FaRegHospital className="text-green-500" />,
             callback: handleItemClick, // Use the handler for clicks
           },
-          // {
-          //   label: 'Gurugram',
-          //   leftIcon: <FaRegHospital className="text-green-500" />,
-          //   callback: handleItemClick, // Use the handler for clicks
-          // },
+          {
+            label: 'Palamvihar',
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
           {
             label: "Jaipur",
             leftIcon: <FaRegHospital className="text-green-500" />,
