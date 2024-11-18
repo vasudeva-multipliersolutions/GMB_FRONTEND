@@ -134,7 +134,7 @@ export default function Dashboard(props) {
         { "Verified Profiles": locationProfiles[0]["Verified Profiles"] },
         { "Unverified Profiles": locationProfiles[0]["Unverfied Profiles"] },
         { "Not Intrested": locationProfiles[0]["Not Intrested"] },
-        { "Out of Organization": locationProfiles[0]["Total Profiles"] },
+        { "Out of Organization": locationProfiles[0]["Out Of Organization"] },
       ];
       setUse(verificationData);
     } else if (analysisData && analysisData[0]) {
@@ -143,7 +143,7 @@ export default function Dashboard(props) {
         { "Verified Profiles": analysisData[0]["Total Verified"] },
         { "Unverified Profiles": analysisData[0]["Unverified"] },
         { "Not Intrested": analysisData[0]["Not Intrested"] },
-        { "Out of Organization": analysisData[0]["Total Profiles"] },
+        { "Out of Organization": analysisData[0]["Out Of Organization"] },
       ];
       setUse(verificationData);
     }
