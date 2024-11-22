@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useRef } from 'react'
+import React, { useEffect, useState, useContext} from 'react'
 import '../stylesheets/docreport.css'
 import TableComponent from '../components/TableComponent'
 import GraphicalContainer from './GraphicalContainer'
@@ -8,6 +8,7 @@ import jsPDF from 'jspdf'
 import { ShimmerThumbnail } from "react-shimmer-effects";
 import { ShimmerTitle } from "react-shimmer-effects";
 import { SidebarContext } from '../SidebarContext'
+import * as XLSX from 'xlsx';
 
 export default function BasicDetailsComponent() {
   const [docData, setDocData] = useState()
@@ -18,6 +19,7 @@ export default function BasicDetailsComponent() {
 
   const { isCollapsed } = useContext(SidebarContext);
   const { windowWidth } = useContext(SidebarContext);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   useEffect(() => {
     if (getDrName) {
@@ -114,31 +116,87 @@ export default function BasicDetailsComponent() {
   //     doc.save('./docreport.pdf')
   //   })
   // }
-
   const downloadPDF = () => {
-    const input = document.querySelector('#capture');
-
-
-    const scale = 2;
-
-    html2canvas(input, { scale: scale }).then((canvas) => {
+    const section1 = document.querySelector('#section1'); // Till "See how your GMB profile looks..."
+    const section2 = document.querySelector('#section2'); // "Actual search results on google" and "Analytics"
+    const section3 = document.querySelector('#section3'); // Remaining content
+  
+    const scale = 2; // Higher scale for better quality
+    const pdf = new jsPDF('p', 'mm', 'a4'); // PDF instance with A4 size
+  
+    const addSectionToPDF = async (element, addPage = false) => {
+      if (addPage) pdf.addPage(); // Add a new page if required
+  
+      const canvas = await html2canvas(element, { scale });
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
+  
+      // Scale canvas dimensions to fit the PDF page
       const imgWidth = canvas.width / scale;
       const imgHeight = canvas.height / scale;
       const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-
-      const imgX = (pdfWidth - imgWidth * ratio) / 2;
-      const imgY = (pdfHeight - imgHeight * ratio) / 2;
-
-      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
-      pdf.save('docreport.pdf');
-    });
+  
+      const scaledWidth = imgWidth * ratio;
+      const scaledHeight = imgHeight * ratio;
+  
+      // Set imgX for horizontal centering; imgY starts at the top (0)
+      const imgX = (pdfWidth - scaledWidth) / 2; // Center horizontally
+      const imgY = 0; // Start at the top of the page
+  
+      pdf.addImage(imgData, 'PNG', imgX, imgY, scaledWidth, scaledHeight);
+    };
+  
+    // Sequentially add each section to the PDF
+    addSectionToPDF(section1)
+      .then(() => addSectionToPDF(section2, true)) // Add to a new page
+      .then(() => addSectionToPDF(section3, true)) // Add to a new page
+      .then(() => pdf.save('docreport.pdf')) // Save the PDF
+      .catch((error) => console.error('Error generating PDF:', error));
   };
+ 
+
+  const exportToExcel = () => {
+    // Define the header
+    const head = [
+      "Month",
+      "GS - Mobile",
+      "GS - Desktop",
+      "GM - Mobile",
+      "GM - Desktop",
+      "Website Clicks",
+      "Directions Clicks",
+      "Phone Calls"
+    ];
+  
+    // Ensure `docData` is available and contains a `result` array
+    const rows = docData?.result || [];
+  
+    if (rows.length === 0) {
+      console.warn("No data available to export.");
+      return; // Exit if there's no data to export
+    }
+  
+    // Combine header and rows for the worksheet
+    const worksheetData = [head, ...rows];
+  
+    // Create a new worksheet
+    const ws = XLSX.utils.aoa_to_sheet(worksheetData);
+  
+    // Create a new workbook and append the worksheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Report");
+  
+    // Generate an Excel file and trigger a download
+    XLSX.writeFile(wb, "docreport.xlsx");
+  };
+  
+  
+  // useEffect(() => { 
+  //   if (downloadExcel) { 
+  //     exportToExcel()
+  //   }
+  // }, [downloadExcel])
 
 
 
@@ -154,76 +212,87 @@ export default function BasicDetailsComponent() {
           marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
           transition: "margin-left 0.5s ease",
         }}>
-          <div className="maniContainer p-3 m-3">
-            <div className='details'>
-              <div className="basi-details">
-                <div className="head p-2">
-                  <span>Dr Name: </span><br />
-                  <span>Dr Mobile: </span>
-                </div>
-                <div className="content p-2">
-                  {
-                    docData && docData.finalDetails && docData.finalDetails[0] &&
-                    <>
-                      <span>{docData.finalDetails[0].name && docData.finalDetails[0].name}</span><br />
-                      <span>{docData.finalDetails[0].phone && docData.finalDetails[0].phone}</span><br />
-                    </>
-                  }
-                  {/* <span>abc</span> */}
-                </div>
+          <div id="section1">
+            <div className="maniContainer p-3 m-3">
+              <div className='details'>
+                <div className="basi-details">
+                  <div className="head p-2">
+                    <span>Dr Name: </span><br />
+                    <span>Dr Mobile: </span>
+                  </div>
+                  <div className="content p-2">
+                    {
+                      docData && docData.finalDetails && docData.finalDetails[0] &&
+                      <>
+                        <span>{docData.finalDetails[0].name && docData.finalDetails[0].name}</span><br />
+                        <span>{docData.finalDetails[0].phone && docData.finalDetails[0].phone}</span><br />
+                      </>
+                    }
+                    {/* <span>abc</span> */}
+                  </div>
 
-              </div>
-              <div className='p-2 download'>
-                <button className='download-btn' onClick={downloadPDF}>Download Report</button>
-              </div>
-              {/* <div className='p-2 download'>
+                </div>
+                <div className='p-2 download'>
+                    <button className='download-btn'
+                      onClick={() => {
+                        setIsPopupOpen(true)
+                        
+                      }}
+                    >Download Report</button>
+                </div>
+                {/* <div className='p-2 download'>
               <button onClick={downloadPDF} className='download-btn'>Download Report</button>
             </div> */}
+              </div>
+              {
+                rows.length !== 0 && (
+                  <TableComponent bcolor="white" title="Monthly Improvement Report" head={head} rows={rows}></TableComponent>
+                )
+              }
             </div>
-            {
-              rows.length !== 0 && (
-                <TableComponent bcolor="white" title="Monthly Improvement Report" head={head} rows={rows}></TableComponent>
-              )
+            <div className="keywords_compititors">
+              <div className="maniContainer p-3 m-3" style={{ width: "50%" }}>
+                <h5>Comparision with other clinicians</h5>
+                {
+                  cRows.length !== 0 && (
+                    <TableComponent bcolor="white" title="Competitors" head={cHead} rows={cRows}></TableComponent>
+                  )
+                }
+              </div>
+              <div className="maniContainer p-3 m-3" style={{ width: "50%" }}>
+                <h5>Path to #1 on Google searches</h5>
+                {
+                  lRows.length !== 0 && (
+                    <TableComponent bcolor="white" title="Keywords Ranking" head={lHead} rows={lRows}></TableComponent>
+                  )
+                }
+              </div>
+            </div>
+          </div>
+          <div id="section2">
+            {images != '' &&
+              <>
+                <div className="maniContainer p-3 m-3">
+                  <h5>See how your GMB profile looks...</h5>
+                  <center>
+                    <img src={images[0].profile} alt="" />
+                  </center>
+                </div>
+
+                <div className="maniContainer p-3 m-3">
+                  <h5>Actual search results on google</h5>
+                  <center>
+                    <img src={images[0].lable1} width="90%" />
+                    <hr />
+                    <img src={images[0].lable2} width="90%" />
+                  </center>
+                </div>
+              </>
             }
           </div>
-          <div className="keywords_compititors">
-            <div className="maniContainer p-3 m-3" style={{ width: "50%" }}>
-              <h5>Comparision with other clinicians</h5>
-              {
-                cRows.length !== 0 && (
-                  <TableComponent bcolor="white" title="Competitors" head={cHead} rows={cRows}></TableComponent>
-                )
-              }
-            </div>
-            <div className="maniContainer p-3 m-3" style={{ width: "50%" }}>
-              <h5>Path to #1 on Google searches</h5>
-              {
-                lRows.length !== 0 && (
-                  <TableComponent bcolor="white" title="Keywords Ranking" head={lHead} rows={lRows}></TableComponent>
-                )
-              }
-            </div>
-          </div>
-          {images != '' &&
-            <>
-              <div className="maniContainer p-3 m-3">
-                <h5>See how your GMB profile looks...</h5>
-                <center>
-                  <img src={images[0].profile} alt="" />
-                </center>
-              </div>
-              <div className="maniContainer p-3 m-3">
-                <h5>Actual search results on google</h5>
-                <center>
-                  <img src={images[0].lable1} width="90%" />
-                  <hr />
-                  <img src={images[0].lable2} width="90%" />
-                </center>
-              </div>
-            </>
-          }
 
-
+            
+          <div id="section3">
           <div style={{ pageBreakBefore: 'always' }}></div>
 
           <div className="maniContainer p-3 m-3">
@@ -233,15 +302,15 @@ export default function BasicDetailsComponent() {
                 <>
                   <div className='row'>
                     <div className="col-md-4" >
-                      <GraphicalContainer gtype={"PieChart"} title={'Searches (Mobile + Desktop)'} callsGraphData={docData.searchesGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
+                      <GraphicalContainer gtype={"ColumnChart"} averageBlock={true} title={'Searches (Mobile + Desktop)'} callsGraphData={docData.searchesGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
                     </div>
                     <div className="col-4">
 
-                      <GraphicalContainer gtype={"PieChart"} title={'Maps (Mobile + Desktop)'} callsGraphData={docData.mapsGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
+                      <GraphicalContainer gtype={"ColumnChart"} averageBlock={true} title={'Maps (Mobile + Desktop)'} callsGraphData={docData.mapsGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
                     </div>
                     <div className="col-4">
 
-                      <GraphicalContainer gtype={"PieChart"} title={'Action (Web + Directions + Phone)'} callsGraphData={docData.actionGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
+                      <GraphicalContainer averageBlock={true} gtype={"ColumnChart"} title={'(Web + Directions + Phone)'} callsGraphData={docData.actionGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
                     </div>
                   </div>
                 </>
@@ -288,7 +357,7 @@ export default function BasicDetailsComponent() {
 
                     <div className="col-6">
                       <div className="m-2">
-                        <GraphicalContainer gtype={"PieChart"} title={'Total Number of Ratings'} callsGraphData={rr} bcolor='white' width={"100%"}></GraphicalContainer>
+                            <GraphicalContainer gtype={"PieChart"} averageBlock={false} title={'Total Number of Ratings'} callsGraphData={rr} bcolor='white' width={"100%"}></GraphicalContainer>
                       </div>
                     </div>
                     <div className="col-6">
@@ -317,9 +386,77 @@ export default function BasicDetailsComponent() {
               )
             }
           </div>
-        </div>
+            </div>
+            </div>
 
       }
+            {/* Popup */}
+            {isPopupOpen && (
+        <Popup
+          downloadPDF={downloadPDF}
+          exportToExcel={exportToExcel}
+          onClose={() => setIsPopupOpen(false)}
+        />
+      )}
     </>
   )
 }
+
+
+const Popup = ({ exportToExcel, downloadPDF, onClose }) => (
+  <div
+    className="modal fade show d-flex justify-content-center align-items-center"
+    style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+    tabIndex="-1"
+    aria-labelledby="modalLabel"
+    aria-hidden="true"
+  >  <div className="modal-dialog modal-dialog-centered">
+  <div className="modal-content">
+    <div className="modal-header">
+      <h5 className="modal-title text-primary" id="modalLabel">
+        Download Excel/PDF
+      </h5>
+      {/* <button
+        type="button"
+        className="btn-close"
+        onClick={onClose}
+        aria-label="Close"
+      ></button> */}
+    </div>
+    <div className="modal-body text-center">
+      <div className="d-grid gap-2">
+        {/* CSV Button */}
+        <button
+          type="button"
+          className="btn btn-outline-primary"
+          onClick={() => {
+            downloadPDF();
+            onClose();
+          }} // Handle CSV selection
+        >
+          <i class="bi bi-filetype-pdf"></i>
+          CSV
+        </button>
+        {/* Excel Button */}
+        <button
+          type="button"
+          className="btn btn-outline-primary"
+          onClick={() => {
+            exportToExcel();
+            onClose();
+          }} // Handle Excel selection
+        >
+          <i class="bi bi-file-earmark-excel"></i>
+          Excel
+        </button>
+      </div>
+    </div>
+    <div className="modal-footer d-flex justify-content-center">
+      <button type="button" className="btn btn-primary" onClick={onClose}>
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+  </div>
+);

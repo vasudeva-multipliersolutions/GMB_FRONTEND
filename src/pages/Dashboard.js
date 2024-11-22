@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import "../stylesheets/dashboard.css";
-import TableComponent from "../components/TableComponent";
 import manipalLogo from "../assets/Logos/manipalLogo.png";
 import careLogo from "../assets/Logos/careLogo.png";
 import Navbar from "../components/Navbar";
@@ -10,8 +9,6 @@ import GraphicalContainer from "../components/GraphicalContainer";
 import { SharedContext } from "../context/SharedContext";
 import { useNavigate } from "react-router-dom";
 import { ShimmerThumbnail } from "react-shimmer-effects";
-import { Container } from "react-bootstrap";
-import { propTypes } from "react-bootstrap/esm/Image";
 import { SidebarContext } from "../SidebarContext";
 import SideContentContainer from "../components/SideContentContainer";
 import TopDoctor from "./TopDoctor";
@@ -22,6 +19,7 @@ export default function Dashboard(props) {
   const [analysisData, setAnalysisData] = useState();
   const [contextCity, setContextCity] = useState();
   const [contextMonth, setContextMonth] = useState();
+  const [contextYear, setContextYear] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [locationProfiles, setLocationProfiles] = useState([]);
   const [use, setUse] = useState([]);
@@ -50,21 +48,27 @@ export default function Dashboard(props) {
     }
   }
 
+  console.log("SetContextYear : " + contextYear);
   async function getMonthData(month) {
     try {
-     
       const response = await fetch(`${api}/monthdata`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ month: month, branch: contextHospitals }),
+        body: JSON.stringify({
+          month: month,
+          year: contextYear,
+          branch: contextHospitals,
+        }),
       });
       const data = await response.json();
       setAllData("");
       setAllData(data);
-      console.log( "+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
-       console.log(  "333333333333 data:" + data.analysis[0]);
+      console.log(
+        "+++++++++++++++++ data:" + data.reviewRating[0].averagerating
+      );
+      console.log("333333333333 data:" + data.analysis[0]);
     } catch (error) {
       console.error("Error fetching all data:", error);
     }
@@ -187,6 +191,7 @@ export default function Dashboard(props) {
         locationProfiles,
         setLocationProfiles,
         setContextMonth,
+        setContextYear,
         getInsightState,
         setInsightsState,
         getInsightsCity,
@@ -260,6 +265,7 @@ export default function Dashboard(props) {
                     {showAllData?.graphDataCalls?.length > 0 && (
                       <GraphicalContainer
                         gtype={"ColumnChart"}
+                        averageBlock={true}
                         title={"Calls"}
                         callsGraphData={showAllData.graphDataCalls[0]}
                         bcolor={"#FFFFFF"}
@@ -269,6 +275,7 @@ export default function Dashboard(props) {
                     {showAllData?.graphDataSearches?.length > 0 && (
                       <GraphicalContainer
                         gtype={"ColumnChart"}
+                        averageBlock={true}
                         title={"Searches"}
                         callsGraphData={showAllData.graphDataSearches[0]}
                         bcolor={"#FFFFFF"}
@@ -287,6 +294,7 @@ export default function Dashboard(props) {
                     {showAllData?.graphDataSearchesMobils?.length > 0 && (
                       <GraphicalContainer
                         gtype={"ColumnChart"}
+                        averageBlock={true}
                         title={"Mobile Searches"}
                         callsGraphData={showAllData.graphDataSearchesMobils[0]}
                         bcolor={"#FFFFFF"}
@@ -296,6 +304,7 @@ export default function Dashboard(props) {
                     {showAllData?.graphDataWebsiteClicks?.length > 0 && (
                       <GraphicalContainer
                         gtype={"ColumnChart"}
+                        averageBlock={true}
                         title={"Website Clicks"}
                         callsGraphData={showAllData.graphDataWebsiteClicks[0]}
                         bcolor={"#FFFFFF"}

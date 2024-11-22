@@ -14,15 +14,15 @@ import { SidebarContext } from "../SidebarContext";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import FilterPopover, { NewMenuBar } from "./FilterPopover";
+import { NewMenuBar } from "./FilterPopover";
 
 export default function Navbar(props) {
   const { isCollapsed, toggleSidebar, drNameContext } =
     useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles, setContextMonth } =
+  const { setContextCity, setLocationProfiles,  setContextMonth,} =
     useContext(SharedContext);
-  const { setInsightsState, setInsightsCity } = useContext(SharedContext);
+  const { setInsightsState, setInsightsCity, setContextYear } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
   const [getName, setName] = useState();
@@ -31,8 +31,8 @@ export default function Navbar(props) {
   const [getCity, setCity] = useState();
   const [getCitys, setCitys] = useState();
   const [getMonth, setMonth] = useState();
+  const [getYear, setYear] = useState();
   const api = localStorage.getItem("API");
-  const user = localStorage.getItem("user");
   const [logo, setLogo] = useState("");
   const [email, setEmai] = useState("");
   const [isNavContentsVisible, setNavContentsVisible] = useState(true);
@@ -117,6 +117,16 @@ export default function Navbar(props) {
   function monthseter() {
     setContextMonth(getMonth);
   }
+
+  function yearHandelar(e) {
+    setYear(e.target.value);
+  }
+
+  function yearseter() {
+    setContextYear(getYear);
+  }
+
+  console.log("SetContextYear : " + getYear);
 
   async function filterApi() {
     try {
@@ -677,7 +687,7 @@ export default function Navbar(props) {
                 {/* <Link to="/gen-ai" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Gen AI</Link>  */}
               </div>
             )}
-
+            <div className="d-flex">
             <div
               className="datepicker"
               style={{ display: props.monthfilter ? "block" : "none" }}
@@ -720,6 +730,35 @@ export default function Navbar(props) {
                 </div>
               </div>
             </div>
+            <div
+              className="datepicker d-flex justify-content-end"
+              style={{ display: props.monthfilter ? "block" : "none" }}
+            >
+              <div className="data_list_selection m-1">
+                <div className="input-group">
+                  <select
+                    //value={getYear}
+                      // onChange={(e) => { 
+                      //   yearHandelar(e);
+                      //   yearseter();
+                      // }}
+                   
+                    style={{
+                      width: "80%",
+                     // borderRadius: " 10px 0px 0 10px",
+                      padding: "4px",
+                      border: "1px solid #ccc",
+                      outline: "none",
+                    }}
+                  >
+                      <option value="">Select Year...</option>
+                      <option value="2024">2024</option>
+                      <option value="2025">2025</option>
+                  </select>
+                </div>
+              </div>
+              </div>
+              </div>
           </div>
 
           {props.children}
