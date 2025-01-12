@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState, useContext } from "react";
 
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { SharedContext } from "../context/SharedContext";
 import { FaAlignJustify, FaAnglesLeft, FaDashcube } from "react-icons/fa6";
 
@@ -20,7 +20,7 @@ export default function Navbar(props) {
   const { isCollapsed, toggleSidebar, drNameContext } =
     useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles,  setContextMonth,} =
+  const { setContextCity, setLocationProfiles, setContextMonth, } =
     useContext(SharedContext);
   const { setInsightsState, setInsightsCity, setContextYear } = useContext(SharedContext);
   const navigate = useNavigate();
@@ -39,6 +39,10 @@ export default function Navbar(props) {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -359,11 +363,11 @@ export default function Navbar(props) {
               icon={isCollapsed ? <FaAlignJustify /> : <FaAnglesLeft />}
               onClick={() => toggleSidebar()}
             >
-              <img src={logo} />
+              <img src={logo} alt="Logo" />
             </MenuItem>
 
             <MenuItem
-              className="menu-item"
+              className={`menu-item ${isActive("/Dashboard") ? "active-menu-item" : ""}`}
               icon={<FaDashcube />}
               onClick={() => navigate("/Dashboard")}
             >
@@ -372,7 +376,7 @@ export default function Navbar(props) {
             </MenuItem>
 
             <MenuItem
-              className="menu-item"
+              className={`menu-item ${isActive("/Doc-report") ? "active-menu-item" : ""}`}
               icon={<FaUserMd />}
               onClick={() => navigate("/Doc-report")}
             >
@@ -381,7 +385,7 @@ export default function Navbar(props) {
             </MenuItem>
 
             <MenuItem
-              className="menu-item"
+              className={`menu-item ${isActive("/Insights") ? "active-menu-item" : ""}`}
               icon={<FaChartBar />}
               onClick={() => navigate("/Insights")}
             >
@@ -389,14 +393,9 @@ export default function Navbar(props) {
               <Link to="/Insights">Insights</Link>
             </MenuItem>
 
-            {[
-              "astrio@gmail.com",
-              "lupin@gmail.com",
-              "care@gmail.com",
-              "mankind@gmail.com",
-            ].includes(email) ? (
+            {["astrio@gmail.com", "lupin@gmail.com", "care@gmail.com", "mankind@gmail.com"].includes(email) ? (
               <MenuItem
-                className="menu-item"
+                className={`menu-item ${isActive("/WorkTracker") ? "active-menu-item" : ""}`}
                 icon={<GiTimeBomb />}
                 onClick={() => navigate("/WorkTracker")}
               >
@@ -405,7 +404,7 @@ export default function Navbar(props) {
               </MenuItem>
             ) : (
               <MenuItem
-                className="menu-item"
+                className={`menu-item ${isActive("/Matrics") ? "active-menu-item" : ""}`}
                 icon={<MdTableChart />}
                 onClick={() => navigate("/Matrics")}
               >
@@ -475,9 +474,8 @@ export default function Navbar(props) {
 
           <div className="sub-nav">
             <div
-              className={`filter-contents  ${
-                isNavContentsVisible ? "show" : ""
-              }`}
+              className={`filter-contents  ${isNavContentsVisible ? "show" : ""
+                }`}
               style={{
                 display: props.worktracker ? "none" : "flex",
                 justifyContent: "space-between",
@@ -668,9 +666,9 @@ export default function Navbar(props) {
                   Insights
                 </Link>
                 {email === "astrio@gmail.com" ||
-                email === "lupin@gmail.com" ||
-                email === "care@gmail.com" ||
-                email === "mankind@gmail.com" ? (
+                  email === "lupin@gmail.com" ||
+                  email === "care@gmail.com" ||
+                  email === "mankind@gmail.com" ? (
                   <Link to="/WorkTracker " className="p-1 pe-5">
                     WorkTracker
                   </Link>
@@ -688,77 +686,77 @@ export default function Navbar(props) {
               </div>
             )}
             <div className="d-flex">
-            <div
-              className="datepicker"
-              style={{ display: props.monthfilter ? "block" : "none" }}
-            >
-              <div className="data_list_selection m-1">
-                <div className="input-group">
-                  <select
-                    value={getMonth}
-                    onChange={monthHandelar}
-                    onInputCapture={monthHandelar}
-                    style={{
-                      width: "80%",
-                      borderRadius: " 10px 0px 0 10px",
-                      padding: "4px",
-                      border: "1px solid #ccc",
-                      outline: "none",
-                    }}
-                  >
-                    <option value="">Select Month...</option>
-                    {/* Map over monthsCalls array to create options */}
-                    {props.monthsCalls?.map((month, index) => (
-                      <option key={index} value={month}>
-                        {month}
-                      </option>
-                    ))}
-                  </select>
+              <div
+                className="datepicker"
+                style={{ display: props.monthfilter ? "block" : "none" }}
+              >
+                <div className="data_list_selection m-1">
+                  <div className="input-group">
+                    <select
+                      value={getMonth}
+                      onChange={monthHandelar}
+                      onInputCapture={monthHandelar}
+                      style={{
+                        width: "80%",
+                        borderRadius: " 10px 0px 0 10px",
+                        padding: "4px",
+                        border: "1px solid #ccc",
+                        outline: "none",
+                      }}
+                    >
+                      <option value="">Select Month...</option>
+                      {/* Map over monthsCalls array to create options */}
+                      {props.monthsCalls?.map((month, index) => (
+                        <option key={index} value={month}>
+                          {month}
+                        </option>
+                      ))}
+                    </select>
 
-                  <button
-                    onClick={() => {
-                      monthseter();
-                    }}
-                    style={{
-                      borderRadius: " 0px 10px 10px 0px",
-                      border: "1px solid #ccc",
-                      outline: "none",
-                    }}
-                  >
-                    <FaSearch className="CircleRightIcon" />
-                  </button>
+                    <button
+                      onClick={() => {
+                        monthseter();
+                      }}
+                      style={{
+                        borderRadius: " 0px 10px 10px 0px",
+                        border: "1px solid #ccc",
+                        outline: "none",
+                      }}
+                    >
+                      <FaSearch className="CircleRightIcon" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div
-              className="datepicker d-flex justify-content-end"
-              style={{ display: props.monthfilter ? "block" : "none" }}
-            >
-              <div className="data_list_selection m-1">
-                <div className="input-group">
-                  <select
-                    //value={getYear}
+              <div
+                className="datepicker d-flex justify-content-end"
+                style={{ display: props.monthfilter ? "block" : "none" }}
+              >
+                <div className="data_list_selection m-1">
+                  <div className="input-group">
+                    <select
+                      //value={getYear}
                       // onChange={(e) => { 
                       //   yearHandelar(e);
                       //   yearseter();
                       // }}
-                   
-                    style={{
-                      width: "80%",
-                     // borderRadius: " 10px 0px 0 10px",
-                      padding: "4px",
-                      border: "1px solid #ccc",
-                      outline: "none",
-                    }}
-                  >
-                      <option value="">Select Year...</option>
+
+                      style={{
+                        width: "100%",
+                        borderRadius: " 10px 10px 10px 10px",
+                        padding: "4px",
+                        border: "1px solid #ccc",
+                        outline: "none",
+                      }}
+                    >
+                      <option value="">Select Year </option>
                       <option value="2024">2024</option>
                       <option value="2025">2025</option>
-                  </select>
+                    </select>
+                  </div>
                 </div>
               </div>
-              </div>
-              </div>
+            </div>
           </div>
 
           {props.children}

@@ -199,7 +199,7 @@ export default function Dashboard(props) {
         setcontextHospitals,
       }}
     >
-      <div className="container-fluid" style={{ background: "#EFEFEF" }}>
+      <div style={{ background: "#EFEFEF" }}>
         <Navbar
           logoimg={logo ? logo : ""}
           username={username}
@@ -317,7 +317,7 @@ export default function Dashboard(props) {
             </div>
           </>
         ) : (
-          <div>No data available</div> // Message if showAllData is empty or missing
+          <div class="d-flex justify-content-center align-items-center">Loading...</div> // Message if showAllData is empty or missing
         )}
       </div>
     </SharedContext.Provider>

@@ -395,7 +395,7 @@ const Popup = ({ setDownloadExcel, exportToExcel,downloadPDF, onClose }) => (
       <div className="modal-content">
         <div className="modal-header">
           <h5 className="modal-title text-primary" id="modalLabel">
-            Download Excel/PDF
+            Download PDF/Excel
           </h5>
           {/* <button
             type="button"
@@ -416,7 +416,7 @@ const Popup = ({ setDownloadExcel, exportToExcel,downloadPDF, onClose }) => (
               }} // Handle CSV selection
             >
               <i class="bi bi-filetype-pdf"></i>
-              CSV
+              PDF
             </button>
             {/* Excel Button */}
             <button

@@ -19,6 +19,10 @@ export function NewMenuBar() {
   // Handler function to manage item clicks
   const handleItemClick = (event, item) => {
     setSelectedItem(item.label); // Update state with the clicked item's label
+    if(item.label==="All")
+    {
+      window.location.reload();
+    }
     console.log(`${item.label} clicked`, event, item);
     setcontextHospitals(item.label); // Set the selected item in context
   };
@@ -62,6 +66,11 @@ export function NewMenuBar() {
     label: ` ${selectedItem ? selectedItem : "Hospitals"}`,
     leftIcon: <SaveIcon className="text-blue-500" />,
     items: [
+      {
+        label: "All",
+        leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+        callback: handleItemClick, // Use the handler for clicks
+      },
       {
         label: "North West",
         leftIcon: <FaHospitalAlt className="text-indigo-500" />,
