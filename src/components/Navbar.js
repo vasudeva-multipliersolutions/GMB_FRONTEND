@@ -20,9 +20,9 @@ export default function Navbar(props) {
   const { isCollapsed, toggleSidebar, drNameContext } =
     useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles, setContextMonth, } =
+  const { setContextCity, setLocationProfiles, setContextMonth, setInsightsAnalysis } =
     useContext(SharedContext);
-  const { setInsightsState, setInsightsCity, setContextYear } = useContext(SharedContext);
+  const { setInsightsState, setInsightsCity, setContextYear, } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
   const [getName, setName] = useState();
@@ -37,6 +37,8 @@ export default function Navbar(props) {
   const [email, setEmai] = useState("");
   const [isNavContentsVisible, setNavContentsVisible] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [countOfProfiles, setCountProfiles] = useState();
+
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -110,12 +112,21 @@ export default function Navbar(props) {
   }
   async function getStateHandeler(e) {
     setState(e.target.value);
+    if(getState === "All")
+    {
+      window.location.reload();
+    }
     setCity("");
+    setMonth("");
     filterApi();
   }
 
   function monthHandelar(e) {
     setMonth(e.target.value);
+    if(getMonth === "All")
+      {
+        window.location.reload();
+      }
   }
 
   function monthseter() {
@@ -130,7 +141,7 @@ export default function Navbar(props) {
     setContextYear(getYear);
   }
 
-  console.log("SetContextYear : " + getYear);
+  //console.log("SetContextYear : " + getYear);
 
   async function filterApi() {
     try {
@@ -143,19 +154,23 @@ export default function Navbar(props) {
       });
       const data = await response.json();
 
-      setLocationProfiles(data.countOfProfiles);
+      setCountProfiles(data);
       if (data.result[0].branches && data.result[0].branches.length > 0) {
         setCitys(data.result[0].branches);
       }
       setAllNames(data.result[0].businessNames);
+      setInsightsAnalysis(data.result[0].analysis);
 
-      if (!props.serach) {
+      if (props.serach) {
         setContextCity(getCity);
       }
+      return data.countOfProfiles;
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }
+
+
 
   function Insightsapicall() {
     setInsightsState(getState);
@@ -176,6 +191,11 @@ export default function Navbar(props) {
 
   function getCityHandeler(e) {
     setCity(e.target.value);
+    if(getCity === "All")
+      {
+        window.location.reload();
+      }
+    setMonth("");
   }
 
   useEffect(() => {
@@ -460,6 +480,8 @@ export default function Navbar(props) {
         </div>
       </div>
 
+      {/* ============================================MenuStarted ========================================================================*/}
+
       {/* Page Content */}
       {!props.blockmenu && (
         <div
@@ -484,7 +506,7 @@ export default function Navbar(props) {
             >
               <div className="filers_sprding">
                 <div className="data_list_selection m-1">
-                  {!props.serach && (
+                  {props.serach && (
                     <div className="input-group">
                       <select
                         value={getState}
@@ -492,13 +514,14 @@ export default function Navbar(props) {
                         onInputCapture={stateInsiteHandelar}
                         style={{
                           width: "150px",
-                          borderRadius: " 10px 0px 0 10px",
-                          padding: "4px",
+                          borderRadius: " 10px",
+                          padding: "5px",
                           border: "1px solid #ccc",
                           outline: "none",
                         }}
                       >
                         <option value="">Select State...</option>
+                        <option value="All">All</option>
                         {getStates &&
                           getStates.map((item, index) => {
                             if (item != "#N/A")
@@ -510,7 +533,7 @@ export default function Navbar(props) {
                           })}
                       </select>
 
-                      <button
+                      {/* <button
                         onClick={() => {
                           filterApi();
                           insightsChecker();
@@ -522,12 +545,12 @@ export default function Navbar(props) {
                         }}
                       >
                         <FaSearch className="CircleRightIcon" />
-                      </button>
+                      </button> */}
                     </div>
                   )}
                 </div>
 
-                {!props.serach && (
+                {props.serach && (
                   <div className="data_list_selection m-1">
                     <div className="input-group">
                       <select
@@ -536,13 +559,14 @@ export default function Navbar(props) {
                         onInputCapture={cityInsightHandelar}
                         style={{
                           width: "150px",
-                          borderRadius: " 10px 0px 0 10px",
+                          borderRadius: " 10px",
                           padding: "4px",
                           border: "1px solid #ccc",
                           outline: "none",
                         }}
                       >
                         <option value="">Select City...</option>
+                        <option value="All">All</option>
                         {getCitys &&
                           getCitys.map((item, index) => {
                             if (item != "#N/A")
@@ -553,7 +577,7 @@ export default function Navbar(props) {
                               );
                           })}
                       </select>
-                      <button
+                      {/* <button
                         onClick={() => {
                           filterApi();
                           insightsChecker();
@@ -565,16 +589,124 @@ export default function Navbar(props) {
                         }}
                       >
                         <FaSearch className="CircleRightIcon" />
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 )}
+
+
+                {/* Date ------------select */}
+
+
                 {props.serach && (
-                  <div
-                    style={{
-                      display: email == "care@gmail.com" ? "none" : "block",
-                    }}
-                  >
+                  <div className="d-flex">
+                    <div
+                      className="datepicker"
+                      style={{ display: props.monthfilter ? "block" : "none" }}
+                    >
+                      <div className="data_list_selection m-1">
+                        <div className="input-group">
+                          <select
+                            value={getMonth}
+                            onChange={monthHandelar}
+                            onInputCapture={monthHandelar}
+                            style={{
+                              width: "100%",
+                              borderRadius: " 10px",
+                              padding: "4px",
+                              border: "1px solid #ccc",
+                              outline: "none",
+                            }}
+                          >
+                            <option value="">Select Month...</option>
+                            <option value="All">All</option>
+                            {/* Map over monthsCalls array to create options */}
+                            {props.monthsCalls?.map((month, index) => (
+                              <option key={index} value={month}>
+                                {month}
+                              </option>
+                            ))}
+                          </select>
+
+                          {/* <button
+                      onClick={() => {
+                        monthseter();
+                      }}
+                      style={{
+                        borderRadius: " 0px 10px 10px 0px",
+                        border: "1px solid #ccc",
+                        outline: "none",
+                      }}
+                    >
+                      <FaSearch className="CircleRightIcon" />
+                    </button> */}
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className="datepicker d-flex justify-content-end"
+                      style={{ display: props.monthfilter ? "block" : "none" }}
+                    >
+                      <div className="data_list_selection m-1">
+                        <div className="input-group">
+                          <select
+                            //value={getYear}
+                            // onChange={(e) => { 
+                            //   yearHandelar(e);
+                            //   yearseter();
+                            // }}
+
+                            style={{
+                              width: "100%",
+                              borderRadius: " 10px 10px 10px 10px",
+                              padding: "4px",
+                              border: "1px solid #ccc",
+                              outline: "none",
+                            }}
+                          >
+                            <option value="">Select Year </option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ===============================Button===========================================*/}
+
+
+
+                {props.serach && (
+                  <div className="data_list_selection m-1">
+                    <button
+                      onClick={async () => {
+                        monthseter();
+                        const count = await filterApi(); // Wait for filterApi to complete
+                        if (count !== null) {
+                          setLocationProfiles(count); // Use the returned count
+                        }
+                        insightsChecker();
+                      }}
+                      style={{
+                        borderRadius: " 10px",
+                        border: "1px solid #ccc",
+                        color: "#ffffff",
+                        background: "linear-gradient(90deg, #034ea1 0, #00b7ac 100%)",
+                        padding: "5px",
+                        outline: "none",
+                      }}
+                    >
+                      Apply
+                      {/* <FaSearch className="CircleRightIcon" /> */}
+                    </button>
+                  </div>
+                )}
+
+
+                {props.filterpopover && (
+                  <div>
                     <NewMenuBar></NewMenuBar>
                   </div>
                 )}
@@ -584,7 +716,7 @@ export default function Navbar(props) {
                   className="data_list_selection m-1"
                   style={{
                     display:
-                      props.docreport || props.insights ? "block" : "none",
+                      props.filterpopover ? "block" : "none",
                   }}
                 >
                   <div className="input-group">
@@ -685,7 +817,13 @@ export default function Navbar(props) {
                 {/* <Link to="/gen-ai" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Gen AI</Link>  */}
               </div>
             )}
-            <div className="d-flex">
+
+
+
+
+
+
+            {/* <div className="d-flex">
               <div
                 className="datepicker"
                 style={{ display: props.monthfilter ? "block" : "none" }}
@@ -705,7 +843,7 @@ export default function Navbar(props) {
                       }}
                     >
                       <option value="">Select Month...</option>
-                      {/* Map over monthsCalls array to create options */}
+                      
                       {props.monthsCalls?.map((month, index) => (
                         <option key={index} value={month}>
                           {month}
@@ -735,11 +873,7 @@ export default function Navbar(props) {
                 <div className="data_list_selection m-1">
                   <div className="input-group">
                     <select
-                      //value={getYear}
-                      // onChange={(e) => { 
-                      //   yearHandelar(e);
-                      //   yearseter();
-                      // }}
+                    
 
                       style={{
                         width: "100%",
@@ -756,7 +890,7 @@ export default function Navbar(props) {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {props.children}

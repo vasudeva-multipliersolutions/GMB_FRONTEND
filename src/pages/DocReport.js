@@ -20,7 +20,7 @@ export default function DocReport() {
   return (
     <Fragment>
       <SharedContext.Provider value={{ getDrName, setDrName , setLocationProfiles, setcontextHospitals}}>
-        <Navbar logoimg={logo} username={username} serach={mail === "manipal@gmail.com" ? true : false} docreport={true} ></Navbar>
+        <Navbar logoimg={logo} username={username}  filterpopover={true} ></Navbar>
         <BasicDetailsComponent></BasicDetailsComponent>
       </SharedContext.Provider>
     </Fragment>

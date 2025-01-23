@@ -22,7 +22,7 @@ export default function DocReport() {
   return (
     <Fragment>
       <SharedContext.Provider value={{getInsightState, setInsightsState, getInsightsCity, contextHospitals, setcontextHospitals, setInsightsCity, getDrName, setDrName , setLocationProfiles}}>
-        <Navbar logoimg={logo} username={username} serach={mail === "manipal@gmail.com" ? true : false} insights={true}></Navbar>
+        <Navbar logoimg={logo} username={username} filterpopover={true} insights={true}></Navbar>
         <InsightDetails></InsightDetails>
       </SharedContext.Provider>
     </Fragment>

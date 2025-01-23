@@ -217,9 +217,12 @@ export default function BasicDetailsComponent() {
               <div className='details'>
                 <div className="basi-details">
                   <div className="head p-2">
-                    <span>Dr Name: </span><br />
+                    <span>Dr Name: </span><br/>
                     <span>Dr Mobile: </span>
                   </div>
+
+                  {
+                      docData && docData.finalDetails && docData.finalDetails[0].name &&
                   <div className="content p-2">
                     {
                       docData && docData.finalDetails && docData.finalDetails[0] &&
@@ -230,7 +233,7 @@ export default function BasicDetailsComponent() {
                     }
                     {/* <span>abc</span> */}
                   </div>
-
+               }
                 </div>
                 <div className='p-2 download'>
                     <button className='download-btn'

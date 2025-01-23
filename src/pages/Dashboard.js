@@ -28,11 +28,17 @@ export default function Dashboard(props) {
   const [getInsightState, setInsightsState] = useState([]);
   const [getInsightsCity, setInsightsCity] = useState([]);
   const [contextHospitals, setcontextHospitals] = useState();
+  const [InsightsAnalysis, setInsightsAnalysis] = useState();
   const mail = localStorage.getItem("mail");
 
   const username1 = localStorage.getItem("username");
   const psw1 = localStorage.getItem("psw");
   const api = localStorage.getItem("API");
+
+  useEffect(() => {
+    setAllData(InsightsAnalysis);
+  }, [InsightsAnalysis]);
+ 
 
   async function getAllData(branch) {
     try {
@@ -58,8 +64,8 @@ export default function Dashboard(props) {
         },
         body: JSON.stringify({
           month: month,
-          year: contextYear,
-          branch: contextHospitals,
+          branch: contextCity ,
+          state: getInsightState,
         }),
       });
       const data = await response.json();
@@ -132,8 +138,8 @@ export default function Dashboard(props) {
       const verificationData = [
         {
           "Total Profiles":
-            locationProfiles[0]["Total Profiles"] -
-            locationProfiles[0]["Need Access"],
+            locationProfiles[0]["Total Profiles"] 
+            //-locationProfiles[0]["Need Access"],
         },
         { "Verified Profiles": locationProfiles[0]["Verified Profiles"] },
         { "Unverified Profiles": locationProfiles[0]["Unverfied Profiles"] },
@@ -147,24 +153,56 @@ export default function Dashboard(props) {
         { "Verified Profiles": analysisData[0]["Total Verified"] },
         { "Unverified Profiles": analysisData[0]["Unverified"] },
         { "Not Intrested": analysisData[0]["Not Intrested"] },
-        { "Out of Organization": analysisData[0]["Out Of Organization"] },
+        { "Out of Organization": analysisData[0]["Organization"] },
       ];
       setUse(verificationData);
     }
   }, [analysisData, locationProfiles]);
 
+  // use.map((item) => {
+  //   Object.entries(item).map(([key, value]) => {
+  //     if (key !== "_id") {
+  //       console.log("getContextKey@@@@@@@@ : "+key);
+  //       console.log("getContextValue@@@@@@@@ : "+value);
+  //     }
+  //   })
+  // })
+
   useEffect(() => {
-    //console.log("getContextCity@@@@@@@@ : "+contextCity);
+    console.log("getContextCity@@@@@@@@ : " + contextCity);
     if (contextCity) {
-      getAllData(contextCity);
+      getMonthData("");
     }
+  }, [contextCity]);
+
+  useEffect(() => {
+    console.log("getInsightState@@@@@@@@ : " + getInsightState);
+    if (getInsightState) {
+      getMonthData("");
+    }
+  }, [getInsightState]);
+
+  useEffect(() => {
     if (contextMonth) {
       getMonthData(contextMonth);
     }
-    if (contextHospitals) {
-      getAllData(contextHospitals);
-    }
-  }, [contextCity, contextMonth, contextHospitals]);
+  }, [contextMonth]);
+
+  // useEffect(() => {
+  //   console.log("getContextCity@@@@@@@@ : "+contextCity);
+  //   if (contextCity) {
+  //     getAllData(contextCity);
+  //   }
+  //   if (getInsightState) {
+  //     getAllData(getInsightState);
+  //   }
+  //   if (contextMonth) {
+  //     getMonthData(contextMonth);
+  //   }
+  //   // if (contextHospitals) {
+  //   //   getAllData(contextHospitals);
+  //   // }
+  // }, [contextCity, getInsightState, contextMonth, contextHospitals]);
 
   // useEffect(() => {
   //   console.log("getContextMonth@@@@@@@@ : "+contextMonth);
@@ -181,7 +219,10 @@ export default function Dashboard(props) {
   const monthsCalls = showAllData?.graphDataCalls?.[0]
     ? Object.keys(showAllData.graphDataCalls[0])
     : [];
-  console.log("Months for Calls:", monthsCalls);
+ // console.log("Months for Calls:", monthsCalls);
+
+
+  console.log("Location Profiles--0-- : ", locationProfiles)
 
   return (
     <SharedContext.Provider
@@ -197,6 +238,7 @@ export default function Dashboard(props) {
         getInsightsCity,
         setInsightsCity,
         setcontextHospitals,
+        setInsightsAnalysis,
       }}
     >
       <div style={{ background: "#EFEFEF" }}>
@@ -234,14 +276,18 @@ export default function Dashboard(props) {
                     }
                   />
                 ) : (
-                  <div>No reviews or ratings available</div>
+                  <ReviewRating
+                    review={0}
+                    rating={0}
+                  />
+                  // <div>No reviews or ratings available</div>
                 )}
               </div>
 
               {showAllData?.analysis?.length > 0 ? (
                 <SideContentContainer data={showAllData.analysis} />
               ) : (
-                <div>No analysis data available</div>
+                <div className="d-flex justify-content-center align-items-center">No analysis data available</div>
               )}
             </div>
 
