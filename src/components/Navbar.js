@@ -20,8 +20,7 @@ export default function Navbar(props) {
   const { isCollapsed, toggleSidebar, drNameContext } =
     useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles, setContextMonth, setInsightsAnalysis } =
-    useContext(SharedContext);
+  const { setContextCity, setLocationProfiles, setContextMonth, setInsightsAnalysis, setReloadCondition} =useContext(SharedContext);
   const { setInsightsState, setInsightsCity, setContextYear, } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
@@ -35,9 +34,11 @@ export default function Navbar(props) {
   const api = localStorage.getItem("API");
   const [logo, setLogo] = useState("");
   const [email, setEmai] = useState("");
+  const [reload, setReload] = useState("");
   const [isNavContentsVisible, setNavContentsVisible] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [countOfProfiles, setCountProfiles] = useState();
+ 
 
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -115,6 +116,7 @@ export default function Navbar(props) {
     if(getState === "All")
     {
       window.location.reload();
+      //setReloadCondition(true)
     }
     setCity("");
     setMonth("");
@@ -125,7 +127,9 @@ export default function Navbar(props) {
     setMonth(e.target.value);
     if(getMonth === "All")
       {
-        window.location.reload();
+         setReload("All")
+         setCity("");
+         setState("");
       }
   }
 
@@ -193,9 +197,10 @@ export default function Navbar(props) {
     setCity(e.target.value);
     if(getCity === "All")
       {
-        window.location.reload();
+          setReload("All")
+          setState("");
       }
-    setMonth("");
+      setMonth("");
   }
 
   useEffect(() => {
@@ -207,7 +212,6 @@ export default function Navbar(props) {
         },
       });
       const allNames = await docNames.json();
-
       setAllNames(allNames);
     }
     async function getallLoc() {
@@ -234,7 +238,7 @@ export default function Navbar(props) {
     if (mail) {
       setEmai(mail);
     }
-  }, [getState]);
+  }, [getState,reload]);
 
   const exportExcel = (excelData) => {
     const title = "Doctor Details";
@@ -362,6 +366,8 @@ export default function Navbar(props) {
   function bulkExport() {
     getAllDoctrosDetails(getState, getCity);
   }
+
+  
 
   return (
     <Fragment>
@@ -619,7 +625,7 @@ export default function Navbar(props) {
                             }}
                           >
                             <option value="">Select Month...</option>
-                            <option value="All">All</option>
+                            {/* <option value="All">All</option> */}
                             {/* Map over monthsCalls array to create options */}
                             {props.monthsCalls?.map((month, index) => (
                               <option key={index} value={month}>
@@ -683,6 +689,10 @@ export default function Navbar(props) {
                     <button
                       onClick={async () => {
                         monthseter();
+                        if(reload === "All")
+                          {
+                            setReloadCondition(true);
+                          }
                         const count = await filterApi(); // Wait for filterApi to complete
                         if (count !== null) {
                           setLocationProfiles(count); // Use the returned count

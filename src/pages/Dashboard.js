@@ -29,6 +29,7 @@ export default function Dashboard(props) {
   const [getInsightsCity, setInsightsCity] = useState([]);
   const [contextHospitals, setcontextHospitals] = useState();
   const [InsightsAnalysis, setInsightsAnalysis] = useState();
+  const [reload, setReloadCondition] = useState(false);
   const mail = localStorage.getItem("mail");
 
   const username1 = localStorage.getItem("username");
@@ -220,10 +221,14 @@ export default function Dashboard(props) {
     ? Object.keys(showAllData.graphDataCalls[0])
     : [];
  // console.log("Months for Calls:", monthsCalls);
-
-
   console.log("Location Profiles--0-- : ", locationProfiles)
 
+  useEffect(() => {
+    if (reload === "All") {
+      getAllData("No");
+      setReloadCondition(false)
+    }
+  }, [reload]);
   return (
     <SharedContext.Provider
       value={{
@@ -239,6 +244,7 @@ export default function Dashboard(props) {
         setInsightsCity,
         setcontextHospitals,
         setInsightsAnalysis,
+        setReloadCondition,
       }}
     >
       <div style={{ background: "#EFEFEF" }}>
