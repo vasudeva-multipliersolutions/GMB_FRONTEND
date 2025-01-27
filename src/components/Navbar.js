@@ -34,7 +34,7 @@ export default function Navbar(props) {
   const api = localStorage.getItem("API");
   const [logo, setLogo] = useState("");
   const [email, setEmai] = useState("");
-  const [reload, setReload] = useState("");
+  const [reload, setReload] = useState();
   const [isNavContentsVisible, setNavContentsVisible] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [countOfProfiles, setCountProfiles] = useState();
@@ -128,8 +128,6 @@ export default function Navbar(props) {
     if(getMonth === "All")
       {
          setReload("All")
-         setCity("");
-         setState("");
       }
   }
 
@@ -149,12 +147,15 @@ export default function Navbar(props) {
 
   async function filterApi() {
     try {
+
+      const cityToSend = getCity === "All" ? "" : getCity;
+      
       const response = await fetch(`${api}/getfilterdata`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ state: getState, branch: getCity }),
+        body: JSON.stringify({ state: getState, branch: cityToSend }),
       });
       const data = await response.json();
 
@@ -197,8 +198,7 @@ export default function Navbar(props) {
     setCity(e.target.value);
     if(getCity === "All")
       {
-          setReload("All")
-          setState("");
+          setReload("All");
       }
       setMonth("");
   }
@@ -238,7 +238,7 @@ export default function Navbar(props) {
     if (mail) {
       setEmai(mail);
     }
-  }, [getState,reload]);
+  }, [getState]);
 
   const exportExcel = (excelData) => {
     const title = "Doctor Details";
@@ -625,13 +625,20 @@ export default function Navbar(props) {
                             }}
                           >
                             <option value="">Select Month...</option>
+                            <option value="All">All</option>
+                            <option value="Jul">Jul</option>
+                            <option value="Aug">Aug</option>
+                            <option value="Sep">Sep</option>
+                            <option value="Oct">Oct</option>
+                            <option value="Nov">Nov</option>
+                            <option value="Dec">Dec</option>
                             {/* <option value="All">All</option> */}
                             {/* Map over monthsCalls array to create options */}
-                            {props.monthsCalls?.map((month, index) => (
+                            {/* {props.monthsCalls?.map((month, index) => (
                               <option key={index} value={month}>
                                 {month}
                               </option>
-                            ))}
+                            ))} */}
                           </select>
 
                           {/* <button
@@ -688,11 +695,13 @@ export default function Navbar(props) {
                   <div className="data_list_selection m-1">
                     <button
                       onClick={async () => {
+                        setReloadCondition(reload);
+                        if (getCity === "All") {
+                          setCity(""); // Clear the city state
+                          setContextCity(""); 
+                          setContextMonth("");
+                        }
                         monthseter();
-                        if(reload === "All")
-                          {
-                            setReloadCondition(true);
-                          }
                         const count = await filterApi(); // Wait for filterApi to complete
                         if (count !== null) {
                           setLocationProfiles(count); // Use the returned count

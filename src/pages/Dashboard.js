@@ -25,11 +25,11 @@ export default function Dashboard(props) {
   const [use, setUse] = useState([]);
   const { isCollapsed } = useContext(SidebarContext);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [getInsightState, setInsightsState] = useState([]);
-  const [getInsightsCity, setInsightsCity] = useState([]);
+  const [getInsightState, setInsightsState] = useState();
+  const [getInsightsCity, setInsightsCity] = useState();
   const [contextHospitals, setcontextHospitals] = useState();
   const [InsightsAnalysis, setInsightsAnalysis] = useState();
-  const [reload, setReloadCondition] = useState(false);
+  const [reload, setReloadCondition] = useState();
   const mail = localStorage.getItem("mail");
 
   const username1 = localStorage.getItem("username");
@@ -40,7 +40,7 @@ export default function Dashboard(props) {
     setAllData(InsightsAnalysis);
   }, [InsightsAnalysis]);
  
-
+ console.log( "+++++++++++++++++ data:" + reload);
   async function getAllData(branch) {
     try {
       const response = await fetch(`${api}/${branch}`);
@@ -58,14 +58,18 @@ export default function Dashboard(props) {
   console.log("SetContextYear : " + contextYear);
   async function getMonthData(month) {
     try {
+
+      const cityToSend = contextCity === "All" ? "" : contextCity;
+      const monthToSend = month === "All" ? "" : month;
+      
       const response = await fetch(`${api}/monthdata`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          month: month,
-          branch: contextCity ,
+          month: monthToSend,
+          branch: cityToSend ,
           state: getInsightState,
         }),
       });
@@ -189,28 +193,6 @@ export default function Dashboard(props) {
     }
   }, [contextMonth]);
 
-  // useEffect(() => {
-  //   console.log("getContextCity@@@@@@@@ : "+contextCity);
-  //   if (contextCity) {
-  //     getAllData(contextCity);
-  //   }
-  //   if (getInsightState) {
-  //     getAllData(getInsightState);
-  //   }
-  //   if (contextMonth) {
-  //     getMonthData(contextMonth);
-  //   }
-  //   // if (contextHospitals) {
-  //   //   getAllData(contextHospitals);
-  //   // }
-  // }, [contextCity, getInsightState, contextMonth, contextHospitals]);
-
-  // useEffect(() => {
-  //   console.log("getContextMonth@@@@@@@@ : "+contextMonth);
-  //   if (contextMonth) {
-  //     getMonthData(contextMonth);
-  //   }
-  // }, [contextMonth]);
 
   const username = analysisData?.[0]?.user;
   const logo = username === "Manipal" ? manipalLogo : careLogo;
@@ -224,10 +206,8 @@ export default function Dashboard(props) {
   console.log("Location Profiles--0-- : ", locationProfiles)
 
   useEffect(() => {
-    if (reload === "All") {
-      getAllData("No");
-      setReloadCondition(false)
-    }
+    
+    getMonthData("");
   }, [reload]);
   return (
     <SharedContext.Provider

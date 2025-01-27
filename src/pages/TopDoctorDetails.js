@@ -33,6 +33,8 @@ export default function TopDoctorDetails({contextHospitals }) {
       const location = contextHospitals ? contextHospitals : getInsightsCity;
       const cluster = contextHospitals ? "" : getInsightState;
 
+      const cityToSend = location === "All" ? "" : location;
+
       if (getInsightState || getInsightsCity || contextHospitals) {
         console.log("Hello"+ 1)
         try {
@@ -43,7 +45,7 @@ export default function TopDoctorDetails({contextHospitals }) {
             },
             body: JSON.stringify({
               state: cluster,
-              branch: location,
+              branch: cityToSend,
             }),
           });
           const data = await response.json();
