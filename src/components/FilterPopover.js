@@ -23,7 +23,7 @@ export function NewMenuBar() {
     {
       window.location.reload();
     }
-    console.log(`${item.label} clicked`, event, item);
+    //console.log(`${item.label} clicked`, event, item);
     setcontextHospitals(item.label); // Set the selected item in context
   };
 
@@ -51,7 +51,7 @@ export function NewMenuBar() {
     }
     if (selectedItem) {
       filterApi(selectedItem); // Call the API function when `selectedItem` changes
-      console.log(" This function will run whenever `selectedItem` changes");
+     // console.log(" This function will run whenever `selectedItem` changes");
     }
   }, [selectedItem, setLocationProfiles]);
 
@@ -63,7 +63,7 @@ export function NewMenuBar() {
   });
 
   const menuItemsData = {
-    label: ` ${selectedItem ? selectedItem : "Hospitals"}`,
+    label: ` ${selectedItem ? selectedItem : "Locations"}`,
     leftIcon: <SaveIcon className="text-blue-500" />,
     items: [
       {

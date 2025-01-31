@@ -40,12 +40,12 @@ export default function Dashboard(props) {
     setAllData(InsightsAnalysis);
   }, [InsightsAnalysis]);
  
- console.log( "+++++++++++++++++ data:" + reload);
+ //console.log( "+++++++++++++++++ data:" + reload);
   async function getAllData(branch) {
     try {
       const response = await fetch(`${api}/${branch}`);
       const data = await response.json();
-      console.log("1234 : " + data[0]);
+     // console.log("1234 : " + data[0]);
 
       setAllData(data);
 
@@ -55,7 +55,7 @@ export default function Dashboard(props) {
     }
   }
 
-  console.log("SetContextYear : " + contextYear);
+  //console.log("SetContextYear : " + contextYear);
   async function getMonthData(month) {
     try {
 
@@ -76,10 +76,8 @@ export default function Dashboard(props) {
       const data = await response.json();
       setAllData("");
       setAllData(data);
-      console.log(
-        "+++++++++++++++++ data:" + data.reviewRating[0].averagerating
-      );
-      console.log("333333333333 data:" + data.analysis[0]);
+      //console.log("+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
+      //console.log("333333333333 data:" + data.analysis[0]);
     } catch (error) {
       console.error("Error fetching all data:", error);
     }
@@ -174,14 +172,14 @@ export default function Dashboard(props) {
   // })
 
   useEffect(() => {
-    console.log("getContextCity@@@@@@@@ : " + contextCity);
+   // console.log("getContextCity@@@@@@@@ : " + contextCity);
     if (contextCity) {
       getMonthData("");
     }
   }, [contextCity]);
 
   useEffect(() => {
-    console.log("getInsightState@@@@@@@@ : " + getInsightState);
+    //console.log("getInsightState@@@@@@@@ : " + getInsightState);
     if (getInsightState) {
       getMonthData("");
     }
@@ -203,7 +201,7 @@ export default function Dashboard(props) {
     ? Object.keys(showAllData.graphDataCalls[0])
     : [];
  // console.log("Months for Calls:", monthsCalls);
-  console.log("Location Profiles--0-- : ", locationProfiles)
+  //console.log("Location Profiles--0-- : ", locationProfiles)
 
   useEffect(() => {
     

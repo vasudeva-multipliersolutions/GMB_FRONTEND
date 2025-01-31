@@ -58,7 +58,7 @@ export default function BasicDetailsComponent() {
   // Fetch filtered data when getInsightState or getInsightsCity changes
   useEffect(() => {
     async function fetchDataFilter() {
-      console.log("789: : " + getInsightState);
+     // console.log("789: : " + getInsightState);
       const location = contextHospitals ? contextHospitals : getInsightsCity;
       const cluster = contextHospitals ? "" : getInsightState;
 

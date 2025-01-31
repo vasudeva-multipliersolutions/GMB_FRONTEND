@@ -70,7 +70,7 @@ export default function WorkTrackerMetrics() {
   ];
 
   useEffect(() => {
-    console.log("********" + getInsightState + " ######### : " + getInsightsCity + "contextHospitals : "+ contextHospitals);
+    //console.log("********" + getInsightState + " ######### : " + getInsightsCity + "contextHospitals : "+ contextHospitals);
   }, [getInsightsCity, getInsightState, contextHospitals]);
 
   async function gettrackerdata(date) {

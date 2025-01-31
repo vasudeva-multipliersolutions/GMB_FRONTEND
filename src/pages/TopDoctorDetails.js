@@ -22,7 +22,7 @@ export default function TopDoctorDetails({contextHospitals }) {
   const { windowWidth } = useContext(SidebarContext);
 
     useEffect(() => { 
-        console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals);
+        //console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals);
     })
     
 
@@ -36,7 +36,7 @@ export default function TopDoctorDetails({contextHospitals }) {
       const cityToSend = location === "All" ? "" : location;
 
       if (getInsightState || getInsightsCity || contextHospitals) {
-        console.log("Hello"+ 1)
+        //console.log("Hello"+ 1)
         try {
           const response = await fetch(`${api}/topdoc`, {
             method: "POST",
@@ -76,12 +76,10 @@ export default function TopDoctorDetails({contextHospitals }) {
           });
           const data = await response.json();
           setInsightData(data);
-       
            setIsLoading(false)
         } catch (error) {
           console.error("Error fetching filtered data:", error);
         }
-      
     }
     fetchTopDocdata();
 }, []);
@@ -92,6 +90,8 @@ export default function TopDoctorDetails({contextHospitals }) {
     : insightdata
     ? [insightdata]
     : [];
+
+
 
   // Function to download PDF
   const downloadPDF = () => {
@@ -132,7 +132,7 @@ export default function TopDoctorDetails({contextHospitals }) {
           <ShimmerTitle line={2} gap={10} variant="primary" /> */}
         </div>
       ) : (
-        (getDrName || getInsightState || getInsightsCity || contextHospitals  ) && (
+        (getDrName || getInsightState || getInsightsCity || contextHospitals || insightdata  ) && (
           <div
             id="capture"
             style={{

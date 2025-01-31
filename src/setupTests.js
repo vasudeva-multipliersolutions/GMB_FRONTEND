@@ -43,9 +43,9 @@ export default function Navbar(props) {
     localStorage.removeItem("logo");
     localStorage.removeItem("username");
     localStorage.removeItem("psw");
-    console.log("logged out before navifated");
+    //console.log("logged out before navifated");
     navigate("/");
-    console.log("logged out after navifated");
+    //console.log("logged out after navifated");
   }
   function nameHandelar(e) {
     setName(e.target.value);
@@ -93,7 +93,7 @@ export default function Navbar(props) {
   function Insightsapicall() {
     setInsightsState(getState);
     setInsightsCity(getCity);
-    console.log("Insight api call...........", setInsightsState, "@", getCity);
+    //console.log("Insight api call...........", setInsightsState, "@", getCity);
   }
   function insightsChecker() {
     if (props.insights) {
@@ -102,7 +102,7 @@ export default function Navbar(props) {
   }
 
   useEffect(() => {
-    console.log("Current path:", window.location.pathname);
+   // console.log("Current path:", window.location.pathname);
     // Your other code here
   }, []);
 
@@ -130,7 +130,7 @@ export default function Navbar(props) {
         },
       });
       const getlocdetails = await locDetails.json();
-      console.log("check it --------------------->", getlocdetails);
+      //console.log("check it --------------------->", getlocdetails);
       setStates(getlocdetails[0].states);
       setCitys(getlocdetails[0].branches);
     }
@@ -276,7 +276,7 @@ export default function Navbar(props) {
       body: JSON.stringify({ state: getState, branch: getCity }),
     });
     const allDetails = await docDetails.json();
-    console.log("All Doctor details State and branch wise : ", allDetails);
+    //console.log("All Doctor details State and branch wise : ", allDetails);
     exportExcel(allDetails);
   }
   function bulkExport() {
