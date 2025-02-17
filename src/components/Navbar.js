@@ -688,12 +688,12 @@ export default function Navbar(props) {
                           >
                             <option value="">Select Month...</option>
                             <option value="All">All</option>
-                            <option value="Jul">Jul</option>
                             <option value="Aug">Aug</option>
                             <option value="Sep">Sep</option>
                             <option value="Oct">Oct</option>
                             <option value="Nov">Nov</option>
                             <option value="Dec">Dec</option>
+                            <option value="Jan">Jan</option>
                             {/* <option value="All">All</option> */}
                             {/* Map over monthsCalls array to create options */}
                             {/* {props.monthsCalls?.map((month, index) => (
