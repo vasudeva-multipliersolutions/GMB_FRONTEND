@@ -30,6 +30,8 @@ export default function Login(props) {
       localStorage.setItem("logo", response[0].Logo);
       localStorage.setItem("API", response[0].API);
       localStorage.setItem("user", response[0].user);
+      localStorage.setItem("Branch", response[0].Branch);
+      localStorage.setItem("Cluster", response[0].Cluster);
       //console.log()
 
       navigate("/Dashboard");

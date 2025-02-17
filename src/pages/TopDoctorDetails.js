@@ -14,9 +14,12 @@ export default function TopDoctorDetails({contextHospitals }) {
   const [insightdata, setInsightData] = useState(null);
   
  
-  const { getDrName, getInsightState, getInsightsCity} =  useContext(SharedContext);
+  const { getDrName, getInsightState, getInsightsCity, currentCluster} =  useContext(SharedContext);
     
   const api = localStorage.getItem("API");
+  const mail = localStorage.getItem("mail");
+  const Branch = localStorage.getItem("Branch");
+  const Cluster = localStorage.getItem("Cluster");
 
   const { isCollapsed } = useContext(SidebarContext);
   const { windowWidth } = useContext(SidebarContext);
@@ -26,6 +29,7 @@ export default function TopDoctorDetails({contextHospitals }) {
     })
     
 
+   
 
   useEffect(() => {
     async function fetchDataFilter() {
@@ -61,28 +65,39 @@ export default function TopDoctorDetails({contextHospitals }) {
     }
     fetchDataFilter();
   }, [getInsightState, getInsightsCity, contextHospitals]);
-    
-    
+  
+ 
        
- useEffect(() => {
+  useEffect(() => {
     async function fetchTopDocdata() {
-        try {
-          const response = await fetch(`${api}/topdoc`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            
-          });
-          const data = await response.json();
-          setInsightData(data);
-           setIsLoading(false)
-        } catch (error) {
-          console.error("Error fetching filtered data:", error);
+      try {
+        
+        let requestBody = "";
+        if (currentCluster === "") {
+          requestBody = mail !== "manipal@gmail.com" ? JSON.stringify({ branch: Branch }) : undefined;
+        } else {
+          requestBody = JSON.stringify({ state: Cluster });
         }
+        
+
+        const response = await fetch(`${api}/topdoc`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: requestBody, // Include body only if mail is not "manipal@gmail.com"
+        });
+  
+        const data = await response.json();
+        setInsightData(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching filtered data:", error);
+      }
     }
     fetchTopDocdata();
-}, []);
+  }, []);
+  
 
 
   const rows = docData?.result
@@ -191,3 +206,4 @@ export default function TopDoctorDetails({contextHospitals }) {
     </>
   );
 }
+//

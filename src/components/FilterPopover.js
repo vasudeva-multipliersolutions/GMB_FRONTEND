@@ -8,8 +8,18 @@ import { SharedContext } from "../context/SharedContext";
 import { SidebarContext } from "../SidebarContext";
 
 export function NewMenuBar() {
-  const [selectedItem, setSelectedItem] = useState("");
   const api = localStorage.getItem("API");
+  const mail = localStorage.getItem("mail");
+  const loginBranch = localStorage.getItem("Branch");
+  const Cluster = localStorage.getItem("Cluster");
+
+  const [selectedItem, setSelectedItem] = useState(() =>
+    mail === "manipal@gmail.com"
+      ? "Locations"
+      : loginBranch === "undefined"
+      ? Cluster
+      : loginBranch
+  );
 
   // Use context directly without destructuring
   const { setcontextHospitals, setLocationProfiles } =
@@ -19,41 +29,48 @@ export function NewMenuBar() {
   // Handler function to manage item clicks
   const handleItemClick = (event, item) => {
     setSelectedItem(item.label); // Update state with the clicked item's label
-    if(item.label==="All")
-    {
+    if (item.label === "All") {
       window.location.reload();
     }
     //console.log(`${item.label} clicked`, event, item);
     setcontextHospitals(item.label); // Set the selected item in context
   };
 
-  useEffect(() => {
+ // useEffect(() => {
     // This function will run whenever `selectedItem` changes
 
-    async function filterApi(city) {
-      try {
-        const response = await fetch(`${api}/getfilterdata`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ state: " ", branch: city }),
-        });
-        const data = await response.json();
-
-        setLocationProfiles(data.countOfProfiles);
-        //setAllNames(data.result[0].businessNames);
-        setDrNameContext(data.result[0].businessNames);
-        //console.log("123 : " + data.result[0].businessNames);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+    useEffect(() => {
+      async function filterApi(city) {
+        try {
+          let sendCity = city;
+          let sendState = "";
+    
+          if (city === "undefined") {
+            sendState = Cluster;
+          }
+    
+          const response = await fetch(`${api}/getfilterdata`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ state: sendState, branch: sendCity }),
+          });
+    
+          const data = await response.json();
+          setLocationProfiles(data.countOfProfiles);
+          setDrNameContext(data.result[0].businessNames);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
       }
-    }
-    if (selectedItem) {
-      filterApi(selectedItem); // Call the API function when `selectedItem` changes
-     // console.log(" This function will run whenever `selectedItem` changes");
-    }
-  }, [selectedItem, setLocationProfiles]);
+        if (selectedItem) {
+          filterApi(selectedItem); // Ensures the function runs when selectedItem is set
+        }
+        
+    }, [selectedItem, mail, loginBranch, setLocationProfiles]);
+
+  
 
   useEffect(() => {
     const handlePageRefresh = () => {
@@ -63,7 +80,8 @@ export function NewMenuBar() {
   });
 
   const menuItemsData = {
-    label: ` ${selectedItem ? selectedItem : "Locations"}`,
+    label: selectedItem,
+
     leftIcon: <SaveIcon className="text-blue-500" />,
     items: [
       {
@@ -123,7 +141,7 @@ export function NewMenuBar() {
           },
         ],
       },
-      
+
       {
         label: "Goa",
         callback: handleItemClick, // Use the handler for clicks

@@ -30,11 +30,35 @@ export default function Dashboard(props) {
   const [contextHospitals, setcontextHospitals] = useState();
   const [InsightsAnalysis, setInsightsAnalysis] = useState();
   const [reload, setReloadCondition] = useState();
+  const [currentCluster, setCurrentCluster] = useState("");
+  
   const mail = localStorage.getItem("mail");
-
   const username1 = localStorage.getItem("username");
   const psw1 = localStorage.getItem("psw");
   const api = localStorage.getItem("API");
+  const Branch = localStorage.getItem("Branch");
+  const Cluster = localStorage.getItem("Cluster");
+
+
+  useEffect(() => {
+    const clusterEmails = [
+      "southcluster@gmail.com",
+      "delhincrcluster@gmail.com",
+      "northwestcluster@gmail.com",
+      "goamanglorecluster@gmail.com",
+      "southeastcluster@gmail.com",
+      "internationalcluster@gmail.com",
+      "vcdoctorcluster@gmail.com",
+      "eastcluster@gmail.com",
+    ];
+  
+    if (clusterEmails.includes(mail)) {
+      setCurrentCluster(Cluster);
+    } else {
+      setCurrentCluster("");
+    }
+  }, [navigate, username1, psw1, api, mail]);
+
 
   useEffect(() => {
     setAllData(InsightsAnalysis);
@@ -58,10 +82,11 @@ export default function Dashboard(props) {
   //console.log("SetContextYear : " + contextYear);
   async function getMonthData(month) {
     try {
-
       const cityToSend = contextCity === "All" ? "" : contextCity;
       const monthToSend = month === "All" ? "" : month;
+      const stateToSend = getInsightState;
       
+      console.log("000000-----00000000000) : " + stateToSend);
       const response = await fetch(`${api}/monthdata`, {
         method: "POST",
         headers: {
@@ -70,7 +95,29 @@ export default function Dashboard(props) {
         body: JSON.stringify({
           month: monthToSend,
           branch: cityToSend ,
-          state: getInsightState,
+          state: stateToSend,
+        }),
+      });
+      const data = await response.json();
+      setAllData("");
+      setAllData(data);
+      //console.log("+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
+      //console.log("333333333333 data:" + data.analysis[0]);
+    } catch (error) {
+      console.error("Error fetching all data:", error);
+    }
+  }
+
+  async function getClusterData(cluster) {
+    try {
+    
+      const response = await fetch(`${api}/monthdata`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          state: cluster,
         }),
       });
       const data = await response.json();
@@ -95,21 +142,77 @@ export default function Dashboard(props) {
     };
   }, []);
 
+  // useEffect(() => {
+  //   const handleStorageChange = (event) => {
+  //     if (event.key === "username" && event.newValue === null) {
+  //       navigate("/");
+  //     }
+  //   };
+
+  //   window.addEventListener("storage", handleStorageChange);
+
+  //   const username = localStorage.getItem("username");
+  //   if (!username) {
+  //     navigate("/");
+  //     return;
+  //   }
+
+  //   async function getAnalysisData() {
+  //     try {
+  //       const response = await fetch("http://localhost:2024/api/login", {
+  //         method: "POST",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify({ username: username1, psw: psw1 }),
+  //       });
+  //       const result = await response.json();
+  //       setAnalysisData(result);
+  //     } catch (error) {
+  //       console.error("Error fetching analysis data:", error);
+  //     }
+  //   }
+
+  //   setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 2000);
+
+  //   if (mail == "manipal@gmail.com") {
+  //     getAllData("No");
+  //   } else if (currentCluster == ""){
+  //     if (Branch && currentCluster === ""){
+  //     getAllData(Branch);
+  //     } else {
+  //       setInsightsState(Cluster);
+  //       if (currentCluster !== "") {
+  //         setInsightsCity("");
+  //         getClusterData(Cluster);
+  //       }
+  //     }
+  //   } 
+
+  //   getAnalysisData();
+    
+
+  //   return () => {
+  //     window.removeEventListener("storage", handleStorageChange);
+  //   };
+  // }, [navigate, username1, psw1, api, mail, currentCluster]);
+
+
   useEffect(() => {
     const handleStorageChange = (event) => {
       if (event.key === "username" && event.newValue === null) {
         navigate("/");
       }
     };
-
+  
     window.addEventListener("storage", handleStorageChange);
-
+  
     const username = localStorage.getItem("username");
     if (!username) {
       navigate("/");
       return;
     }
-
+  
     async function getAnalysisData() {
       try {
         const response = await fetch("http://localhost:2024/api/login", {
@@ -123,18 +226,32 @@ export default function Dashboard(props) {
         console.error("Error fetching analysis data:", error);
       }
     }
-
+  
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
+  
+    if (mail === "manipal@gmail.com") {
+      getAllData("No");
+    } else if (!currentCluster) {
+      if (Branch && Branch !== "undefined") {
+        console.log("Branch@@@@@@@@ : "+Branch);
+        getAllData(Branch);
+      } else if (Cluster) {
 
+        setInsightsState(Cluster);
+        getClusterData(Cluster);
+      }
+    }
+  
     getAnalysisData();
-    getAllData("No");
-
+  
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, [navigate, username1, psw1, api]);
+  }, [navigate, username1, psw1, api, mail, currentCluster, Branch, Cluster]);
+
+  
 
   useEffect(() => {
     if (locationProfiles && locationProfiles[0]) {
@@ -191,6 +308,12 @@ export default function Dashboard(props) {
     }
   }, [contextMonth]);
 
+  useEffect(() => {
+    if (currentCluster) {
+      getClusterData(currentCluster);
+    }
+  }, [currentCluster]);
+
 
   const username = analysisData?.[0]?.user;
   const logo = username === "Manipal" ? manipalLogo : careLogo;
@@ -203,9 +326,11 @@ export default function Dashboard(props) {
  // console.log("Months for Calls:", monthsCalls);
   //console.log("Location Profiles--0-- : ", locationProfiles)
 
+
+  
+  console.log("Location Profiles--0-- : ", currentCluster);
   useEffect(() => {
-    
-    getMonthData("");
+    //getMonthData("");
   }, [reload]);
   return (
     <SharedContext.Provider
@@ -223,6 +348,7 @@ export default function Dashboard(props) {
         setcontextHospitals,
         setInsightsAnalysis,
         setReloadCondition,
+        currentCluster,
       }}
     >
       <div style={{ background: "#EFEFEF" }}>
@@ -230,10 +356,12 @@ export default function Dashboard(props) {
           logoimg={logo ? logo : ""}
           username={username}
           serach={mail === "manipal@gmail.com" ? true : false}
+          monthhide={mail === "manipal@gmail.com" || currentCluster !== ""? true : false}
           topdoc={true}
           monthfilter={true}
           monthsCalls={monthsCalls}
           contextHospitals={contextHospitals}
+          currentCluster ={currentCluster}
         />
 
         {/* Root-level check for showAllData */}

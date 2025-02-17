@@ -17,10 +17,13 @@ import Button from "@mui/material/Button";
 import { NewMenuBar } from "./FilterPopover";
 
 export default function Navbar(props) {
+  const mail = localStorage.getItem("mail");
+  const loginBranch = localStorage.getItem("Branch");
+  const Cluster = localStorage.getItem("Cluster");
   const { isCollapsed, toggleSidebar, drNameContext } =
     useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles, setContextMonth, setInsightsAnalysis, setReloadCondition} =useContext(SharedContext);
+  const { setContextCity, setLocationProfiles, setContextMonth, setInsightsAnalysis, setReloadCondition } = useContext(SharedContext);
   const { setInsightsState, setInsightsCity, setContextYear, } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
@@ -38,8 +41,7 @@ export default function Navbar(props) {
   const [isNavContentsVisible, setNavContentsVisible] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [countOfProfiles, setCountProfiles] = useState();
- 
-
+  const [currentCluster, setCurrentCluster] = useState();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -67,6 +69,7 @@ export default function Navbar(props) {
 
   function logoutHandeler() {
     // alert('hello world')
+    localStorage.clear();
     localStorage.removeItem("API");
     localStorage.removeItem("logo");
     localStorage.removeItem("username");
@@ -82,9 +85,40 @@ export default function Navbar(props) {
 
   useEffect(() => {
     const storedLogo = localStorage.getItem("logo");
-
     if (storedLogo) setLogo(storedLogo);
+
+    // const isAuthenticated = localStorage.getItem("Branch");
+    // console.log("]]]]]]]]]]]]]]]]]]]]]]=>", isAuthenticated)
+
+    if (loginBranch ==="undefined") {
+      setState(Cluster);
+      filterApi();
+    }
+
+    // if (props.currentCluster !== "") {
+    //   setState(Cluster);
+    //   setCurrentCluster(props.currentCluster);
+    // } else {
+    //   setCurrentCluster("");
+    // }
+    // if (currentCluster === "") {
+    //   filterApi();
+    // }
+
   }, []);
+
+  useEffect(() => {
+    console.log("5555555555=>", props.currentCluster)
+    if (props.currentCluster !== "") {
+      setState(props.currentCluster); // Use the prop value instead of Cluster from localStorage
+      setCurrentCluster(props.currentCluster);
+    } else {
+      setCurrentCluster("");
+    }
+    if (currentCluster === "") {
+      filterApi();
+    }
+  }, [props.currentCluster]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -113,8 +147,7 @@ export default function Navbar(props) {
   }
   async function getStateHandeler(e) {
     setState(e.target.value);
-    if(getState === "All")
-    {
+    if (getState === "All") {
       window.location.reload();
       //setReloadCondition(true)
     }
@@ -125,10 +158,9 @@ export default function Navbar(props) {
 
   function monthHandelar(e) {
     setMonth(e.target.value);
-    if(getMonth === "All")
-      {
-         setReload("All")
-      }
+    if (getMonth === "All") {
+      setReload("All")
+    }
   }
 
   function monthseter() {
@@ -149,7 +181,7 @@ export default function Navbar(props) {
     try {
 
       const cityToSend = getCity === "All" ? "" : getCity;
-      
+
       const response = await fetch(`${api}/getfilterdata`, {
         method: "POST",
         headers: {
@@ -196,11 +228,10 @@ export default function Navbar(props) {
 
   function getCityHandeler(e) {
     setCity(e.target.value);
-    if(getCity === "All")
-      {
-          setReload("All");
-      }
-      setMonth("");
+    if (getCity === "All") {
+      setReload("All");
+    }
+    setMonth("");
   }
 
   useEffect(() => {
@@ -234,7 +265,7 @@ export default function Navbar(props) {
       setLogo(logo);
     }
 
-    const mail = localStorage.getItem("mail");
+
     if (mail) {
       setEmai(mail);
     }
@@ -367,7 +398,30 @@ export default function Navbar(props) {
     getAllDoctrosDetails(getState, getCity);
   }
 
-  
+  function ApplyClick() {
+    setReloadCondition(reload);
+    if (mail === "manipal@gmail.com") {
+      if (getCity === "All") {
+        setCity(""); // Clear the city state
+        setContextCity("");
+        setContextMonth("");
+        console.log("check it --------------------->manipal@gmail.com");
+      }
+    } else {
+      if (currentCluster === "") {
+        setState("");
+        setCity(loginBranch); // Clear the city state
+        setContextCity(loginBranch);
+        setContextMonth("");
+        console.log("check it --------------------->branch@gmail.com", currentCluster);
+      } else {
+        setContextCity(getCity);
+        setState(Cluster);
+        setInsightsState(Cluster);
+        console.log("check it --------------------->Cluster@gmail.com", currentCluster);
+      }
+    }
+  }
 
   return (
     <Fragment>
@@ -529,13 +583,16 @@ export default function Navbar(props) {
                         <option value="">Select State...</option>
                         <option value="All">All</option>
                         {getStates &&
-                          getStates.map((item, index) => {
+                          getStates
+                          .filter(item => item !== "#N/A") 
+                          .sort()
+                          .map((item, index) => {
                             if (item != "#N/A")
-                              return (
-                                <option key={index} value={item}>
-                                  {item}
-                                </option>
-                              );
+                        return (
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                        );
                           })}
                       </select>
 
@@ -556,7 +613,9 @@ export default function Navbar(props) {
                   )}
                 </div>
 
-                {props.serach && (
+                {console.log("Current Cluster : ", currentCluster)}
+
+                {props.monthhide && (
                   <div className="data_list_selection m-1">
                     <div className="input-group">
                       <select
@@ -574,7 +633,10 @@ export default function Navbar(props) {
                         <option value="">Select City...</option>
                         <option value="All">All</option>
                         {getCitys &&
-                          getCitys.map((item, index) => {
+                          getCitys
+                          .filter(item => item !== "#N/A") 
+                          .sort()
+                          .map((item, index) => {
                             if (item != "#N/A")
                               return (
                                 <option key={index} value={item}>
@@ -604,7 +666,7 @@ export default function Navbar(props) {
                 {/* Date ------------select */}
 
 
-                {props.serach && (
+                {!props.filterpopover && (
                   <div className="d-flex">
                     <div
                       className="datepicker"
@@ -691,16 +753,11 @@ export default function Navbar(props) {
 
 
 
-                {props.serach && (
+                {!props.filterpopover && (
                   <div className="data_list_selection m-1">
                     <button
                       onClick={async () => {
-                        setReloadCondition(reload);
-                        if (getCity === "All") {
-                          setCity(""); // Clear the city state
-                          setContextCity(""); 
-                          setContextMonth("");
-                        }
+                        ApplyClick();
                         monthseter();
                         const count = await filterApi(); // Wait for filterApi to complete
                         if (count !== null) {
