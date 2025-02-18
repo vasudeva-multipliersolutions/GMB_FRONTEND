@@ -83,7 +83,7 @@ export function NewMenuBar() {
     label: selectedItem,
 
     leftIcon: <SaveIcon className="text-blue-500" />,
-    items: [
+    items:  mail === "manipal@gmail.com" ?  [
       {
         label: "All",
         leftIcon: <FaHospitalAlt className="text-indigo-500" />,
@@ -342,7 +342,7 @@ export function NewMenuBar() {
           },
         ],
       },
-    ],
+    ] : [],
   };
 
   return (
