@@ -39,6 +39,8 @@ export default function Dashboard(props) {
   const Branch = localStorage.getItem("Branch");
   const Cluster = localStorage.getItem("Cluster");
 
+  console.log("COntext Month  :"+ contextMonth);
+
 
   useEffect(() => {
     const clusterEmails = [
@@ -403,7 +405,7 @@ export default function Dashboard(props) {
               )}
             </div>
 
-            <TopDoctor contextHospitals={contextHospitals} />
+            <TopDoctor contextHospitals={contextHospitals} contextMonth={contextMonth} />
 
             <div
               className="grapharea"

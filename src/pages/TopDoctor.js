@@ -6,7 +6,7 @@ import BasicDetailsComponent from "../components/BasicDetailsComponent";
 import { SharedContext } from "../context/SharedContext";
 import TopDoctorDetails from "../pages/TopDoctorDetails"
 
-export default function TopDoctor({contextHospitals}) {
+export default function TopDoctor({contextHospitals, contextMonth}) {
   var username;
   const userlogo = localStorage.getItem("username");
   // alert(userlogo)
@@ -16,7 +16,7 @@ export default function TopDoctor({contextHospitals}) {
     <Fragment>
       
       <Navbar logoimg={logo} username={username} serach={false} topdoc={true} blockmenu={true}></Navbar>
-      <TopDoctorDetails contextHospitals={contextHospitals}  ></TopDoctorDetails>  
+      <TopDoctorDetails contextHospitals={contextHospitals} contextMonth={contextMonth}  ></TopDoctorDetails>  
         
     </Fragment>
   );

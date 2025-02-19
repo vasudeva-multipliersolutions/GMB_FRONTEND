@@ -8,13 +8,13 @@ import { ShimmerThumbnail, ShimmerTitle } from "react-shimmer-effects";
 import { SidebarContext } from "../SidebarContext";
 import DoctorTableComponent from "../components/DoctorTableComponent";
 
-export default function TopDoctorDetails({contextHospitals }) {
+export default function TopDoctorDetails({contextHospitals, contextMonth}) {
   const [docData, setDocData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [insightdata, setInsightData] = useState(null);
   
  
-  const { getDrName, getInsightState, getInsightsCity, currentCluster} =  useContext(SharedContext);
+  const { getDrName, getInsightState, getInsightsCity, currentCluster,} =  useContext(SharedContext);
     
   const api = localStorage.getItem("API");
   const mail = localStorage.getItem("mail");
@@ -24,9 +24,9 @@ export default function TopDoctorDetails({contextHospitals }) {
   const { isCollapsed } = useContext(SidebarContext);
   const { windowWidth } = useContext(SidebarContext);
 
-    useEffect(() => { 
-        //console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals);
-    })
+  
+        console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals + "contextMonth", contextMonth);
+    
     
 
    
@@ -39,7 +39,7 @@ export default function TopDoctorDetails({contextHospitals }) {
 
       const cityToSend = location === "All" ? "" : location;
 
-      if (getInsightState || getInsightsCity || contextHospitals) {
+      if (getInsightState || getInsightsCity || contextHospitals || contextMonth) {
         //console.log("Hello"+ 1)
         try {
           const response = await fetch(`${api}/topdoc`, {
@@ -50,6 +50,7 @@ export default function TopDoctorDetails({contextHospitals }) {
             body: JSON.stringify({
               state: cluster,
               branch: cityToSend,
+              month: contextMonth,
             }),
           });
           const data = await response.json();
@@ -64,7 +65,7 @@ export default function TopDoctorDetails({contextHospitals }) {
       }
     }
     fetchDataFilter();
-  }, [getInsightState, getInsightsCity, contextHospitals]);
+  }, [getInsightState, getInsightsCity, contextHospitals, contextMonth]);
   
  
        
