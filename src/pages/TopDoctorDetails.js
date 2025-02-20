@@ -8,13 +8,13 @@ import { ShimmerThumbnail, ShimmerTitle } from "react-shimmer-effects";
 import { SidebarContext } from "../SidebarContext";
 import DoctorTableComponent from "../components/DoctorTableComponent";
 
-export default function TopDoctorDetails({contextHospitals, contextMonth}) {
+export default function TopDoctorDetails({contextHospitals}) {
   const [docData, setDocData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [insightdata, setInsightData] = useState(null);
   
  
-  const { getDrName, getInsightState, getInsightsCity, currentCluster,} =  useContext(SharedContext);
+  const { getDrName, getInsightState, getInsightsCity, currentCluster, contextMonth} =  useContext(SharedContext);
     
   const api = localStorage.getItem("API");
   const mail = localStorage.getItem("mail");
@@ -25,23 +25,40 @@ export default function TopDoctorDetails({contextHospitals, contextMonth}) {
   const { windowWidth } = useContext(SidebarContext);
 
   
-        console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals + "contextMonth", contextMonth);
+  console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals + "contextMonth", contextMonth);
     
     
 
    
 
-  useEffect(() => {
+ useEffect(() => {
     async function fetchDataFilter() {
 
       const location = contextHospitals ? contextHospitals : getInsightsCity;
       const cluster = contextHospitals ? "" : getInsightState;
+      
+      
+      
+      // let cityToSend = "";
+      // let monthToSend = "";
+      
+      
+      // if (location === "All"){
+      //   cityToSend = "";
+      //   monthToSend = "";
+      // } else {
+        //   cityToSend = location;
+        //   monthToSend = contextMonth;
+        // }
+        
+        console.log("Hello--------"+ contextMonth)
+        
 
-      const cityToSend = location === "All" ? "" : location;
-
-      if (getInsightState || getInsightsCity || contextHospitals || contextMonth) {
-        //console.log("Hello"+ 1)
-        try {
+        if (getInsightState || getInsightsCity || contextHospitals || contextMonth) {
+          //console.log("Hello"+ 1)
+          try {
+          let cityToSend = location === "All" ? "" : location;
+          let monthToSend = contextMonth === "All" ? "" : contextMonth;
           const response = await fetch(`${api}/topdoc`, {
             method: "POST",
             headers: {
@@ -50,7 +67,7 @@ export default function TopDoctorDetails({contextHospitals, contextMonth}) {
             body: JSON.stringify({
               state: cluster,
               branch: cityToSend,
-              month: contextMonth,
+              month: monthToSend,
             }),
           });
           const data = await response.json();

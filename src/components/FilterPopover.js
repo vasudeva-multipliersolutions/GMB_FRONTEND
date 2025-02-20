@@ -159,12 +159,22 @@ export function NewMenuBar() {
             leftIcon: <FaHospitalAlt className="text-indigo-500" />,
             items: [
               {
+                label: "Begur",
+                leftIcon: <FaRegHospital className="text-green-500" />,
+                callback: handleItemClick, // Use the handler for clicks
+              },
+              {
                 label: "Doddaballapur",
                 leftIcon: <FaRegHospital className="text-green-500" />,
                 callback: handleItemClick, // Use the handler for clicks
               },
               {
-                label: "Old Airport Road",
+                label: "Hebbal",
+                leftIcon: <FaRegHospital className="text-green-500" />,
+                callback: handleItemClick, // Use the handler for clicks
+              },
+              {
+                label: "MHB",
                 leftIcon: <FaRegHospital className="text-green-500" />,
                 callback: handleItemClick, // Use the handler for clicks
               },
@@ -194,7 +204,7 @@ export function NewMenuBar() {
                 callback: handleItemClick, // Use the handler for clicks
               },
               {
-                label: "Millers road",
+                label: "Millers Road",
                 leftIcon: <FaRegHospital className="text-green-500" />,
                 callback: handleItemClick, // Use the handler for clicks
               },
@@ -219,6 +229,10 @@ export function NewMenuBar() {
         label: "South East",
         leftIcon: <FaHospitalAlt className="text-indigo-500" />,
         items: [
+          {
+            label: "BBR",
+            callback: handleItemClick, 
+          },
           {
             label: "Vijayawada",
             callback: handleItemClick, // Use the handler for clicks
@@ -256,7 +270,7 @@ export function NewMenuBar() {
             callback: handleItemClick, // Use the handler for clicks
           },
           {
-            label: "Pune Kharadi",
+            label: "Pune",
             leftIcon: <FaRegHospital className="text-green-500" />,
             callback: handleItemClick, // Use the handler for clicks,
           },
@@ -311,7 +325,7 @@ export function NewMenuBar() {
             callback: handleItemClick, // Use the handler for clicks
           },
           {
-            label: "Millers road",
+            label: "Millers Road",
             leftIcon: <FaRegHospital className="text-green-500" />,
             callback: handleItemClick, // Use the handler for clicks
           },

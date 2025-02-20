@@ -342,6 +342,7 @@ export default function Dashboard(props) {
         locationProfiles,
         setLocationProfiles,
         setContextMonth,
+        contextMonth,
         setContextYear,
         getInsightState,
         setInsightsState,
