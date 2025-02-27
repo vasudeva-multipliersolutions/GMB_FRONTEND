@@ -235,12 +235,11 @@ export default function Dashboard(props) {
   
     if (mail === "manipal@gmail.com") {
       getAllData("No");
-    } else if (!currentCluster) {
+    } else  {
       if (Branch && Branch !== "undefined") {
         console.log("Branch@@@@@@@@ : "+Branch);
         getAllData(Branch);
       } else if (Cluster) {
-
         setInsightsState(Cluster);
         getClusterData(Cluster);
       }

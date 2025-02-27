@@ -342,7 +342,7 @@ export default function BasicDetailsComponent() {
                 )}
   
                 {/* Second Table */}
-                    {rows.length > 0 && (
+                    {/* {rows.length > 0 && (
                       <div className="mt-5">
                   <TableComponent
                     bcolor="white"
@@ -362,7 +362,7 @@ export default function BasicDetailsComponent() {
                     rows={[percentagerow]}
                         />
                         </div>
-                )}
+                )} */}
               </div>
             )}
           </div>

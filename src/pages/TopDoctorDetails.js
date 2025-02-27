@@ -25,7 +25,7 @@ export default function TopDoctorDetails({contextHospitals}) {
   const { windowWidth } = useContext(SidebarContext);
 
   
-  console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals + "contextMonth", contextMonth);
+  //console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals + "contextMonth", contextMonth);
     
     
 

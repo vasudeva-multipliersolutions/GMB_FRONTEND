@@ -3,9 +3,6 @@ import React, { Fragment, useEffect, useState, useContext } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { SharedContext } from "../context/SharedContext";
 import { FaAlignJustify, FaAnglesLeft, FaDashcube } from "react-icons/fa6";
-
-import ExcelJS from "exceljs";
-import * as FileSaver from "file-saver";
 import { FaChartBar, FaSearch, FaUserMd } from "react-icons/fa";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { MdTableChart } from "react-icons/md";
@@ -16,6 +13,8 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { NewMenuBar } from "./FilterPopover";
 
+
+
 export default function Navbar(props) {
   const mail = localStorage.getItem("mail");
   const loginBranch = localStorage.getItem("Branch");
@@ -23,7 +22,7 @@ export default function Navbar(props) {
   const { isCollapsed, toggleSidebar, drNameContext } =
     useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles, setContextMonth, setInsightsAnalysis, setReloadCondition } = useContext(SharedContext);
+  const { setContextCity, setLocationProfiles, setContextMonth, setInsightsAnalysis, setReloadCondition, } = useContext(SharedContext);
   const { setInsightsState, setInsightsCity, setContextYear, } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
@@ -40,12 +39,13 @@ export default function Navbar(props) {
   const [reload, setReload] = useState();
   const [isNavContentsVisible, setNavContentsVisible] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [countOfProfiles, setCountProfiles] = useState();
+  const [getcountOfProfiles, setcountOfProfiles] = useState(null);
   const [currentCluster, setCurrentCluster] = useState();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const location = useLocation();
+  
 
   const isActive = (path) => location.pathname === path;
 
@@ -83,345 +83,126 @@ export default function Navbar(props) {
   //   setIsCollapsed(!isCollapsed);
   // }
 
-  useEffect(() => {
-    const storedLogo = localStorage.getItem("logo");
-    if (storedLogo) setLogo(storedLogo);
-
-    // const isAuthenticated = localStorage.getItem("Branch");
-    // console.log("]]]]]]]]]]]]]]]]]]]]]]=>", isAuthenticated)
-
-    if (loginBranch ==="undefined") {
-      setState(Cluster);
-      filterApi();
-    }
-
-    // if (props.currentCluster !== "") {
-    //   setState(Cluster);
-    //   setCurrentCluster(props.currentCluster);
-    // } else {
-    //   setCurrentCluster("");
-    // }
-    // if (currentCluster === "") {
-    //   filterApi();
-    // }
-
-  }, []);
-
-  useEffect(() => {
-    console.log("5555555555=>", props.currentCluster)
-    if (props.currentCluster !== "") {
-      setState(props.currentCluster); // Use the prop value instead of Cluster from localStorage
-      setCurrentCluster(props.currentCluster);
-    } else {
-      setCurrentCluster("");
-    }
-    if (currentCluster === "") {
-      filterApi();
-    }
-  }, [props.currentCluster]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  function nameHandelar(e) {
-    setName(e.target.value);
+  function nameHandelar( e )
+  {
+    setName( e.target.value )
   }
-  function cityInsightHandelar(e) {
-    setCity(e.target.value);
+  function nameseter()
+  {
+    setDrName(getName)
   }
-  function stateInsiteHandelar(e) {
-    setState(e.target.value);
-    setCity("");
-  }
-  function nameseter() {
-    setDrName(getName);
-  }
-  async function getStateHandeler(e) {
-    setState(e.target.value);
-    if (getState === "All") {
+  async function getStateHandeler( e )
+  {
+    setCity("")
+    if (e.target.value === "All") {
       window.location.reload();
-      //setReloadCondition(true)
+    }else {
+      setState( e.target.value )
     }
-    setCity("");
+    //filterApi()
+  }
+  function getCityHandeler( e )
+  {
     setMonth("");
-    filterApi();
+    setCity( e.target.value )
   }
-
-  function monthHandelar(e) {
-    setMonth(e.target.value);
-    if (getMonth === "All") {
-      setReload("All")
-    }
-  }
-
-  function monthseter() {
-    setContextMonth(getMonth);
-  }
-
-  function yearHandelar(e) {
-    setYear(e.target.value);
-  }
-
-  function yearseter() {
-    setContextYear(getYear);
-  }
-
-  //console.log("SetContextYear : " + getYear);
-
-  async function filterApi() {
-    try {
-
-      const cityToSend = getCity === "All" ? "" : getCity;
-
-      const response = await fetch(`${api}/getfilterdata`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ state: getState, branch: cityToSend }),
-      });
-      const data = await response.json();
-
-      setCountProfiles(data);
-      if (data.result[0].branches && data.result[0].branches.length > 0) {
-        setCitys(data.result[0].branches);
-      }
-      setAllNames(data.result[0].businessNames);
-      setInsightsAnalysis(data.result[0].analysis);
-
-      if (props.serach) {
-        setContextCity(getCity);
-      }
-      return data.countOfProfiles;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }
-
-
-
-  function Insightsapicall() {
-    setInsightsState(getState);
-    setInsightsCity(getCity);
-    //console.log("Insight api call..........." +setInsightsState+ "@" +getCity);
-  }
-  function insightsChecker() {
-    if (props.insights || props.topdoc) {
-      Insightsapicall();
-      // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-    }
+  function monthHandelar( e )
+  {
+    setMonth( e.target.value )
   }
 
   useEffect(() => {
-    //console.log("Current path:", window.location.pathname);
-    // Your other code here
-  }, []);
-
-  function getCityHandeler(e) {
-    setCity(e.target.value);
-    if (getCity === "All") {
-      setReload("All");
-    }
-    setMonth("");
-  }
-
-  useEffect(() => {
-    async function getAllDoctrosNames() {
-      const docNames = await fetch("" + api + "/getAllDocNames", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const allNames = await docNames.json();
-      setAllNames(allNames);
-    }
-    async function getallLoc() {
-      const locDetails = await fetch("" + api + "/getunquelocdata", {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const getlocdetails = await locDetails.json();
-      //console.log("check it --------------------->", getlocdetails);
-      setStates(getlocdetails[0].states);
-      setCitys(getlocdetails[0].branches);
-    }
-    getallLoc();
-    getAllDoctrosNames();
-
-    const logo = localStorage.getItem("logo");
-    if (logo) {
-      setLogo(logo);
-    }
-
-
-    if (mail) {
-      setEmai(mail);
+    if (getState) {
+      filterApi();
     }
   }, [getState]);
 
-  const exportExcel = (excelData) => {
-    const title = "Doctor Details";
-    // const details = excelData.result[0]["details"];
-    const details = excelData.result[0]["details"].map((detail) => ({
-      ...detail,
-      businessName: detail.businessName.split("|")[0].trim(),
-    }));
+  useEffect(() => {
+    if (getCity) {
+      //setContextCity(getCity);
+      filterApi();
+    }
+  }, [getCity]); 
 
-    // Column header mapping for aliasing
-    const columnMapping = {
-      businessName: "Dr Name",
-      googleSearchMobile: "GS - Mobile",
-      googleSearchDesktop: "GS - Desktop",
-      googleMapsMobile: "GM - Mobile",
-      googleMapsDesktop: "GM - Desktop",
-      calls: "Phone Calls",
-      directions: "Direction Clicks",
-      websiteClicks: "Website Clicks",
-      month: "Month",
-      state: "State",
-      branch: "Branch",
-    };
+//   useEffect(() => {
+//   if (getcountOfProfiles) {
+//     console.log("Updating setLocationProfiles with:", getcountOfProfiles);
+//     setLocationProfiles(getcountOfProfiles);
+//   }
+// }, [getcountOfProfiles]); 
 
-    const columnOrder = [
-      "businessName",
-      "googleSearchMobile",
-      "googleSearchDesktop",
-      "googleMapsMobile",
-      "googleMapsDesktop",
-      "calls",
-      "directions",
-      "websiteClicks",
-      "month",
-      "state",
-      "branch",
-    ];
-
-    let workbook = new ExcelJS.Workbook();
-    let worksheet = workbook.addWorksheet("details");
-    worksheet.properties.outlineLevelCol = 2;
-    worksheet.properties.defaultRowHeight = 55;
-
-    // Adding Header Row
-    let header = columnOrder.map((col) => columnMapping[col]);
-    let headerRow = worksheet.addRow(header);
-    headerRow.eachCell((cell, number) => {
-      cell.fill = {
-        type: "pattern",
-        pattern: "solid",
-        fgColor: { argb: "b7274c" },
-      };
-
-      cell.font = {
-        bold: true,
-        color: { argb: "FFFFFF" },
-        size: 12,
-        vertAlign: "superscript",
-      };
-      cell.alignment = {
-        wrapText: true,
-        vertical: "middle",
-        horizontal: "center",
-      };
-
-      cell.border = {
-        top: { style: "thin" },
-        left: { style: "thin" },
-        bottom: { style: "thin" },
-        right: { style: "thin" },
-      };
-    });
-
-    // Adding Data Rows
-    details.forEach((row, rowIndex) => {
-      let rowData = columnOrder.map((col) => row[col] ?? ""); // Ensure an empty string if the value is missing
-      let excelRow = worksheet.addRow(rowData);
-      excelRow.eachCell((cell, number) => {
-        cell.font = {
-          vertAlign: "superscript",
-          size: 12,
-        };
-        cell.alignment = {
-          wrapText: true,
-          vertical: "middle",
-          horizontal: "center",
-        };
-        cell.border = {
-          top: { style: "thin" },
-          left: { style: "thin" },
-          bottom: { style: "thin" },
-          right: { style: "thin" },
-        };
-      });
-    });
-
-    worksheet.columns.forEach((column) => {
-      column.width = 15;
-    });
-
-    worksheet.eachRow((row, rowNumber) => {
-      row.height = 55;
-    });
-
-    workbook.xlsx.writeBuffer().then((data) => {
-      let blob = new Blob([data], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      FileSaver.saveAs(blob, title + ".xlsx");
-    });
-  };
-
-  async function getAllDoctrosDetails(getState, getCity) {
-    const docDetails = await fetch("" + api + "/getAllDocDetails", {
-      method: "POST",
+  async function filterApi()
+  {
+    // alert(getState)
+    let cityToSend = getCity === "All" ? "" : getCity;
+    const response = await fetch(api + '/getfilterdata', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ state: getState, branch: getCity }),
+      body: JSON.stringify({ "state": getState, "branch": cityToSend })
     });
-    const allDetails = await docDetails.json();
-    //console.log("All Doctor details State and branch wise : ", allDetails);
-    exportExcel(allDetails);
-  }
-  function bulkExport() {
-    getAllDoctrosDetails(getState, getCity);
+    const data = await response.json();
+    // alert("Hello")
+    //console.log("datacountOfProfiles: ",data.result[0].countOfProfiles)
+    setAllNames(data.result[0].businessNames)
+    if (data.result[0].branches) {
+    setCitys(data.result[0].branches)
+    }
+
+    if (data.countOfProfiles && data.countOfProfiles.length > 0) {
+      console.log("New countOfProfiles:", data.countOfProfiles);
+      setcountOfProfiles([...data.countOfProfiles]); // Ensure new array reference
+    }
+    //setContextCity(getCity)
+
+    // if(props.serach)
+    // {
+    //   setContextCity(getCity)
+    // }
   }
 
-  function ApplyClick() {
-    setReloadCondition(reload);
-    if (mail === "manipal@gmail.com") {
-      if (getCity === "All") {
-        setCity(""); // Clear the city state
-        setContextCity("");
-        setContextMonth("");
-        console.log("check it --------------------->manipal@gmail.com");
-      }
+  useEffect(() => {
+    async function getAllDoctrosNames()
+    {
+      const docNames = await fetch(api + '/getAllDocNames', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      const allNames = await docNames.json()
+      // alert(allNames)
+      setAllNames(allNames)
+    }
+    async function getallLoc()
+    {
+      const locDetails = await fetch(api + '/getunquelocdata', {
+        method: "post" ,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      const getlocdetails = await locDetails.json()
+      setStates(getlocdetails[0].states)
+      setCitys(getlocdetails[0].branches)
+  
+    }
+    if (mail === "manipal@gmail.com")
+    {
+    getallLoc()
+    getAllDoctrosNames()
     } else {
-      if (currentCluster === "") {
-        setState("");
-        setCity(loginBranch); // Clear the city state
-        setContextCity(loginBranch);
-        setContextMonth("");
-        console.log("check it --------------------->branch@gmail.com", currentCluster);
-      } else {
-        setContextCity(getCity);
+      if (loginBranch === "undefined") {
         setState(Cluster);
-        setInsightsState(Cluster);
-        console.log("check it --------------------->Cluster@gmail.com", currentCluster);
+        // filterApi();
+      } else {
+        setCity(loginBranch);
+        //filterApi();
       }
     }
-  }
+    setLogo(localStorage.getItem("logo"))
+  }, [])
 
   return (
     <Fragment>
@@ -571,7 +352,7 @@ export default function Navbar(props) {
                       <select
                         value={getState}
                         onChange={getStateHandeler}
-                        onInputCapture={stateInsiteHandelar}
+                        //onInputCapture={filterApi}
                         style={{
                           width: "150px",
                           borderRadius: " 10px",
@@ -584,16 +365,16 @@ export default function Navbar(props) {
                         <option value="All">All</option>
                         {getStates &&
                           getStates
-                          .filter(item => item !== "#N/A") 
-                          .sort()
-                          .map((item, index) => {
-                            if (item != "#N/A")
-                        return (
-                        <option key={index} value={item}>
-                          {item}
-                        </option>
-                        );
-                          })}
+                            .filter(item => item !== "#N/A")
+                            .sort()
+                            .map((item, index) => {
+                              if (item != "#N/A")
+                                return (
+                                  <option key={index} value={item}>
+                                    {item}
+                                  </option>
+                                );
+                            })}
                       </select>
 
                       {/* <button
@@ -621,7 +402,7 @@ export default function Navbar(props) {
                       <select
                         value={getCity}
                         onChange={getCityHandeler}
-                        onInputCapture={cityInsightHandelar}
+                        //onInputCapture={cityInsightHandelar}
                         style={{
                           width: "150px",
                           borderRadius: " 10px",
@@ -634,16 +415,16 @@ export default function Navbar(props) {
                         <option value="All">All</option>
                         {getCitys &&
                           getCitys
-                          .filter(item => item !== "#N/A") 
-                          .sort()
-                          .map((item, index) => {
-                            if (item != "#N/A")
-                              return (
-                                <option key={index} value={item}>
-                                  {item}
-                                </option>
-                              );
-                          })}
+                            .filter(item => item !== "#N/A")
+                            .sort()
+                            .map((item, index) => {
+                              if (item != "#N/A")
+                                return (
+                                  <option key={index} value={item}>
+                                    {item}
+                                  </option>
+                                );
+                            })}
                       </select>
                       {/* <button
                         onClick={() => {
@@ -676,8 +457,8 @@ export default function Navbar(props) {
                         <div className="input-group">
                           <select
                             value={getMonth}
-                            onChange={monthHandelar}
-                            onInputCapture={monthHandelar}
+                             onChange={monthHandelar}
+                            //onInputCapture={monthHandelar}
                             style={{
                               width: "100%",
                               borderRadius: " 10px",
@@ -718,11 +499,11 @@ export default function Navbar(props) {
                         </div>
                       </div>
                     </div>
-                    <div
+                    {props.monthfilter &&<div
                       className="datepicker d-flex justify-content-end"
                       style={{ display: props.monthfilter ? "block" : "none" }}
                     >
-                      <div className="data_list_selection m-1">
+                       <div className="data_list_selection m-1">
                         <div className="input-group">
                           <select
                             //value={getYear}
@@ -745,7 +526,7 @@ export default function Navbar(props) {
                           </select>
                         </div>
                       </div>
-                    </div>
+                    </div>}
                   </div>
                 )}
 
@@ -753,17 +534,17 @@ export default function Navbar(props) {
 
 
 
-                {!props.filterpopover && (
+                {!props.filterpopover && props.monthfilter && (
                   <div className="data_list_selection m-1">
                     <button
-                      onClick={async () => {
-                        ApplyClick();
-                        monthseter();
-                        const count = await filterApi(); // Wait for filterApi to complete
-                        if (count !== null) {
-                          setLocationProfiles(count); // Use the returned count
-                        }
-                        insightsChecker();
+                    
+                      onClick={ () => {
+                        setInsightsState(getState);
+                        setInsightsCity(getCity);
+                        setContextMonth(getMonth);
+                        setContextCity(getCity)
+                        setLocationProfiles(getcountOfProfiles);
+                        filterApi();
                       }}
                       style={{
                         borderRadius: " 10px",
@@ -792,7 +573,7 @@ export default function Navbar(props) {
                   className="data_list_selection m-1"
                   style={{
                     display:
-                      props.filterpopover ? "block" : "none",
+                      props.filterpopover || props.clusterlogin ? "block" : "none",
                   }}
                 >
                   <div className="input-group">
@@ -858,7 +639,7 @@ export default function Navbar(props) {
                     style={{
                       display: !props.serach ? "block" : "none",
                     }}
-                    onClick={bulkExport}
+                   // onClick={bulkExport}
                     disabled={!getState}
                   >
                     Bulk Download

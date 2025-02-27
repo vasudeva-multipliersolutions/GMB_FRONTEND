@@ -81,213 +81,21 @@ export function NewMenuBar() {
 
   const menuItemsData = {
     label: selectedItem,
-
     leftIcon: <SaveIcon className="text-blue-500" />,
-    items: [
+    items: mail === "manipal@gmail.com" ? [
       {
         label: "All",
         leftIcon: <FaHospitalAlt className="text-indigo-500" />,
         callback: handleItemClick, // Use the handler for clicks
       },
       {
-        label: "North West",
-        leftIcon: <FaHospitalAlt className="text-indigo-500" />,
-        callback: handleItemClick,
-        items: [
-          {
-            label: "Delhi - NCR",
-            leftIcon: <FaHospitalAlt className="text-indigo-500" />,
-            items: [
-              {
-                label: "Delhi",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick,
-              },
-              {
-                label: "Ghaziabad",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick,
-              },
-              {
-                label: "Palamvihar",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick,
-              },
-            ],
-          },
-          {
-            label: "Jaipur",
-            callback: handleItemClick,
-          },
-          {
-            label: "Patiala",
-            callback: handleItemClick,
-          },
-          {
-            label: "Pune",
-            leftIcon: <FaHospitalAlt className="text-indigo-500" />,
-            items: [
-              {
-                label: "Pune Kharadi",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick,
-              },
-              {
-                label: "Baner",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick,
-              },
-            ],
-          },
-        ],
-      },
-
-      {
-        label: "Goa",
-        callback: handleItemClick, // Use the handler for clicks
-      },
-      {
-        label: "Mangalore",
-        callback: handleItemClick,
-      },
-      {
         label: "South",
         leftIcon: <FaHospitalAlt className="text-indigo-500" />,
         items: [
           {
-            label: "Bengaluru",
-            leftIcon: <FaHospitalAlt className="text-indigo-500" />,
-            items: [
-              {
-                label: "Begur",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-              {
-                label: "Doddaballapur",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-              {
-                label: "Hebbal",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-              {
-                label: "MHB",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-              {
-                label: "Sarjapur",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-              {
-                label: "Jayanagar",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-              {
-                label: "Varthur",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-              {
-                label: "Malleshwaram",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-              {
-                label: "Whitefield",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-              {
-                label: "Millers Road",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-              {
-                label: "Yeshwanthpur",
-                leftIcon: <FaRegHospital className="text-green-500" />,
-                callback: handleItemClick, // Use the handler for clicks
-              },
-            ],
-          },
-          {
-            label: "Salem",
-            callback: handleItemClick, // Use the handler for clicks
-          },
-          {
-            label: "Mysore",
-            callback: handleItemClick, // Use the handler for clicks
-          },
-        ],
-      },
-      {
-        label: "South East",
-        leftIcon: <FaHospitalAlt className="text-indigo-500" />,
-        items: [
-          {
-            label: "BBR",
-            callback: handleItemClick, 
-          },
-          {
-            label: "Vijayawada",
-            callback: handleItemClick, // Use the handler for clicks
-          },
-        ],
-      },
-
-      {
-        label: "Hospitals",
-        leftIcon: <FaHospitalAlt className="text-indigo-500" />,
-        items: [
-          {
-            label: "Delhi",
+            label: "Begur",
             leftIcon: <FaRegHospital className="text-green-500" />,
             callback: handleItemClick, // Use the handler for clicks
-          },
-          {
-            label: "Ghaziabad",
-            leftIcon: <FaRegHospital className="text-green-500" />,
-            callback: handleItemClick, // Use the handler for clicks
-          },
-          {
-            label: 'Palamvihar',
-            leftIcon: <FaRegHospital className="text-green-500" />,
-            callback: handleItemClick, // Use the handler for clicks
-          },
-          {
-            label: "Jaipur",
-            leftIcon: <FaRegHospital className="text-green-500" />,
-            callback: handleItemClick, // Use the handler for clicks
-          },
-          {
-            label: "Patiala",
-            leftIcon: <FaRegHospital className="text-green-500" />,
-            callback: handleItemClick, // Use the handler for clicks
-          },
-          {
-            label: "Pune",
-            leftIcon: <FaRegHospital className="text-green-500" />,
-            callback: handleItemClick, // Use the handler for clicks,
-          },
-          {
-            label: "Baner",
-            leftIcon: <FaRegHospital className="text-green-500" />,
-            callback: handleItemClick, // Use the handler for clicks
-          },
-          {
-            label: "Goa",
-            leftIcon: <FaRegHospital className="text-green-500" />,
-            callback: handleItemClick, // Use the handler for clicks
-          },
-          {
-            label: "Mangalore",
-            leftIcon: <FaRegHospital className="text-green-500" />,
-            callback: handleItemClick,
           },
           {
             label: "Doddaballapur",
@@ -295,7 +103,12 @@ export function NewMenuBar() {
             callback: handleItemClick, // Use the handler for clicks
           },
           {
-            label: "Old Airport Road",
+            label: "Hebbal",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+          {
+            label: "MHB",
             leftIcon: <FaRegHospital className="text-green-500" />,
             callback: handleItemClick, // Use the handler for clicks
           },
@@ -345,18 +158,290 @@ export function NewMenuBar() {
             callback: handleItemClick, // Use the handler for clicks
           },
           {
-            label: "Vijayawada",
+            label: "Brookefield",
             leftIcon: <FaRegHospital className="text-green-500" />,
             callback: handleItemClick, // Use the handler for clicks
           },
           {
-            label: "Hospitals",
+            label: "Budigere",
             leftIcon: <FaRegHospital className="text-green-500" />,
             callback: handleItemClick, // Use the handler for clicks
           },
         ],
       },
-    ],
+      {
+        label: "North West",
+        leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+        callback: handleItemClick,
+        items: [
+          {
+            label: "Delhi - NCR",
+            leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+            items: [
+              {
+                label: "Delhi",
+                leftIcon: <FaRegHospital className="text-green-500" />,
+                callback: handleItemClick,
+              },
+              {
+                label: "Ghaziabad",
+                leftIcon: <FaRegHospital className="text-green-500" />,
+                callback: handleItemClick,
+              },
+              {
+                label: "Ghaziabad",
+                leftIcon: <FaRegHospital className="text-green-500" />,
+                callback: handleItemClick,
+              },
+            ],
+          },
+          {
+            label: "Pune",
+            leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+            callback: handleItemClick,
+          },
+          {
+            label: "Jaipur",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick,
+          },
+          {
+            label: "Patiala",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick,
+          },
+          {
+            label: "Baner",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick,
+          },
+        ],
+      },
+      {
+        label: "Goa-Mangalore",
+        leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+        items: [
+          {
+            label: "Goa",
+            callback: handleItemClick, 
+          },
+          {
+            label: "Mangalore",
+            callback: handleItemClick, // Use the handler for clicks
+          },
+        ],
+      },
+      {
+        label: "South East",
+        leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+        items: [
+          {
+            label: "BBR",
+            callback: handleItemClick, 
+          },
+          {
+            label: "Vijayawada",
+            callback: handleItemClick, // Use the handler for clicks
+          },
+        ],
+      },
+      {
+        label: "International",
+        leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+        items: [
+          {
+            label: "Bangladesh",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, 
+          },
+          {
+            label: "Burundi",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+          {
+            label: "Kenya",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+          {
+            label: "Malawi",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+          {
+            label: "Mauritius",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+          {
+            label: "Rwanda",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+          {
+            label: "Uganda",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+        ],
+      },
+      {
+        label: "VC Doctor",
+        leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+        items: [
+
+          {
+            label: "Varthur",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+        ],
+      },
+      {
+        label: "East",
+        leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+        items: [
+          {
+            label: "Broad way",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+          {
+            label: "Dhakuria",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+          {
+            label: "Mukundapur",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+          {
+            label: "Salt lake",
+            leftIcon: <FaRegHospital className="text-green-500" />,
+            callback: handleItemClick, // Use the handler for clicks
+          },
+        ],
+      },
+
+    //   {
+    //     label: "Hospitals",
+    //     leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+    //     items: [
+    //       {
+    //         label: "Delhi",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Ghaziabad",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: 'Palamvihar',
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Jaipur",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Patiala",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Pune",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks,
+    //       },
+    //       {
+    //         label: "Baner",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Goa",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Mangalore",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick,
+    //       },
+    //       {
+    //         label: "Doddaballapur",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Old Airport Road",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Sarjapur",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Jayanagar",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Varthur",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Malleshwaram",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Whitefield",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Millers Road",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Yeshwanthpur",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Salem",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Mysore",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Vijayawada",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //       {
+    //         label: "Hospitals",
+    //         leftIcon: <FaRegHospital className="text-green-500" />,
+    //         callback: handleItemClick, // Use the handler for clicks
+    //       },
+    //     ],
+    //   },
+    ] : [],
   };
 
   return (
