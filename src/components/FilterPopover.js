@@ -189,7 +189,7 @@ export function NewMenuBar() {
                 callback: handleItemClick,
               },
               {
-                label: "Ghaziabad",
+                label: "Gurugram",
                 leftIcon: <FaRegHospital className="text-green-500" />,
                 callback: handleItemClick,
               },
@@ -197,7 +197,7 @@ export function NewMenuBar() {
           },
           {
             label: "Pune",
-            leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+            leftIcon: <FaRegHospital className="text-green-500" />,
             callback: handleItemClick,
           },
           {
