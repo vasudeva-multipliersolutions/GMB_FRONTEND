@@ -41,6 +41,10 @@ export default function Navbar(props) {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [getcountOfProfiles, setcountOfProfiles] = useState(null);
   const [currentCluster, setCurrentCluster] = useState();
+  const [lastFiveMonth, setLastMonths] = useState();
+
+  const [selectedYear, setSelectedYear] = useState("");
+  const [filteredMonths, setFilteredMonths] = useState([]);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -48,6 +52,24 @@ export default function Navbar(props) {
   
 
   const isActive = (path) => location.pathname === path;
+
+  function yearHandler(e) {
+    const year = e.target.value;
+    setSelectedYear(year);
+  }
+
+  useEffect(() => {
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    if (!selectedYear) {
+      setFilteredMonths(monthNames.map(m => `${m}-2024`).concat(monthNames.map(m => `${m}-2025`)));
+    } else {
+      setFilteredMonths(monthNames.map(m => `${m}-${selectedYear}`));
+    }
+  }, [selectedYear]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -185,7 +207,7 @@ export default function Navbar(props) {
       })
       const getlocdetails = await locDetails.json()
       setStates(getlocdetails[0].states)
-      setCitys(getlocdetails[0].branches)
+    //setCitys(getlocdetails[0].branches)
   
     }
     if (mail === "manipal@gmail.com")
@@ -203,6 +225,47 @@ export default function Navbar(props) {
     }
     setLogo(localStorage.getItem("logo"))
   }, [])
+
+  useEffect(() => {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    let lastSixMonths = [];
+    for (let i = 6; i > 0; i--) {
+      const monthIndex = (today.getMonth() - i + 12) % 12;
+      const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
+      lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
+    }
+
+    // Filter months based on selected year
+    if (selectedYear) {
+      setFilteredMonths(lastSixMonths.filter(m => m.year === selectedYear));
+    } else {
+      setFilteredMonths(lastSixMonths);
+    }
+  }, [selectedYear]);
+
+  useEffect(() => {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    let lastSixMonths = [];
+    for (let i = 6; i > 0; i--) {
+        const monthIndex = (today.getMonth() - i + 12) % 12;
+        const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
+        lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
+    }
+
+    // Filter months based on selected year
+    if (selectedYear) {
+        setFilteredMonths(lastSixMonths.filter(m => m.year === selectedYear).map(m => m.name));
+    } else {
+        setFilteredMonths(lastSixMonths.map(m => m.name));
+    }
+}, [selectedYear]);
+
 
   return (
     <Fragment>
@@ -263,15 +326,15 @@ export default function Navbar(props) {
                 {isCollapsed && <span className="tooltip">Work Tracker</span>}
                 <Link to="/WorkTracker">Work Tracker</Link>
               </MenuItem>
-            ) : (
-              <MenuItem
-                className={`menu-item ${isActive("/Matrics") ? "active-menu-item" : ""}`}
-                icon={<MdTableChart />}
-                onClick={() => navigate("/Matrics")}
-              >
-                {isCollapsed && <span className="tooltip">Metrics</span>}
-                <Link to="/Matrics">Metrics</Link>
-              </MenuItem>
+            ) : (<></>
+              // <MenuItem
+              //   className={`menu-item ${isActive("/Matrics") ? "active-menu-item" : ""}`}
+              //   icon={<MdTableChart />}
+              //   onClick={() => navigate("/Matrics")}
+              // >
+              //   {isCollapsed && <span className="tooltip">Metrics</span>}
+              //   <Link to="/Matrics">Metrics</Link>
+              // </MenuItem>
             )}
           </Menu>
         </Sidebar>
@@ -449,39 +512,31 @@ export default function Navbar(props) {
 
                 {!props.filterpopover && (
                   <div className="d-flex">
+                     {props.monthfilter &&<div
+                      className="datepicker d-flex justify-content-end"
+                      style={{ display: props.monthfilter ? "block" : "none" }}
+                    >
+                       <div className="data_list_selection m-1">
+                        <div className="input-group">
+                        <select onChange={yearHandler} value={selectedYear} style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
+                            <option value="">Select Year</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>}
                     <div
                       className="datepicker"
                       style={{ display: props.monthfilter ? "block" : "none" }}
                     >
                       <div className="data_list_selection m-1">
                         <div className="input-group">
-                          <select
-                            value={getMonth}
-                             onChange={monthHandelar}
-                            //onInputCapture={monthHandelar}
-                            style={{
-                              width: "100%",
-                              borderRadius: " 10px",
-                              padding: "4px",
-                              border: "1px solid #ccc",
-                              outline: "none",
-                            }}
-                          >
-                            <option value="">Select Month...</option>
-                            <option value="All">All</option>
-                            <option value="Sep">Sep</option>
-                            <option value="Oct">Oct</option>
-                            <option value="Nov">Nov</option>
-                            <option value="Dec">Dec</option>
-                            <option value="Jan">Jan</option>
-                            <option value="Feb">Feb</option>
-                            {/* <option value="All">All</option> */}
-                            {/* Map over monthsCalls array to create options */}
-                            {/* {props.monthsCalls?.map((month, index) => (
-                              <option key={index} value={month}>
-                                {month}
-                              </option>
-                            ))} */}
+                        <select value={getMonth} onChange={monthHandelar} style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
+                             <option value="">Select Month</option>
+                            {filteredMonths.map((month, index) => (
+                              <option key={index} value={month}>{month}</option>
+                            ))}
                           </select>
 
                           {/* <button
@@ -499,34 +554,7 @@ export default function Navbar(props) {
                         </div>
                       </div>
                     </div>
-                    {props.monthfilter &&<div
-                      className="datepicker d-flex justify-content-end"
-                      style={{ display: props.monthfilter ? "block" : "none" }}
-                    >
-                       <div className="data_list_selection m-1">
-                        <div className="input-group">
-                          <select
-                            //value={getYear}
-                            // onChange={(e) => { 
-                            //   yearHandelar(e);
-                            //   yearseter();
-                            // }}
-
-                            style={{
-                              width: "100%",
-                              borderRadius: " 10px 10px 10px 10px",
-                              padding: "4px",
-                              border: "1px solid #ccc",
-                              outline: "none",
-                            }}
-                          >
-                            <option value="">Select Year </option>
-                            <option value="2024">2024</option>
-                            <option value="2025">2025</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>}
+                   
                   </div>
                 )}
 
