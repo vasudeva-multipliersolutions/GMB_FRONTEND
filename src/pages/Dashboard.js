@@ -81,7 +81,7 @@ export default function Dashboard(props) {
         localStorage.clear();
         window.location.reload();
       }
-      
+
       const data = await response.json();
       console.log("1234🎉✨🎉🎉 : " + response.status);
 
@@ -107,6 +107,7 @@ export default function Dashboard(props) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           month: monthToSend,
@@ -114,6 +115,10 @@ export default function Dashboard(props) {
           state: stateToSend,
         }),
       });
+      if (!response.ok) {
+        localStorage.clear();
+        window.location.reload();
+      }
       const data = await response.json();
       setAllData("");
       setAllData(data);
