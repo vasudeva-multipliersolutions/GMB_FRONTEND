@@ -31,15 +31,17 @@ export default function Dashboard(props) {
   const [InsightsAnalysis, setInsightsAnalysis] = useState();
   const [reload, setReloadCondition] = useState();
   const [currentCluster, setCurrentCluster] = useState("");
-  
+
   const mail = localStorage.getItem("mail");
+  const loginEmail = localStorage.getItem("loginEmail");
   const username1 = localStorage.getItem("username");
   const psw1 = localStorage.getItem("psw");
   const api = localStorage.getItem("API");
   const Branch = localStorage.getItem("Branch");
   const Cluster = localStorage.getItem("Cluster");
+  const token = localStorage.getItem("token");
 
-  console.log("COntext Month  :"+ contextMonth);
+  console.log("COntext Month  :" + contextMonth);
 
 
   useEffect(() => {
@@ -53,7 +55,7 @@ export default function Dashboard(props) {
       "vcdoctorcluster@gmail.com",
       "eastcluster@gmail.com",
     ];
-  
+
     if (clusterEmails.includes(mail)) {
       setCurrentCluster(Cluster);
     } else {
@@ -65,13 +67,25 @@ export default function Dashboard(props) {
   useEffect(() => {
     setAllData(InsightsAnalysis);
   }, [InsightsAnalysis]);
- 
- //console.log( "+++++++++++++++++ data:" + reload);
+
+  //console.log( "+++++++++++++++++ data:" + reload);
   async function getAllData(branch) {
     try {
-      const response = await fetch(`${api}/${branch}`);
+      const response = await fetch(`${api}/${branch}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      });
+
+      if (!response.ok) {
+        localStorage.clear();
+        window.location.reload();
+      }
+      
       const data = await response.json();
-     // console.log("1234 : " + data[0]);
+      console.log("1234🎉✨🎉🎉 : " + response.status);
+
+
 
       setAllData(data);
 
@@ -87,7 +101,7 @@ export default function Dashboard(props) {
       const cityToSend = contextCity === "All" ? "" : contextCity;
       const monthToSend = month === "All" ? "" : month;
       const stateToSend = getInsightState;
-      
+
       console.log("000000-----00000000000) : " + stateToSend);
       const response = await fetch(`${api}/monthdata`, {
         method: "POST",
@@ -96,7 +110,7 @@ export default function Dashboard(props) {
         },
         body: JSON.stringify({
           month: monthToSend,
-          branch: cityToSend ,
+          branch: cityToSend,
           state: stateToSend,
         }),
       });
@@ -112,11 +126,12 @@ export default function Dashboard(props) {
 
   async function getClusterData(cluster) {
     try {
-    
+
       const response = await fetch(`${api}/monthdata`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           state: cluster,
@@ -192,7 +207,7 @@ export default function Dashboard(props) {
   //   } 
 
   //   getAnalysisData();
-    
+
 
   //   return () => {
   //     window.removeEventListener("storage", handleStorageChange);
@@ -206,21 +221,21 @@ export default function Dashboard(props) {
         navigate("/");
       }
     };
-  
+
     window.addEventListener("storage", handleStorageChange);
-  
+
     const username = localStorage.getItem("username");
     if (!username) {
       navigate("/");
       return;
     }
-  
+
     async function getAnalysisData() {
       try {
-        const response = await fetch("http://localhost:2024/api/login", {
+        const response = await fetch("http://localhost:2024/api/logindata", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: username1, psw: psw1 }),
+          headers: { "Content-Type": "application/json", },
+          body: JSON.stringify({ username: loginEmail, psw: psw1 }),
         });
         const result = await response.json();
         setAnalysisData(result);
@@ -228,39 +243,39 @@ export default function Dashboard(props) {
         console.error("Error fetching analysis data:", error);
       }
     }
-  
+
     setTimeout(() => {
       setIsLoading(false);
     }, 2000);
-  
+
     if (mail === "manipal@gmail.com") {
       getAllData("No");
-    } else  {
+    } else {
       if (Branch && Branch !== "undefined") {
-        console.log("Branch@@@@@@@@ : "+Branch);
+        console.log("Branch@@@@@@@@ : " + Branch);
         getAllData(Branch);
       } else if (Cluster) {
         setInsightsState(Cluster);
         getClusterData(Cluster);
       }
     }
-  
+
     getAnalysisData();
-  
+
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
   }, [navigate, username1, psw1, api, mail, currentCluster, Branch, Cluster]);
 
-  
+
 
   useEffect(() => {
     if (locationProfiles && locationProfiles[0]) {
       const verificationData = [
         {
           "Total Profiles":
-            locationProfiles[0]["Total Profiles"] 
-            //-locationProfiles[0]["Need Access"],
+            locationProfiles[0]["Total Profiles"]
+          //-locationProfiles[0]["Need Access"],
         },
         { "Verified Profiles": locationProfiles[0]["Verified Profiles"] },
         { "Unverified Profiles": locationProfiles[0]["Unverfied Profiles"] },
@@ -290,7 +305,7 @@ export default function Dashboard(props) {
   // })
 
   useEffect(() => {
-   // console.log("getContextCity@@@@@@@@ : " + contextCity);
+    // console.log("getContextCity@@@@@@@@ : " + contextCity);
     if (contextCity) {
       getMonthData("");
     }
@@ -324,11 +339,11 @@ export default function Dashboard(props) {
   const monthsCalls = showAllData?.graphDataCalls?.[0]
     ? Object.keys(showAllData.graphDataCalls[0])
     : [];
- // console.log("Months for Calls:", monthsCalls);
+  // console.log("Months for Calls:", monthsCalls);
   //console.log("Location Profiles--0-- : ", locationProfiles)
 
 
-  
+
   console.log("Location Profiles--0-- : ", currentCluster);
   useEffect(() => {
     //getMonthData("");
@@ -358,12 +373,12 @@ export default function Dashboard(props) {
           logoimg={logo ? logo : ""}
           username={username}
           serach={mail === "manipal@gmail.com" ? true : false}
-          monthhide={mail === "manipal@gmail.com" || currentCluster !== ""? true : false}
+          monthhide={mail === "manipal@gmail.com" || currentCluster !== "" ? true : false}
           topdoc={true}
           monthfilter={true}
           monthsCalls={monthsCalls}
           contextHospitals={contextHospitals}
-          currentCluster ={currentCluster}
+          currentCluster={currentCluster}
         />
 
         {/* Root-level check for showAllData */}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext} from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import '../stylesheets/docreport.css'
 import TableComponent from '../components/TableComponent'
 import GraphicalContainer from './GraphicalContainer'
@@ -16,6 +16,7 @@ export default function BasicDetailsComponent() {
   const [isLoading, setIsLoading] = useState(true)
   var ratingsuggestion = ""
   const api = localStorage.getItem('API')
+  const token = localStorage.getItem("token");
 
   const { isCollapsed } = useContext(SidebarContext);
   const { windowWidth } = useContext(SidebarContext);
@@ -24,21 +25,44 @@ export default function BasicDetailsComponent() {
   useEffect(() => {
     if (getDrName) {
       async function getDocData() {
-        const response = await fetch(`${api}/docData`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ "businessName": getDrName })
-        });
-        const data = await response.json();
-        //console.log("datyaK: ", data);
-        setDocData(data);
+        try {
+          const response = await fetch(`${api}/docData`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ "businessName": getDrName })
+          });
+
+          if (!response.ok) {
+            // If response status is not OK, set docData to null
+            localStorage.clear();
+            setDocData(null);
+            setIsLoading(false);
+            window.location.reload();
+            return;
+          }
+
+          const data = await response.json();
+          if (!data || Object.keys(data).length === 0 || data.cRank.length === 0) {
+            // If data is empty or invalid, set docData to null
+            setDocData(null);
+          } else {
+            setDocData(data);
+          }
+        } catch (error) {
+          console.error("Error fetching docData:", error);
+          setDocData(null);
+        } finally {
+          setIsLoading(false);
+        }
       }
+
       getDocData();
-      setIsLoading(false);
     }
-  }, [getDrName])
+  }, [getDrName]);
+
   const head = ['Month', "GS - Mobile", "GS - Desktop", "GM - Mobile", "GM - Desktop", "Website Cliks", "Directions Clicks", "Phone Calls"]
   const rows = []
   const cHead = ["S.No: ", "Competitor name"]
@@ -120,33 +144,33 @@ export default function BasicDetailsComponent() {
     const section1 = document.querySelector('#section1'); // Till "See how your GMB profile looks..."
     const section2 = document.querySelector('#section2'); // "Actual search results on google" and "Analytics"
     const section3 = document.querySelector('#section3'); // Remaining content
-  
+
     const scale = 2; // Higher scale for better quality
     const pdf = new jsPDF('p', 'mm', 'a4'); // PDF instance with A4 size
-  
+
     const addSectionToPDF = async (element, addPage = false) => {
       if (addPage) pdf.addPage(); // Add a new page if required
-  
+
       const canvas = await html2canvas(element, { scale });
       const imgData = canvas.toDataURL('image/png');
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-  
+
       // Scale canvas dimensions to fit the PDF page
       const imgWidth = canvas.width / scale;
       const imgHeight = canvas.height / scale;
       const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-  
+
       const scaledWidth = imgWidth * ratio;
       const scaledHeight = imgHeight * ratio;
-  
+
       // Set imgX for horizontal centering; imgY starts at the top (0)
       const imgX = (pdfWidth - scaledWidth) / 2; // Center horizontally
       const imgY = 0; // Start at the top of the page
-  
+
       pdf.addImage(imgData, 'PNG', imgX, imgY, scaledWidth, scaledHeight);
     };
-  
+
     // Sequentially add each section to the PDF
     addSectionToPDF(section1)
       .then(() => addSectionToPDF(section2, true)) // Add to a new page
@@ -154,7 +178,7 @@ export default function BasicDetailsComponent() {
       .then(() => pdf.save('docreport.pdf')) // Save the PDF
       .catch((error) => console.error('Error generating PDF:', error));
   };
- 
+
 
   const exportToExcel = () => {
     // Define the header
@@ -168,30 +192,30 @@ export default function BasicDetailsComponent() {
       "Directions Clicks",
       "Phone Calls"
     ];
-  
+
     // Ensure `docData` is available and contains a `result` array
     const rows = docData?.result || [];
-  
+
     if (rows.length === 0) {
       console.warn("No data available to export.");
       return; // Exit if there's no data to export
     }
-  
+
     // Combine header and rows for the worksheet
     const worksheetData = [head, ...rows];
-  
+
     // Create a new worksheet
     const ws = XLSX.utils.aoa_to_sheet(worksheetData);
-  
+
     // Create a new workbook and append the worksheet
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Report");
-  
+
     // Generate an Excel file and trigger a download
     XLSX.writeFile(wb, "docreport.xlsx");
   };
-  
-  
+
+
   // useEffect(() => { 
   //   if (downloadExcel) { 
   //     exportToExcel()
@@ -200,7 +224,7 @@ export default function BasicDetailsComponent() {
 
 
 
-  return (
+  return docData !== null ? (
     <>
       {docData && isLoading ?
         <div>
@@ -217,31 +241,31 @@ export default function BasicDetailsComponent() {
               <div className='details'>
                 <div className="basi-details">
                   <div className="head p-2">
-                    <span>Dr Name: </span><br/>
+                    <span>Dr Name: </span><br />
                     <span>Dr Mobile: </span>
                   </div>
 
                   {
-                      docData && docData.finalDetails && docData.finalDetails[0].name &&
-                  <div className="content p-2">
-                    {
-                      docData && docData.finalDetails && docData.finalDetails[0] &&
-                      <>
-                        <span>{docData.finalDetails[0].name && docData.finalDetails[0].name}</span><br />
-                        <span>{docData.finalDetails[0].phone && docData.finalDetails[0].phone}</span><br />
-                      </>
-                    }
-                    {/* <span>abc</span> */}
-                  </div>
-               }
+                    docData && docData.finalDetails && docData.finalDetails[0].name &&
+                    <div className="content p-2">
+                      {
+                        docData && docData.finalDetails && docData.finalDetails[0] &&
+                        <>
+                          <span>{docData.finalDetails[0].name && docData.finalDetails[0].name}</span><br />
+                          <span>{docData.finalDetails[0].phone && docData.finalDetails[0].phone}</span><br />
+                        </>
+                      }
+                      {/* <span>abc</span> */}
+                    </div>
+                  }
                 </div>
                 <div className='p-2 download'>
-                    <button className='download-btn'
-                      onClick={() => {
-                        setIsPopupOpen(true)
-                        
-                      }}
-                    >Download Report</button>
+                  <button className='download-btn'
+                    onClick={() => {
+                      setIsPopupOpen(true)
+
+                    }}
+                  >Download Report</button>
                 </div>
                 {/* <div className='p-2 download'>
               <button onClick={downloadPDF} className='download-btn'>Download Report</button>
@@ -294,107 +318,107 @@ export default function BasicDetailsComponent() {
             }
           </div>
 
-            
+
           <div id="section3">
-          <div style={{ pageBreakBefore: 'always' }}></div>
+            <div style={{ pageBreakBefore: 'always' }}></div>
 
-          <div className="maniContainer p-3 m-3">
-            <h5>Analytics</h5>
-            {
-              docData && (
-                <>
-                  <div className='row'>
-                    <div className="col-md-4" >
-                      <GraphicalContainer gtype={"ColumnChart"} averageBlock={true} title={'Searches (Mobile + Desktop)'} callsGraphData={docData.searchesGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
+            <div className="maniContainer p-3 m-3">
+              <h5>Analytics</h5>
+              {
+                docData && (
+                  <>
+                    <div className='row'>
+                      <div className="col-md-4" >
+                        <GraphicalContainer gtype={"ColumnChart"} averageBlock={true} title={'Searches (Mobile + Desktop)'} callsGraphData={docData.searchesGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
+                      </div>
+                      <div className="col-4">
+
+                        <GraphicalContainer gtype={"ColumnChart"} averageBlock={true} title={'Maps (Mobile + Desktop)'} callsGraphData={docData.mapsGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
+                      </div>
+                      <div className="col-4">
+
+                        <GraphicalContainer averageBlock={true} gtype={"ColumnChart"} title={'(Web + Directions + Phone)'} callsGraphData={docData.actionGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
+                      </div>
                     </div>
-                    <div className="col-4">
-
-                      <GraphicalContainer gtype={"ColumnChart"} averageBlock={true} title={'Maps (Mobile + Desktop)'} callsGraphData={docData.mapsGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
-                    </div>
-                    <div className="col-4">
-
-                      <GraphicalContainer averageBlock={true} gtype={"ColumnChart"} title={'(Web + Directions + Phone)'} callsGraphData={docData.actionGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
-                    </div>
-                  </div>
-                </>
-              )
-            }
-          </div>
+                  </>
+                )
+              }
+            </div>
 
 
 
 
-          <div className="maniContainer p-3 m-3">
-            <h5>Review & Rating</h5>
-            {
-              docData && (
-                <>
-                  <div className="row">
-                    <div className="col-6">
-                      {
-                        topreview_body.length != 0 && topreview_body ? (
-                          <TableComponent bcolor="white" title="Current month top FIVE positive reviews" head={Topreview_head} rows={topreview_body}></TableComponent>
-                        ) : (
-                          <>
+            <div className="maniContainer p-3 m-3">
+              <h5>Review & Rating</h5>
+              {
+                docData && (
+                  <>
+                    <div className="row">
+                      <div className="col-6">
+                        {
+                          topreview_body.length != 0 && topreview_body ? (
+                            <TableComponent bcolor="white" title="Current month top FIVE positive reviews" head={Topreview_head} rows={topreview_body}></TableComponent>
+                          ) : (
+                            <>
+                              <div className="review_rating m-2 ">
+                                <span className='table-heading graphs'>Current 5 Positive Reviews</span>
+                                <center>No Data Found</center>
+                              </div>
+                            </>
+                          )
+                        }
+                      </div>
+                      <div className="col-6">
+                        {
+                          lestreview_body.length != 0 && lestreview_body ? (
+                            <TableComponent bcolor="white" title="Current 5 Negitive Reviews" head={Topreview_head} rows={lestreview_body}></TableComponent>) : <>
                             <div className="review_rating m-2 ">
-                              <span className='table-heading graphs'>Current 5 Positive Reviews</span>
+                              <span className='table-heading graphs'>Current 5 Negitive Reviews</span>
                               <center>No Data Found</center>
                             </div>
                           </>
-                        )
-                      }
-                    </div>
-                    <div className="col-6">
-                      {
-                        lestreview_body.length != 0 && lestreview_body ? (
-                          <TableComponent bcolor="white" title="Current 5 Negitive Reviews" head={Topreview_head} rows={lestreview_body}></TableComponent>) : <>
-                          <div className="review_rating m-2 ">
-                            <span className='table-heading graphs'>Current 5 Negitive Reviews</span>
-                            <center>No Data Found</center>
-                          </div>
-                        </>
-                      }
-                    </div>
-                  </div>
-                  <div className='row'>
-
-                    <div className="col-6">
-                      <div className="m-2">
-                            <GraphicalContainer gtype={"PieChart"} averageBlock={false} title={'Total Number of Ratings'} callsGraphData={rr} bcolor='white' width={"100%"}></GraphicalContainer>
-                      </div>
-                    </div>
-                    <div className="col-6">
-                      <div className="review_rating m-2 ">
-                        <div class="graphs">Total Rating</div>
-                        {docData.basicDetails &&
-                          <>
-                            <span>{docData.basicDetails[0].averageRating.toFixed(1)}</span><br />
-                            <span>{ratingsuggestion}</span>
-                            <h6 className='mt-3'>Total Reviews</h6>
-                            <span>{docData.basicDetails[0].totalReviewCount}</span><br />
-                            <span>
-                              <a
-                                href={`https://www.google.com/search?q=${docData.finalDetails[0].name.replace(/ /g, '+')}+reviews+rating`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                Click Here
-                              </a> to see a complete log of Reviews and Rating
-                            </span>                          </>
                         }
                       </div>
                     </div>
-                  </div>
-                </>
-              )
-            }
+                    <div className='row'>
+
+                      <div className="col-6">
+                        <div className="m-2">
+                          <GraphicalContainer gtype={"PieChart"} averageBlock={false} title={'Total Number of Ratings'} callsGraphData={rr} bcolor='white' width={"100%"}></GraphicalContainer>
+                        </div>
+                      </div>
+                      <div className="col-6">
+                        <div className="review_rating m-2 ">
+                          <div class="graphs">Total Rating</div>
+                          {docData.basicDetails &&
+                            <>
+                              <span>{docData.basicDetails[0].averageRating.toFixed(1)}</span><br />
+                              <span>{ratingsuggestion}</span>
+                              <h6 className='mt-3'>Total Reviews</h6>
+                              <span>{docData.basicDetails[0].totalReviewCount}</span><br />
+                              <span>
+                                <a
+                                  href={`https://www.google.com/search?q=${docData.finalDetails[0].name.replace(/ /g, '+')}+reviews+rating`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  Click Here
+                                </a> to see a complete log of Reviews and Rating
+                              </span>                          </>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )
+              }
+            </div>
           </div>
-            </div>
-            </div>
+        </div>
 
       }
-            {/* Popup */}
-            {isPopupOpen && (
+      {/* Popup */}
+      {isPopupOpen && (
         <Popup
           downloadPDF={downloadPDF}
           exportToExcel={exportToExcel}
@@ -402,6 +426,10 @@ export default function BasicDetailsComponent() {
         />
       )}
     </>
+  ) : (
+    <div class="d-flex vh-100 justify-content-center mt-3">
+      <h6>Data Unavailable....</h6>
+    </div>
   )
 }
 
@@ -414,52 +442,52 @@ const Popup = ({ exportToExcel, downloadPDF, onClose }) => (
     aria-labelledby="modalLabel"
     aria-hidden="true"
   >  <div className="modal-dialog modal-dialog-centered">
-  <div className="modal-content">
-    <div className="modal-header">
-      <h5 className="modal-title text-primary" id="modalLabel">
-        Download PDF/Excel
-      </h5>
-      {/* <button
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title text-primary" id="modalLabel">
+            Download PDF/Excel
+          </h5>
+          {/* <button
         type="button"
         className="btn-close"
         onClick={onClose}
         aria-label="Close"
       ></button> */}
-    </div>
-    <div className="modal-body text-center">
-      <div className="d-grid gap-2">
-        {/* CSV Button */}
-        <button
-          type="button"
-          className="btn btn-outline-primary"
-          onClick={() => {
-            downloadPDF();
-            onClose();
-          }} // Handle CSV selection
-        >
-          <i class="bi bi-filetype-pdf"></i>
-          PDF
-        </button>
-        {/* Excel Button */}
-        <button
-          type="button"
-          className="btn btn-outline-primary"
-          onClick={() => {
-            exportToExcel();
-            onClose();
-          }} // Handle Excel selection
-        >
-          <i class="bi bi-file-earmark-excel"></i>
-          Excel
-        </button>
+        </div>
+        <div className="modal-body text-center">
+          <div className="d-grid gap-2">
+            {/* CSV Button */}
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={() => {
+                downloadPDF();
+                onClose();
+              }} // Handle CSV selection
+            >
+              <i class="bi bi-filetype-pdf"></i>
+              PDF
+            </button>
+            {/* Excel Button */}
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={() => {
+                exportToExcel();
+                onClose();
+              }} // Handle Excel selection
+            >
+              <i class="bi bi-file-earmark-excel"></i>
+              Excel
+            </button>
+          </div>
+        </div>
+        <div className="modal-footer d-flex justify-content-center">
+          <button type="button" className="btn btn-primary" onClick={onClose}>
+            Close
+          </button>
+        </div>
       </div>
     </div>
-    <div className="modal-footer d-flex justify-content-center">
-      <button type="button" className="btn btn-primary" onClick={onClose}>
-        Close
-      </button>
-    </div>
-  </div>
-</div>
   </div>
 );

@@ -11,6 +11,8 @@ import WorkTracker from "./components/Worktracker/WorkTracker";
 import Matrics from "./components/Worktracker/Matrics"
 import { SidebarProvider } from "./SidebarContext";
 
+import Verification from "./pages/Verification";
+
 
 function App() {
   const isAuthenticated = !!localStorage.getItem("mail");
@@ -21,6 +23,7 @@ function App() {
     <HashRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/verification" element={<Verification/>} />
         <Route
           path="/Dashboard"
           element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}

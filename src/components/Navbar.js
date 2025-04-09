@@ -12,6 +12,7 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { NewMenuBar } from "./FilterPopover";
+import { Bold } from "lucide-react";
 
 
 
@@ -44,6 +45,7 @@ export default function Navbar(props) {
   const [lastFiveMonth, setLastMonths] = useState();
 
   const [selectedYear, setSelectedYear] = useState("");
+  const [selectedSpeciaity, setselectedSpeciaity] = useState("");
   const [filteredMonths, setFilteredMonths] = useState([]);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -57,12 +59,19 @@ export default function Navbar(props) {
     const year = e.target.value;
     setSelectedYear(year);
   }
+  function specialityHandler(e) {
+    const speciality = e.target.value;
+    setselectedSpeciaity(speciality);
+   
+  }
+  //console.log("Speciality24567: ", selectedSpeciaity);
 
   useEffect(() => {
-    const monthNames = [
+      const monthNames = [
       "Jan", "Feb", "Mar", "Apr", "May", "Jun",
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
+];
+    
 
     if (!selectedYear) {
       setFilteredMonths(monthNames.map(m => `${m}-2024`).concat(monthNames.map(m => `${m}-2025`)));
@@ -597,13 +606,26 @@ export default function Navbar(props) {
                 )}
 
                 {/* <label>Select Doctor:</label>&nbsp; */}
+
+
+                {/* <div className="data_list_selection m-1">
+                        <div className="input-group">
+                        <select onChange={specialityHandler} value={selectedSpeciaity} style={{ display:props.filterpopover || props.clusterlogin ? "block" : "none", width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
+                            <option value="" style={{ fontWeight: "bold" }}>Select Speciality</option>
+                            <option value="Cardiologist">Cardiologist</option>
+                            <option value="Physician">Physician</option>
+                            <option value="Diabetologist">Diabetologist</option>
+                            <option value="Surgeon">Surgeon</option>
+                          </select>
+                        </div>
+                      </div> */}
                 <div
                   className="data_list_selection m-1"
                   style={{
-                    display:
-                      props.filterpopover || props.clusterlogin ? "block" : "none",
+                    display:props.filterpopover || props.clusterlogin ? "block" : "none",
                   }}
                 >
+                  
                   <div className="input-group">
                     <input
                       type="text"
