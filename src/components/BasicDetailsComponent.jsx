@@ -35,12 +35,16 @@ export default function BasicDetailsComponent() {
             body: JSON.stringify({ "businessName": getDrName })
           });
 
+          if (response.status === 403 || response.status === 404) {
+            localStorage.clear();
+            window.location.reload();
+          }
+        
+
           if (!response.ok) {
             // If response status is not OK, set docData to null
-            localStorage.clear();
             setDocData(null);
             setIsLoading(false);
-            window.location.reload();
             return;
           }
 

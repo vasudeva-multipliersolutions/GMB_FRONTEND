@@ -65,3 +65,8 @@ footer {
     justify-content: center;
     margin-top: 10px;
 }
+
+.verify-btn {
+    border: none;
+    background: linear-gradient(180deg, #30C3BB 0%, #07509D 119.23%);
+}

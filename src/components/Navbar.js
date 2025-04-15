@@ -563,12 +563,30 @@ export default function Navbar(props) {
                         </div>
                       </div>
                     </div>
+
+
+
+                    <div
+                      className="datepicker"
+                      style={{ display: props.monthfilter ? "block" : "none" }}
+                    >
+                      <div className="data_list_selection m-1">
+                        <div className="input-group">
+                        <select style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
+                        <option value="" style={{ fontWeight: "bold" }}>Select Speciality</option>
+                            <option value="Cardiologist">Cardiologist</option>
+                            <option value="Physician">Physician</option>
+                            <option value="Diabetologist">Diabetologist</option>
+                            <option value="Surgeon">Surgeon</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
                    
                   </div>
                 )}
 
                 {/* ===============================Button===========================================*/}
-
 
 
                 {!props.filterpopover && props.monthfilter && (
@@ -608,7 +626,7 @@ export default function Navbar(props) {
                 {/* <label>Select Doctor:</label>&nbsp; */}
 
 
-                {/* <div className="data_list_selection m-1">
+                <div className="data_list_selection m-1">
                         <div className="input-group">
                         <select onChange={specialityHandler} value={selectedSpeciaity} style={{ display:props.filterpopover || props.clusterlogin ? "block" : "none", width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
                             <option value="" style={{ fontWeight: "bold" }}>Select Speciality</option>
@@ -618,7 +636,7 @@ export default function Navbar(props) {
                             <option value="Surgeon">Surgeon</option>
                           </select>
                         </div>
-                      </div> */}
+                      </div>
                 <div
                   className="data_list_selection m-1"
                   style={{

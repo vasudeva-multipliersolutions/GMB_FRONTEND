@@ -115,7 +115,7 @@ export default function Dashboard(props) {
           state: stateToSend,
         }),
       });
-      if (!response.ok) {
+      if (response.status === 403 || response.status === 404) {
         localStorage.clear();
         window.location.reload();
       }

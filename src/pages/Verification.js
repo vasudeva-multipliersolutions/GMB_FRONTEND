@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import "../stylesheets/login.css";
 import axios from "axios";
 
 const Verification = () => {
@@ -85,12 +86,13 @@ const Verification = () => {
         showError("Invalid OTP Code. Please try again.");
       }
     } catch (error) {
-      showError("2FA verification failed: " + (error.response?.data?.message || error.message));
+      showError("Try again. " + (error.response?.data?.message || error.message));
     }
   };
 
   return (
     <>
+    <div className="login-page ">
      {showPopup && (
         <div style={{
           position: "fixed",
@@ -108,7 +110,7 @@ const Verification = () => {
         </div>
       )}
 
-    <div className="bg-light d-flex flex-column justify-content-center align-items-center min-vh-100">
+    <div className="  d-flex flex-column justify-content-center align-items-center min-vh-100">
       {/* <div className="mb-3">
         <img
           src="https://multipliersolutions.in/manipalhospitals/manipallogo2.png"
@@ -150,18 +152,17 @@ const Verification = () => {
 
         <button
           onClick={verify2FA}
-          className="btn btn-primary w-100 fw-semibold"
+          className="verify-btn btn btn-primary w-75 fw-semibold"
         >
           Verify
         </button>
 
         <p className="mt-3 text-muted">
           Didn't receive code?{" "}
-          <a href="/login" className="text-primary text-decoration-none">
-            Request again
-          </a>
+          <Link to="/"  className="text-primary text-decoration-none">Request again</Link>
         </p>
       </div>
+    </div>
     </div>
     </>
   );
