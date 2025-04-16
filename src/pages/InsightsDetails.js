@@ -16,6 +16,7 @@ export default function BasicDetailsComponent() {
   const { getDrName, getInsightState, getInsightsCity, contextHospitals, setDrName} =
     useContext(SharedContext);
   const api = localStorage.getItem("API");
+  const token = localStorage.getItem("token");
 
   const { isCollapsed } = useContext(SidebarContext);
   const { windowWidth } = useContext(SidebarContext);
@@ -41,9 +42,15 @@ export default function BasicDetailsComponent() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ businessName: getDrName }),
           });
+          
+          if (response.status === 403 || response.status === 404) {
+            localStorage.clear();
+            window.location.reload();
+          }
           const data = await response.json();
           setDocData(data);
           setIsLoading(false);
@@ -68,12 +75,14 @@ export default function BasicDetailsComponent() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              
             },
             body: JSON.stringify({
               state: cluster,
               branch: location,
             }),
           });
+
           const data = await response.json();
           setInsightData(data);
           if (
