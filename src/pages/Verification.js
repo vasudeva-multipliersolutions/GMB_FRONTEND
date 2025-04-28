@@ -12,7 +12,7 @@ const Verification = () => {
   const navigate = useNavigate();
   const userId = location.state?.userId;
 
-  console.log("userId--------->", userId);
+  // console.log("userId--------->", userId);
 
   const handleChange = (e, index) => {
     const value = e.target.value;

@@ -20,10 +20,10 @@ export default function Navbar(props) {
   const mail = localStorage.getItem("mail");
   const loginBranch = localStorage.getItem("Branch");
   const Cluster = localStorage.getItem("Cluster");
-  const { isCollapsed, toggleSidebar, drNameContext } =
+  const { isCollapsed, toggleSidebar, drNameContext, specialityContext } =
     useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles, setContextMonth, setInsightsAnalysis, setReloadCondition, } = useContext(SharedContext);
+  const { setContextCity, setLocationProfiles, setContextMonth, setContextSpeciality } = useContext(SharedContext);
   const { setInsightsState, setInsightsCity, setContextYear, } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
@@ -43,15 +43,15 @@ export default function Navbar(props) {
   const [getcountOfProfiles, setcountOfProfiles] = useState(null);
   const [currentCluster, setCurrentCluster] = useState();
   const [lastFiveMonth, setLastMonths] = useState();
-
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedSpeciaity, setselectedSpeciaity] = useState("");
   const [filteredMonths, setFilteredMonths] = useState([]);
-
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [getSpeciality, setAllSpeciality] = useState();
+  const [speciality, setSpeciality] = useState();
 
   const location = useLocation();
-  
+
 
   const isActive = (path) => location.pathname === path;
 
@@ -59,19 +59,31 @@ export default function Navbar(props) {
     const year = e.target.value;
     setSelectedYear(year);
   }
+
   function specialityHandler(e) {
     const speciality = e.target.value;
-    setselectedSpeciaity(speciality);
-   
+    setSpeciality(speciality);
+    // filterApi();
   }
+
+  // useEffect(() => {
+  //   filterApi();
+  // }, [speciality]);
   //console.log("Speciality24567: ", selectedSpeciaity);
 
+
+ useEffect(() => {
+    setAllSpeciality(specialityContext)
+  }, [specialityContext]);   
+
+
+
   useEffect(() => {
-      const monthNames = [
+    const monthNames = [
       "Jan", "Feb", "Mar", "Apr", "May", "Jun",
       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-];
-    
+    ];
+
 
     if (!selectedYear) {
       setFilteredMonths(monthNames.map(m => `${m}-2024`).concat(monthNames.map(m => `${m}-2025`)));
@@ -114,33 +126,33 @@ export default function Navbar(props) {
   //   setIsCollapsed(!isCollapsed);
   // }
 
-  function nameHandelar( e )
-  {
-    setName( e.target.value )
+  function nameHandelar(e) {
+    setName(e.target.value)
   }
-  function nameseter()
-  {
+  function nameseter() {
     setDrName(getName)
   }
-  async function getStateHandeler( e )
-  {
+  async function getStateHandeler(e) {
+    setSpeciality("");
     setCity("")
+    setMonth("");
     if (e.target.value === "All") {
       window.location.reload();
-    }else {
-      setState( e.target.value )
+    } else {
+      setState(e.target.value)
     }
     //filterApi()
   }
-  function getCityHandeler( e )
-  {
+  function getCityHandeler(e) {
     setMonth("");
-    setCity( e.target.value )
+    setSpeciality("");
+    setCity(e.target.value)
   }
-  function monthHandelar( e )
-  {
-    setMonth( e.target.value )
+  function monthHandelar(e) {
+    setSpeciality("");
+    setMonth(e.target.value)
   }
+
 
   useEffect(() => {
     if (getState) {
@@ -153,17 +165,23 @@ export default function Navbar(props) {
       //setContextCity(getCity);
       filterApi();
     }
-  }, [getCity]); 
+  }, [getCity]);
 
-//   useEffect(() => {
-//   if (getcountOfProfiles) {
-//     console.log("Updating setLocationProfiles with:", getcountOfProfiles);
-//     setLocationProfiles(getcountOfProfiles);
-//   }
-// }, [getcountOfProfiles]); 
+  useEffect(() => {
+    if (speciality) {
+      //setContextCity(getCity);
+      filterApi();
+    }
+  }, [speciality]);
 
-  async function filterApi()
-  {
+  //   useEffect(() => {
+  //   if (getcountOfProfiles) {
+  //     console.log("Updating setLocationProfiles with:", getcountOfProfiles);
+  //     setLocationProfiles(getcountOfProfiles);
+  //   }
+  // }, [getcountOfProfiles]); 
+
+  async function filterApi() {
     // alert(getState)
     let cityToSend = getCity === "All" ? "" : getCity;
     const response = await fetch(api + '/getfilterdata', {
@@ -171,15 +189,19 @@ export default function Navbar(props) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ "state": getState, "branch": cityToSend })
+      body: JSON.stringify({ "state": getState, "branch": cityToSend, "speciality": speciality })
     });
     const data = await response.json();
     // alert("Hello")
     //console.log("datacountOfProfiles: ",data.result[0].countOfProfiles)
-    setAllNames(data.result[0].businessNames)
-    if (data.result[0].branches) {
-    setCitys(data.result[0].branches)
+    setAllNames(data.result[0].businessNames);
+    if (data.result[0].specialities) {
+      setAllSpeciality(data.result[0].specialities)
     }
+    if (data.result[0].branches) {
+      setCitys(data.result[0].branches)
+    }
+    
 
     if (data.countOfProfiles && data.countOfProfiles.length > 0) {
       console.log("New countOfProfiles:", data.countOfProfiles);
@@ -194,8 +216,7 @@ export default function Navbar(props) {
   }
 
   useEffect(() => {
-    async function getAllDoctrosNames()
-    {
+    async function getAllDoctrosNames() {
       const docNames = await fetch(api + '/getAllDocNames', {
         method: 'POST',
         headers: {
@@ -206,30 +227,44 @@ export default function Navbar(props) {
       // alert(allNames)
       setAllNames(allNames)
     }
-    async function getallLoc()
-    {
+    async function getallLoc() {
       const locDetails = await fetch(api + '/getunquelocdata', {
-        method: "post" ,
+        method: "post",
         headers: {
           'Content-Type': 'application/json'
         }
       })
       const getlocdetails = await locDetails.json()
       setStates(getlocdetails[0].states)
-    //setCitys(getlocdetails[0].branches)
-  
+      //setCitys(getlocdetails[0].branches)
     }
-    if (mail === "manipal@gmail.com")
-    {
-    getallLoc()
-    getAllDoctrosNames()
+    async function getAllSpeciality() {
+
+      const SpecialityDetails = await fetch(api + '/getallspeciality', {
+        method: "post",
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      const getspecialitydetails = await SpecialityDetails.json()
+      setAllSpeciality(getspecialitydetails)
+    }
+
+   
+
+
+
+    if (mail === "manipal@gmail.com") {
+      getallLoc()
+      getAllDoctrosNames()
+      getAllSpeciality()
     } else {
       if (loginBranch === "undefined") {
         setState(Cluster);
         // filterApi();
       } else {
         setCity(loginBranch);
-        //filterApi();
+        // filterApi();
       }
     }
     setLogo(localStorage.getItem("logo"))
@@ -262,18 +297,18 @@ export default function Navbar(props) {
 
     let lastSixMonths = [];
     for (let i = 6; i > 0; i--) {
-        const monthIndex = (today.getMonth() - i + 12) % 12;
-        const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
-        lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
+      const monthIndex = (today.getMonth() - i + 12) % 12;
+      const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
+      lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
     }
 
     // Filter months based on selected year
     if (selectedYear) {
-        setFilteredMonths(lastSixMonths.filter(m => m.year === selectedYear).map(m => m.name));
+      setFilteredMonths(lastSixMonths.filter(m => m.year === selectedYear).map(m => m.name));
     } else {
-        setFilteredMonths(lastSixMonths.map(m => m.name));
+      setFilteredMonths(lastSixMonths.map(m => m.name));
     }
-}, [selectedYear]);
+  }, [selectedYear]);
 
 
   return (
@@ -466,7 +501,7 @@ export default function Navbar(props) {
                   )}
                 </div>
 
-                {console.log("Current Cluster : ", currentCluster)}
+
 
                 {props.monthhide && (
                   <div className="data_list_selection m-1">
@@ -521,13 +556,13 @@ export default function Navbar(props) {
 
                 {!props.filterpopover && (
                   <div className="d-flex">
-                     {props.monthfilter &&<div
+                    {props.monthfilter && <div
                       className="datepicker d-flex justify-content-end"
                       style={{ display: props.monthfilter ? "block" : "none" }}
                     >
-                       <div className="data_list_selection m-1">
+                      <div className="data_list_selection m-1">
                         <div className="input-group">
-                        <select onChange={yearHandler} value={selectedYear} style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
+                          <select onChange={yearHandler} value={selectedYear} style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
                             <option value="">Select Year</option>
                             <option value="2024">2024</option>
                             <option value="2025">2025</option>
@@ -541,8 +576,8 @@ export default function Navbar(props) {
                     >
                       <div className="data_list_selection m-1">
                         <div className="input-group">
-                        <select value={getMonth} onChange={monthHandelar} style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
-                             <option value="">Select Month</option>
+                          <select value={getMonth} onChange={monthHandelar} style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
+                            <option value="">Select Month</option>
                             {filteredMonths.map((month, index) => (
                               <option key={index} value={month}>{month}</option>
                             ))}
@@ -566,38 +601,66 @@ export default function Navbar(props) {
 
 
 
-                    <div
-                      className="datepicker"
-                      style={{ display: props.monthfilter ? "block" : "none" }}
-                    >
-                      <div className="data_list_selection m-1">
-                        <div className="input-group">
-                        <select style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
-                        <option value="" style={{ fontWeight: "bold" }}>Select Speciality</option>
-                            <option value="Cardiologist">Cardiologist</option>
-                            <option value="Physician">Physician</option>
-                            <option value="Diabetologist">Diabetologist</option>
-                            <option value="Surgeon">Surgeon</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                   
+
+
                   </div>
                 )}
 
+
                 {/* ===============================Button===========================================*/}
+
+                {props.filterpopover && (
+                  <div>
+                    <NewMenuBar speciality={speciality}></NewMenuBar>
+                  </div>
+                )}
+{/* ===============================Speciality ===========================================*/}
+                <div className="datepicker">
+                  <div className="data_list_selection m-1">
+                    <div className="input-group">
+                      <select
+                        value={speciality}
+                        onChange={specialityHandler}
+                        //onInputCapture={filterApi}
+                        style={{
+                          width: "150px",
+                          borderRadius: " 10px",
+                          padding: "4px",
+                          border: "1px solid #ccc",
+                          outline: "none",
+                        }}
+                      >
+                        <option value="">Select Speciality...</option>
+                        <option value="">All</option>
+                        {getSpeciality &&
+                          getSpeciality
+                            .filter(item => item !== "#N/A")
+                            .sort()
+                            .map((item, index) => {
+                              if (item != "#N/A")
+                                return (
+                                  <option key={index} value={item}>
+                                    {item}
+                                  </option>
+                                );
+                            })}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
 
 
                 {!props.filterpopover && props.monthfilter && (
                   <div className="data_list_selection m-1">
                     <button
-                    
-                      onClick={ () => {
+
+                      onClick={() => {
                         setInsightsState(getState);
                         setInsightsCity(getCity);
                         setContextMonth(getMonth);
                         setContextCity(getCity)
+                        setContextSpeciality(speciality);
                         setLocationProfiles(getcountOfProfiles);
                         filterApi();
                       }}
@@ -617,33 +680,23 @@ export default function Navbar(props) {
                 )}
 
 
-                {props.filterpopover && (
-                  <div>
-                    <NewMenuBar></NewMenuBar>
-                  </div>
-                )}
+
 
                 {/* <label>Select Doctor:</label>&nbsp; */}
 
 
-                <div className="data_list_selection m-1">
-                        <div className="input-group">
-                        <select onChange={specialityHandler} value={selectedSpeciaity} style={{ display:props.filterpopover || props.clusterlogin ? "block" : "none", width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
-                            <option value="" style={{ fontWeight: "bold" }}>Select Speciality</option>
-                            <option value="Cardiologist">Cardiologist</option>
-                            <option value="Physician">Physician</option>
-                            <option value="Diabetologist">Diabetologist</option>
-                            <option value="Surgeon">Surgeon</option>
-                          </select>
-                        </div>
-                      </div>
+
+
+
+
+
                 <div
                   className="data_list_selection m-1"
                   style={{
-                    display:props.filterpopover || props.clusterlogin ? "block" : "none",
+                    display: props.filterpopover || props.clusterlogin ? "block" : "none",
                   }}
                 >
-                  
+
                   <div className="input-group">
                     <input
                       type="text"
@@ -707,7 +760,7 @@ export default function Navbar(props) {
                     style={{
                       display: !props.serach ? "block" : "none",
                     }}
-                   // onClick={bulkExport}
+                    // onClick={bulkExport}
                     disabled={!getState}
                   >
                     Bulk Download

@@ -12,6 +12,41 @@ import { ShimmerThumbnail } from "react-shimmer-effects";
 import { SidebarContext } from "../SidebarContext";
 import SideContentContainer from "../components/SideContentContainer";
 import TopDoctor from "./TopDoctor";
+import html2canvas from 'html2canvas'
+import { BsFiletypePdf } from "react-icons/bs";
+import { RiFileExcel2Fill } from "react-icons/ri";
+import jsPDF from 'jspdf'
+import * as XLSX from "xlsx";
+
+
+
+function getLast6MonthsLabels() {
+  const now = new Date();
+  const labels = [];
+
+  for (let i = 1; i <= 6; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const month = d.toLocaleString("default", { month: "short" }); // e.g. Jan, Feb
+    const year = d.getFullYear();
+    labels.push({ label: month, year });
+  }
+
+  return labels;
+}
+
+function reorderGraphData(rawData, isYearSpecific = false) {
+  const last6Months = getLast6MonthsLabels();
+
+  return last6Months.map(({ label, year }) => {
+    const rawKey = isYearSpecific ? `${year}-${label}` : label;
+    const displayKey = `${label}-${year}`; // always use year in final key
+
+    return {
+      [displayKey]: rawData[rawKey] || rawData[label] || 0
+    };
+  }).reduce((acc, cur) => ({ ...acc, ...cur }), {});
+}
+
 
 export default function Dashboard(props) {
   const navigate = useNavigate();
@@ -31,6 +66,10 @@ export default function Dashboard(props) {
   const [InsightsAnalysis, setInsightsAnalysis] = useState();
   const [reload, setReloadCondition] = useState();
   const [currentCluster, setCurrentCluster] = useState("");
+  const [topDoctorData, setTopDoctorData] = useState([]);
+  const [contextSpeciality, setContextSpeciality] = useState();
+
+
 
   const mail = localStorage.getItem("mail");
   const loginEmail = localStorage.getItem("loginEmail");
@@ -41,7 +80,7 @@ export default function Dashboard(props) {
   const Cluster = localStorage.getItem("Cluster");
   const token = localStorage.getItem("token");
 
-  console.log("COntext Month  :" + contextMonth);
+  //console.log("COntext Month  :" + contextMonth);
 
 
   useEffect(() => {
@@ -83,7 +122,7 @@ export default function Dashboard(props) {
       }
 
       const data = await response.json();
-      console.log("1234🎉✨🎉🎉 : " + response.status);
+      // console.log("1234🎉✨🎉🎉 : " + response.status);
 
 
 
@@ -102,17 +141,18 @@ export default function Dashboard(props) {
       const monthToSend = month === "All" ? "" : month;
       const stateToSend = getInsightState;
 
-      console.log("000000-----00000000000) : " + stateToSend);
+      //console.log("000000-----00000000000) : " + stateToSend);
       const response = await fetch(`${api}/monthdata`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-           'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           month: monthToSend,
           branch: cityToSend,
           state: stateToSend,
+          speciality: contextSpeciality,
         }),
       });
       if (response.status === 403 || response.status === 404) {
@@ -257,7 +297,7 @@ export default function Dashboard(props) {
       getAllData("No");
     } else {
       if (Branch && Branch !== "undefined") {
-        console.log("Branch@@@@@@@@ : " + Branch);
+        //console.log("Branch@@@@@@@@ : " + Branch);
         getAllData(Branch);
       } else if (Cluster) {
         setInsightsState(Cluster);
@@ -330,6 +370,12 @@ export default function Dashboard(props) {
   }, [contextMonth]);
 
   useEffect(() => {
+    if (contextSpeciality) {
+      getMonthData(contextMonth);
+    } 
+  }, [contextSpeciality]);
+
+  useEffect(() => {
     if (currentCluster) {
       getClusterData(currentCluster);
     }
@@ -349,10 +395,212 @@ export default function Dashboard(props) {
 
 
 
-  console.log("Location Profiles--0-- : ", currentCluster);
+  //console.log("Location Profiles--0-- : ", currentCluster);
   useEffect(() => {
     //getMonthData("");
   }, [reload]);
+
+  const downloadPDF = async () => {
+    const content = document.getElementById('mainDashboardContent');
+    const cloneContainer = document.getElementById('pdf-clone-container');
+
+    if (!content || !cloneContainer) {
+      console.error("Missing elements for PDF generation.");
+      return;
+    }
+
+    // Clone the content
+    const clone = content.cloneNode(true);
+    clone.style.marginLeft = '0';
+    clone.style.width = '100%';
+
+    const elementsWithStyles = clone.querySelectorAll('[style]');
+    elementsWithStyles.forEach(el => {
+      el.style.marginLeft = '0';
+      el.style.width = '100%';
+    });
+
+    cloneContainer.innerHTML = '';
+    cloneContainer.appendChild(clone);
+    cloneContainer.style.display = 'block';
+
+    const scale = 2;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    // Padding values
+    const topPadding = 10;     // mm
+    const leftPadding = 10;    // mm
+    const rightPadding = 0;   // mm
+
+    try {
+      const canvas = await html2canvas(clone, {
+        scale,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+      });
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      const imgWidth = canvas.width / scale;
+      const imgHeight = canvas.height / scale;
+
+      // Available space inside the PDF considering paddings
+      const availableWidth = pdfWidth - leftPadding - rightPadding;
+      const availableHeight = pdfHeight - topPadding;
+
+      const ratio = Math.min(availableWidth / imgWidth, availableHeight / imgHeight);
+
+      const scaledWidth = imgWidth * ratio;
+      const scaledHeight = imgHeight * ratio;
+
+      let remainingHeight = scaledHeight;
+      let pageIndex = 0;
+
+      while (remainingHeight > 0) {
+        if (pageIndex > 0) pdf.addPage();
+
+        const offsetY = pageIndex * pdfHeight;
+        const imgY = topPadding;
+        const imgX = leftPadding;
+
+        pdf.addImage(
+          imgData,
+          'PNG',
+          imgX,
+          imgY,
+          scaledWidth,
+          scaledHeight,
+          undefined,
+          'FAST'
+        );
+
+        remainingHeight -= pdfHeight;
+        pageIndex++;
+      }
+
+      const parts = [
+        getInsightState || "",
+        getInsightsCity || "",
+        contextMonth || "",
+        contextSpeciality || "",
+        // Optional: add speciality if available e.g., `speciality || ""`
+      ].filter(Boolean); // removes empty strings
+    
+      const filename = parts.length > 0 ? `GMB_Performance_Report_${parts.join("_")}.xlsx` : "GMB Performance Report.xlsx";
+
+      pdf.save(`${filename}.pdf`);
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+    } finally {
+      cloneContainer.style.display = 'none';
+    }
+  };
+
+
+  const downloadDataAsExcel = () => {
+    const workbook = XLSX.utils.book_new();
+  
+    // Sheet 1: ContentContainer
+    if (use && use.length > 0) {
+      const useSheet = XLSX.utils.json_to_sheet(use.map(obj => {
+        const key = Object.keys(obj)[0];
+        return { name: key, value: obj[key] };
+      }));
+      XLSX.utils.book_append_sheet(workbook, useSheet, "ContentContainer");
+    }
+  
+    // Sheet 2: ReviewRating
+    if (showAllData?.reviewRating?.length > 0) {
+      const reviewSheet = XLSX.utils.json_to_sheet(showAllData.reviewRating);
+      XLSX.utils.book_append_sheet(workbook, reviewSheet, "ReviewRating");
+    }
+  
+    // Sheet 3: Analysis
+    if (showAllData?.analysis?.length > 0) {
+      const analysisSheet = XLSX.utils.json_to_sheet(showAllData.analysis);
+      XLSX.utils.book_append_sheet(workbook, analysisSheet, "Analysis");
+    }
+  
+    //Sheet 4: Top Doctor Data
+    if (Array.isArray(topDoctorData) && topDoctorData.length > 0) {
+      const header = [
+        "Name / Hospital",
+        "GS - Mobile",
+        "GS - Desktop",
+        "GM - Mobile",
+        "GM - Desktop",
+        "Website Clicks",
+        "Directions Clicks",
+        "Phone Calls"
+      ];
+  
+      // Process each row to ensure it's an array of cells
+      const dataRows = topDoctorData.map(row => {
+        if (Array.isArray(row)) {
+          return row; // Already an array, use as-is
+        } else if (typeof row === 'string') {
+          // Split string by commas to create row array
+          return row.split(',');
+        } else {
+          console.warn('Unexpected data format in row:', row);
+          return []; // Fallback to empty array to avoid errors
+        }
+      });
+  
+      // Combine header with processed data rows
+      const doctorRows = [header, ...dataRows];
+      const doctorSheet = XLSX.utils.aoa_to_sheet(doctorRows);
+      XLSX.utils.book_append_sheet(workbook, doctorSheet, "TopDoctors");
+    }
+  
+  
+    // Build filename dynamically
+    const parts = [
+      getInsightState || "",
+      getInsightsCity || "",
+      contextMonth || "",
+      contextSpeciality || "",
+      // Optional: add speciality if available e.g., `speciality || ""`
+    ].filter(Boolean); // removes empty strings
+  
+    const filename = parts.length > 0 ? `GMB_Performance_Report_${parts.join("_")}.xlsx` : "GMB Performance Report.xlsx";
+  
+    // Export Excel file
+    XLSX.writeFile(workbook, filename);
+  };
+  
+console.log("getContextCity@@@@@@@@******^^^^^^^^^^^^^^^%%%%%%%%%%%%%$$$$$$$$$$#### : " + topDoctorData);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <SharedContext.Provider
       value={{
@@ -371,6 +619,10 @@ export default function Dashboard(props) {
         setInsightsAnalysis,
         setReloadCondition,
         currentCluster,
+        setTopDoctorData, 
+        contextSpeciality,
+        setContextSpeciality,
+        contextSpeciality,
       }}
     >
       <div style={{ background: "#EFEFEF" }}>
@@ -385,121 +637,133 @@ export default function Dashboard(props) {
           contextHospitals={contextHospitals}
           currentCluster={currentCluster}
         />
+        <div className="text-end me-5 mt-4">
+          <button className="btn btn-outline-primary me-1 " onClick={downloadPDF}><BsFiletypePdf /></button>
+          <button className="btn btn-outline-success" onClick={downloadDataAsExcel}>
+            <RiFileExcel2Fill />
+          </button>
+
+        </div>
+
 
         {/* Root-level check for showAllData */}
-        {showAllData && showAllData.length !== 0 ? (
-          <>
-            {use && <ContentContainer data={use} />}
-            <div
-              className="second-container"
-              style={{
-                marginLeft:
-                  windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
-                transition: "margin-left 0.5s ease",
-              }}
-            >
-              <div className="left-container m-2">
-                {showAllData?.reviewRating?.length > 0 ? (
-                  <ReviewRating
-                    review={
-                      showAllData.reviewRating[0]?.totalreviews ?? "No reviews"
-                    }
-                    rating={
-                      showAllData.reviewRating[0]?.averagerating ??
-                      "No rating available"
-                    }
-                  />
+        <div id="mainDashboardContent">
+          {showAllData && showAllData.length !== 0 ? (
+            <>
+              {use && <ContentContainer data={use} />}
+              <div
+                className="second-container"
+                style={{
+                  marginLeft:
+                    windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
+                  transition: "margin-left 0.5s ease",
+                }}
+              >
+                <div className="left-container m-2">
+                  {showAllData?.reviewRating?.length > 0 ? (
+                    <ReviewRating
+                      review={
+                        showAllData.reviewRating[0]?.totalreviews ?? "No reviews"
+                      }
+                      rating={
+                        showAllData.reviewRating[0]?.averagerating ??
+                        "No rating available"
+                      }
+                    />
+                  ) : (
+                    <ReviewRating
+                      review={0}
+                      rating={0}
+                    />
+                    // <div>No reviews or ratings available</div>
+                  )}
+                </div>
+
+                {showAllData?.analysis?.length > 0 ? (
+                  <SideContentContainer data={showAllData.analysis} />
                 ) : (
-                  <ReviewRating
-                    review={0}
-                    rating={0}
-                  />
-                  // <div>No reviews or ratings available</div>
+                  <div className="d-flex justify-content-center align-items-center">No analysis data available</div>
                 )}
               </div>
 
-              {showAllData?.analysis?.length > 0 ? (
-                <SideContentContainer data={showAllData.analysis} />
-              ) : (
-                <div className="d-flex justify-content-center align-items-center">No analysis data available</div>
-              )}
-            </div>
+              <TopDoctor contextHospitals={contextHospitals} contextMonth={contextMonth} />
 
-            <TopDoctor contextHospitals={contextHospitals} contextMonth={contextMonth} />
+              <div
+                className="grapharea"
+                style={{
+                  marginLeft:
+                    windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
+                  width:
+                    windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
+                  transition: "margin-left 0.5s ease",
+                }}
+              >
+                <div className="right-container me-5">
+                  {isLoading ? (
+                    <ShimmerThumbnail height={420} width={2000} rounded />
+                  ) : (
+                    <>
+                      {showAllData?.graphDataCalls?.length > 0 && (
+                        <GraphicalContainer
+                          gtype={"ColumnChart"}
+                          averageBlock={true}
+                          title={"Calls"}
+                          callsGraphData={reorderGraphData(showAllData.graphDataCalls[0], true)}
+                          bcolor={"#FFFFFF"}
+                          width={"50%"}
+                        />
+                      )}
+                      {showAllData?.graphDataSearches?.length > 0 && (
+                        <GraphicalContainer
+                          gtype={"ColumnChart"}
+                          averageBlock={true}
+                          title={"Desktop Searches"}
+                          callsGraphData={reorderGraphData(showAllData.graphDataSearches[0])}
+                          bcolor={"#FFFFFF"}
+                          width={"50%"}
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
 
-            <div
-              className="grapharea"
-              style={{
-                marginLeft:
-                  windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
-                width:
-                  windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
-                transition: "margin-left 0.5s ease",
-              }}
-            >
-              <div className="right-container me-5">
-                {isLoading ? (
-                  <ShimmerThumbnail height={420} width={2000} rounded />
-                ) : (
-                  <>
-                    {showAllData?.graphDataCalls?.length > 0 && (
-                      <GraphicalContainer
-                        gtype={"ColumnChart"}
-                        averageBlock={true}
-                        title={"Calls"}
-                        callsGraphData={showAllData.graphDataCalls[0]}
-                        bcolor={"#FFFFFF"}
-                        width={"50%"}
-                      />
-                    )}
-                    {showAllData?.graphDataSearches?.length > 0 && (
-                      <GraphicalContainer
-                        gtype={"ColumnChart"}
-                        averageBlock={true}
-                        title={"Searches"}
-                        callsGraphData={showAllData.graphDataSearches[0]}
-                        bcolor={"#FFFFFF"}
-                        width={"50%"}
-                      />
-                    )}
-                  </>
-                )}
+                <div className="right-container">
+                  {isLoading ? (
+                    <ShimmerThumbnail height={420} width={2000} rounded />
+                  ) : (
+                    <>
+                      {showAllData?.graphDataSearchesMobils?.length > 0 && (
+                        <GraphicalContainer
+                          gtype={"ColumnChart"}
+                          averageBlock={true}
+                          title={"Mobile Searches"}
+                          callsGraphData={reorderGraphData(showAllData.graphDataSearchesMobils[0])}
+                          bcolor={"#FFFFFF"}
+                          width={"50%"}
+                        />
+                      )}
+                      {showAllData?.graphDataWebsiteClicks?.length > 0 && (
+                        <GraphicalContainer
+                          gtype={"ColumnChart"}
+                          averageBlock={true}
+                          title={"Website Clicks"}
+                          callsGraphData={reorderGraphData(showAllData.graphDataWebsiteClicks[0])}
+                          bcolor={"#FFFFFF"}
+                          width={"50%"}
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
-
-              <div className="right-container">
-                {isLoading ? (
-                  <ShimmerThumbnail height={420} width={2000} rounded />
-                ) : (
-                  <>
-                    {showAllData?.graphDataSearchesMobils?.length > 0 && (
-                      <GraphicalContainer
-                        gtype={"ColumnChart"}
-                        averageBlock={true}
-                        title={"Mobile Searches"}
-                        callsGraphData={showAllData.graphDataSearchesMobils[0]}
-                        bcolor={"#FFFFFF"}
-                        width={"50%"}
-                      />
-                    )}
-                    {showAllData?.graphDataWebsiteClicks?.length > 0 && (
-                      <GraphicalContainer
-                        gtype={"ColumnChart"}
-                        averageBlock={true}
-                        title={"Website Clicks"}
-                        callsGraphData={showAllData.graphDataWebsiteClicks[0]}
-                        bcolor={"#FFFFFF"}
-                        width={"50%"}
-                      />
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-          </>
-        ) : (
-          <div class="d-flex justify-content-center align-items-center">Loading...</div> // Message if showAllData is empty or missing
-        )}
+            </>
+          ) : (
+            <div class="d-flex justify-content-center align-items-center">Loading...</div> // Message if showAllData is empty or missing
+          )}
+        </div>
       </div>
+      <div id="pdf-clone-container" style={{ display: 'none' }}></div>
+
     </SharedContext.Provider>
   );
 }

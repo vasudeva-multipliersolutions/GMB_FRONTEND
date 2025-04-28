@@ -26,6 +26,7 @@
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.10.3",
     "jspdf": "^2.5.1",
     "lucide-react": "^0.451.0",
     "mui-nested-menu": "^3.4.0",

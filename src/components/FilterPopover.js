@@ -7,7 +7,7 @@ import { FaHospitalAlt } from "react-icons/fa";
 import { SharedContext } from "../context/SharedContext";
 import { SidebarContext } from "../SidebarContext";
 
-export function NewMenuBar() {
+export function NewMenuBar({speciality}) {
   const api = localStorage.getItem("API");
   const mail = localStorage.getItem("mail");
   const loginBranch = localStorage.getItem("Branch");
@@ -21,10 +21,13 @@ export function NewMenuBar() {
       : loginBranch
   );
 
+  useEffect(() => {
+    speciality="";
+  }, [selectedItem])
+
   // Use context directly without destructuring
-  const { setcontextHospitals, setLocationProfiles } =
-    useContext(SharedContext);
-  const { setDrNameContext } = useContext(SidebarContext);
+  const { setcontextHospitals, setLocationProfiles } = useContext(SharedContext);
+  const { setDrNameContext, setSpecialityContext } = useContext(SidebarContext);
 
   // Handler function to manage item clicks
   const handleItemClick = (event, item) => {
@@ -42,24 +45,29 @@ export function NewMenuBar() {
     useEffect(() => {
       async function filterApi(city) {
         try {
-          let sendCity = city;
+          let sendCity = city === "Locations" ? "" : city;
           let sendState = "";
     
           if (city === "undefined") {
             sendState = Cluster;
           }
+
+          let spcialitytoSend = speciality? speciality : "";
     
           const response = await fetch(`${api}/getfilterdata`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ state: sendState, branch: sendCity }),
+            body: JSON.stringify({ state: sendState, branch: sendCity, speciality: spcialitytoSend }),
           });
     
           const data = await response.json();
           setLocationProfiles(data.countOfProfiles);
           setDrNameContext(data.result[0].businessNames);
+          if (data.result[0].specialities) {
+            setSpecialityContext(data.result[0].specialities);
+          }
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -68,9 +76,9 @@ export function NewMenuBar() {
           filterApi(selectedItem); // Ensures the function runs when selectedItem is set
         }
         
-    }, [selectedItem, mail, loginBranch, setLocationProfiles]);
+    }, [selectedItem, mail, loginBranch, setLocationProfiles, speciality]);
 
-  
+ // Run on component mount
 
   useEffect(() => {
     const handlePageRefresh = () => {

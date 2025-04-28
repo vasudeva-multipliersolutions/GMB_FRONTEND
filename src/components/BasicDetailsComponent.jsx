@@ -10,6 +10,35 @@ import { ShimmerTitle } from "react-shimmer-effects";
 import { SidebarContext } from '../SidebarContext'
 import * as XLSX from 'xlsx';
 
+
+function getLast6MonthsLabels() {
+  const now = new Date();
+  const labels = [];
+
+  for (let i = 1; i <= 6; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const month = d.toLocaleString("default", { month: "short" }); // e.g. Jan, Feb
+    const year = d.getFullYear();
+    labels.push({ label: month, year });
+  }
+
+  return labels;
+}
+
+function reorderGraphData(rawData, isYearSpecific = false) {
+  const last6Months = getLast6MonthsLabels();
+
+  return last6Months.map(({ label, year }) => {
+    const rawKey = isYearSpecific ? `${year}-${label}` : label;
+    const displayKey = `${label}-${year}`; // always use year in final key
+
+    return {
+      [displayKey]: rawData[rawKey] || rawData[label] || 0
+    };
+  }).reduce((acc, cur) => ({ ...acc, ...cur }), {});
+}
+
+
 export default function BasicDetailsComponent() {
   const [docData, setDocData] = useState()
   const { getDrName } = useContext(SharedContext)
@@ -185,7 +214,6 @@ export default function BasicDetailsComponent() {
 
 
   const exportToExcel = () => {
-    // Define the header
     const head = [
       "Month",
       "GS - Mobile",
@@ -196,29 +224,28 @@ export default function BasicDetailsComponent() {
       "Directions Clicks",
       "Phone Calls"
     ];
-
-    // Ensure `docData` is available and contains a `result` array
+  
     const rows = docData?.result || [];
-
+  
     if (rows.length === 0) {
       console.warn("No data available to export.");
-      return; // Exit if there's no data to export
+      return;
     }
-
-    // Combine header and rows for the worksheet
+  
     const worksheetData = [head, ...rows];
-
-    // Create a new worksheet
     const ws = XLSX.utils.aoa_to_sheet(worksheetData);
-
-    // Create a new workbook and append the worksheet
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Report");
-
-    // Generate an Excel file and trigger a download
-    XLSX.writeFile(wb, "docreport.xlsx");
+  
+    // Use doctor's name and phone number for filename
+    const name = docData?.finalDetails?.[0]?.name?.replace(/\s+/g, '_') || "Doctor";
+    const phone = docData?.finalDetails?.[0]?.phone || "NoPhone";
+  
+    const filename = `${name}_${phone}_report.xlsx`;
+  
+    XLSX.writeFile(wb, filename);
   };
-
+  
 
   // useEffect(() => { 
   //   if (downloadExcel) { 
@@ -333,15 +360,15 @@ export default function BasicDetailsComponent() {
                   <>
                     <div className='row'>
                       <div className="col-md-4" >
-                        <GraphicalContainer gtype={"ColumnChart"} averageBlock={true} title={'Searches (Mobile + Desktop)'} callsGraphData={docData.searchesGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
+                        <GraphicalContainer gtype={"ColumnChart"} averageBlock={true} title={'Searches (Mobile + Desktop)'} callsGraphData={reorderGraphData(docData.searchesGraph[0])} bcolor='white' width={"100%"}></GraphicalContainer>
                       </div>
                       <div className="col-4">
 
-                        <GraphicalContainer gtype={"ColumnChart"} averageBlock={true} title={'Maps (Mobile + Desktop)'} callsGraphData={docData.mapsGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
+                        <GraphicalContainer gtype={"ColumnChart"} averageBlock={true} title={'Maps (Mobile + Desktop)'} callsGraphData={reorderGraphData(docData.mapsGraph[0])} bcolor='white' width={"100%"}></GraphicalContainer>
                       </div>
                       <div className="col-4">
 
-                        <GraphicalContainer averageBlock={true} gtype={"ColumnChart"} title={'(Web + Directions + Phone)'} callsGraphData={docData.actionGraph[0]} bcolor='white' width={"100%"}></GraphicalContainer>
+                        <GraphicalContainer averageBlock={true} gtype={"ColumnChart"} title={'(Web + Directions + Phone)'} callsGraphData={reorderGraphData(docData.actionGraph[0])} bcolor='white' width={"100%"}></GraphicalContainer>
                       </div>
                     </div>
                   </>

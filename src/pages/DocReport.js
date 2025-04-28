@@ -7,7 +7,7 @@ import { SharedContext } from "../context/SharedContext";
 export default function DocReport() {
   var username;
   const loginBranch = localStorage.getItem("Branch");
-  console.log("=============>", loginBranch)
+  //console.log("=============>", loginBranch)
   const [locationProfiles, setLocationProfiles] = useState([]);
   const [contextHospitals, setcontextHospitals] = useState();
   const [clusterContext, setclusterContext] = useState();
