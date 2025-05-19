@@ -26,17 +26,18 @@ function getLast6MonthsLabels() {
 }
 
 function reorderGraphData(rawData, isYearSpecific = false) {
-  const last6Months = getLast6MonthsLabels();
+  const last6Months = getLast6MonthsLabels().reverse(); // reversed here
 
   return last6Months.map(({ label, year }) => {
     const rawKey = isYearSpecific ? `${year}-${label}` : label;
-    const displayKey = `${label}-${year}`; // always use year in final key
+    const displayKey = `${label}-${year}`;
 
     return {
       [displayKey]: rawData[rawKey] || rawData[label] || 0
     };
   }).reduce((acc, cur) => ({ ...acc, ...cur }), {});
 }
+
 
 
 export default function BasicDetailsComponent() {

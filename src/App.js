@@ -26,8 +26,7 @@ function App() {
         <Route path="/verification" element={<Verification/>} />
         <Route
           path="/Dashboard"
-          element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
-        />
+          element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}        />
         <Route
           path="/Doc-report"
           element={isAuthenticated ? <DocReport /> : <Navigate to="/" />}

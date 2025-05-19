@@ -35,17 +35,18 @@ function getLast6MonthsLabels() {
 }
 
 function reorderGraphData(rawData, isYearSpecific = false) {
-  const last6Months = getLast6MonthsLabels();
+  const last6Months = getLast6MonthsLabels().reverse(); // reversed here
 
   return last6Months.map(({ label, year }) => {
     const rawKey = isYearSpecific ? `${year}-${label}` : label;
-    const displayKey = `${label}-${year}`; // always use year in final key
+    const displayKey = `${label}-${year}`;
 
     return {
       [displayKey]: rawData[rawKey] || rawData[label] || 0
     };
   }).reduce((acc, cur) => ({ ...acc, ...cur }), {});
 }
+
 
 
 export default function Dashboard(props) {
@@ -372,7 +373,7 @@ export default function Dashboard(props) {
   useEffect(() => {
     if (contextSpeciality) {
       getMonthData(contextMonth);
-    } 
+    }
   }, [contextSpeciality]);
 
   useEffect(() => {
@@ -487,7 +488,7 @@ export default function Dashboard(props) {
         contextSpeciality || "",
         // Optional: add speciality if available e.g., `speciality || ""`
       ].filter(Boolean); // removes empty strings
-    
+
       const filename = parts.length > 0 ? `GMB_Performance_Report_${parts.join("_")}.xlsx` : "GMB Performance Report.xlsx";
 
       pdf.save(`${filename}.pdf`);
@@ -499,31 +500,149 @@ export default function Dashboard(props) {
   };
 
 
+  // const downloadDataAsExcel = () => {
+  //   const workbook = XLSX.utils.book_new();
+
+  //   // Sheet 1: ContentContainer
+  //   if (use && use.length > 0) {
+  //     const useSheet = XLSX.utils.json_to_sheet(use.map(obj => {
+  //       const key = Object.keys(obj)[0];
+  //       return { Profiles: key, Counts: obj[key] };
+  //     }));
+  //     XLSX.utils.book_append_sheet(workbook, useSheet, "Profile Counts");
+  //   }
+
+  //   // Sheet 2: ReviewRating
+  //   if (showAllData?.reviewRating?.length > 0) {
+  //     const reviewSheet = XLSX.utils.json_to_sheet(showAllData.reviewRating);
+  //     XLSX.utils.book_append_sheet(workbook, reviewSheet, "ReviewRating");
+  //   }
+
+  //   // Sheet 3: Analysis
+  //   if (showAllData?.analysis?.length > 0) {
+  //     const analysisSheet = XLSX.utils.json_to_sheet(showAllData.analysis);
+  //     XLSX.utils.book_append_sheet(workbook, analysisSheet, "Analysis");
+  //   }
+
+  //   //Sheet 4: Top Doctor Data
+  //   if (Array.isArray(topDoctorData) && topDoctorData.length > 0) {
+  //     const header = [
+  //       "Name / Hospital",
+  //       "GS - Mobile",
+  //       "GS - Desktop",
+  //       "GM - Mobile",
+  //       "GM - Desktop",
+  //       "Website Clicks",
+  //       "Directions Clicks",
+  //       "Phone Calls"
+  //     ];
+
+  //     // Process each row to ensure it's an array of cells
+  //     const dataRows = topDoctorData.map(row => {
+  //       if (Array.isArray(row)) {
+  //         return row; // Already an array, use as-is
+  //       } else if (typeof row === 'string') {
+  //         // Split string by commas to create row array
+  //         return row.split(',');
+  //       } else {
+  //         console.warn('Unexpected data format in row:', row);
+  //         return []; // Fallback to empty array to avoid errors
+  //       }
+  //     });
+
+  //     // Combine header with processed data rows
+  //     const doctorRows = [header, ...dataRows];
+  //     const doctorSheet = XLSX.utils.aoa_to_sheet(doctorRows);
+  //     XLSX.utils.book_append_sheet(workbook, doctorSheet, "TopDoctors");
+  //   }
+
+
+  //   // Build filename dynamically
+  //   const parts = [
+  //     getInsightState || "",
+  //     getInsightsCity || "",
+  //     contextMonth || "",
+  //     contextSpeciality || "",
+  //     // Optional: add speciality if available e.g., `speciality || ""`
+  //   ].filter(Boolean); // removes empty strings
+
+  //   const filename = parts.length > 0 ? `GMB_Performance_Report_${parts.join("_")}.xlsx` : "GMB Performance Report.xlsx";
+
+  //   // Export Excel file
+  //   XLSX.writeFile(workbook, filename);
+  // };
+
+  //console.log("getContextCity@@@@@@@@******^^^^^^^^^^^^^^^%%%%%%%%%%%%%$$$$$$$$$$#### : " + topDoctorData);
+
+
+
+
   const downloadDataAsExcel = () => {
     const workbook = XLSX.utils.book_new();
-  
-    // Sheet 1: ContentContainer
+
+    const autoFitColumns = (data) => {
+      const colWidths = data[0].map((_, colIndex) => {
+        const maxLen = data.reduce((max, row) => {
+          const cell = row[colIndex] ?? "";
+          return Math.max(max, String(cell).length);
+        }, 10);
+        return { wch: maxLen + 2 };
+      });
+      return colWidths;
+    };
+
+    // Helper to create sheet with bold headers and auto width
+    const createStyledSheet = (data, sheetName) => {
+      const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+      // Bold header
+      const headerRow = data[0];
+      headerRow.forEach((_, i) => {
+        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: i });
+        if (!worksheet[cellAddress]) return;
+        worksheet[cellAddress].s = {
+          font: { bold: true }
+        };
+      });
+
+      worksheet["!cols"] = autoFitColumns(data);
+      XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    };
+
+    // Sheet 1: Profile Counts
     if (use && use.length > 0) {
-      const useSheet = XLSX.utils.json_to_sheet(use.map(obj => {
+      const rows = [["Profiles", "Counts"]];
+      rows.push(...use.map(obj => {
         const key = Object.keys(obj)[0];
-        return { name: key, value: obj[key] };
+        return [key, obj[key]];
       }));
-      XLSX.utils.book_append_sheet(workbook, useSheet, "ContentContainer");
+      createStyledSheet(rows, "Profile Counts");
     }
-  
-    // Sheet 2: ReviewRating
-    if (showAllData?.reviewRating?.length > 0) {
-      const reviewSheet = XLSX.utils.json_to_sheet(showAllData.reviewRating);
-      XLSX.utils.book_append_sheet(workbook, reviewSheet, "ReviewRating");
+
+    // Sheet 2: Review Rating (exclude _id and round averageRating)
+    if (Array.isArray(showAllData?.reviewRating) && showAllData.reviewRating.length > 0) {
+      const cleaned = showAllData.reviewRating.map(({ _id, ...rest }) => {
+        if (typeof rest.averageRating === 'number') {
+          rest.averageRating = Math.round(rest.averageRating * 10) / 10; // Round to 1 decimal place
+        }
+        return rest;
+      });
+
+      const headers = Object.keys(cleaned[0]);
+      const rows = [headers, ...cleaned.map(obj => headers.map(h => obj[h]))];
+      createStyledSheet(rows, "Review Rating");
     }
-  
-    // Sheet 3: Analysis
-    if (showAllData?.analysis?.length > 0) {
-      const analysisSheet = XLSX.utils.json_to_sheet(showAllData.analysis);
-      XLSX.utils.book_append_sheet(workbook, analysisSheet, "Analysis");
+
+
+    // Sheet 3: Analysis (exclude _id)
+    if (Array.isArray(showAllData?.analysis) && showAllData.analysis.length > 0) {
+      const cleaned = showAllData.analysis.map(({ _id, ...rest }) => rest);
+      const headers = Object.keys(cleaned[0]);
+      const rows = [headers, ...cleaned.map(obj => headers.map(h => obj[h]))];
+      createStyledSheet(rows, "Analysis Data");
     }
-  
-    //Sheet 4: Top Doctor Data
+
+    // Sheet 4: TopDoctors
     if (Array.isArray(topDoctorData) && topDoctorData.length > 0) {
       const header = [
         "Name / Hospital",
@@ -535,43 +654,31 @@ export default function Dashboard(props) {
         "Directions Clicks",
         "Phone Calls"
       ];
-  
-      // Process each row to ensure it's an array of cells
-      const dataRows = topDoctorData.map(row => {
-        if (Array.isArray(row)) {
-          return row; // Already an array, use as-is
-        } else if (typeof row === 'string') {
-          // Split string by commas to create row array
-          return row.split(',');
-        } else {
-          console.warn('Unexpected data format in row:', row);
-          return []; // Fallback to empty array to avoid errors
-        }
+      const rows = topDoctorData.map(row => {
+        if (Array.isArray(row)) return row;
+        if (typeof row === 'string') return row.split(',');
+        console.warn("Unexpected format in topDoctorData row:", row);
+        return [];
       });
-  
-      // Combine header with processed data rows
-      const doctorRows = [header, ...dataRows];
-      const doctorSheet = XLSX.utils.aoa_to_sheet(doctorRows);
-      XLSX.utils.book_append_sheet(workbook, doctorSheet, "TopDoctors");
+      createStyledSheet([header, ...rows], "Top 100 Doctor's Data");
     }
-  
-  
-    // Build filename dynamically
+
+    // Build dynamic filename
     const parts = [
       getInsightState || "",
       getInsightsCity || "",
       contextMonth || "",
-      contextSpeciality || "",
-      // Optional: add speciality if available e.g., `speciality || ""`
-    ].filter(Boolean); // removes empty strings
-  
-    const filename = parts.length > 0 ? `GMB_Performance_Report_${parts.join("_")}.xlsx` : "GMB Performance Report.xlsx";
-  
-    // Export Excel file
+      contextSpeciality || ""
+    ].filter(Boolean);
+
+    const filename = parts.length > 0
+      ? `GMB_Performance_Report_${parts.join("_")}.xlsx`
+      : "GMB_Performance_Report.xlsx";
+
+    // Write file
     XLSX.writeFile(workbook, filename);
   };
-  
-console.log("getContextCity@@@@@@@@******^^^^^^^^^^^^^^^%%%%%%%%%%%%%$$$$$$$$$$#### : " + topDoctorData);
+
 
 
 
@@ -619,7 +726,7 @@ console.log("getContextCity@@@@@@@@******^^^^^^^^^^^^^^^%%%%%%%%%%%%%$$$$$$$$$$#
         setInsightsAnalysis,
         setReloadCondition,
         currentCluster,
-        setTopDoctorData, 
+        setTopDoctorData,
         contextSpeciality,
         setContextSpeciality,
         contextSpeciality,
@@ -682,7 +789,7 @@ console.log("getContextCity@@@@@@@@******^^^^^^^^^^^^^^^%%%%%%%%%%%%%$$$$$$$$$$#
                 {showAllData?.analysis?.length > 0 ? (
                   <SideContentContainer data={showAllData.analysis} />
                 ) : (
-                  <div className="d-flex justify-content-center align-items-center">No analysis data available</div>
+                  <h6 className="d-flex justify-content-center align-items-center">No analysis data available</h6>
                 )}
               </div>
 

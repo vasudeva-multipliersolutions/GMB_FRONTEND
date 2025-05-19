@@ -111,6 +111,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
         });
 
         const data = await response.json();
+        setTopDoctorData(data)
         setInsightData(data);
 
         setIsLoading(false);
