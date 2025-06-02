@@ -13,6 +13,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { NewMenuBar } from "./FilterPopover";
 import { Bold } from "lucide-react";
+import MultiMonthSelector from "./MultiMonthSelector";
 
 
 
@@ -46,11 +47,15 @@ export default function Navbar(props) {
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedSpeciaity, setselectedSpeciaity] = useState("");
   const [filteredMonths, setFilteredMonths] = useState([]);
+  const [selectedMonths, setSelectedMonths] = useState([]);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [getSpeciality, setAllSpeciality] = useState();
   const [speciality, setSpeciality] = useState();
 
   const location = useLocation();
+
+  console.log("^^^^^^^^^^^^^^^^^------------>" + selectedMonths)
 
 
   const isActive = (path) => location.pathname === path;
@@ -72,9 +77,9 @@ export default function Navbar(props) {
   //console.log("Speciality24567: ", selectedSpeciaity);
 
 
- useEffect(() => {
+  useEffect(() => {
     setAllSpeciality(specialityContext)
-  }, [specialityContext]);   
+  }, [specialityContext]);
 
 
 
@@ -136,6 +141,7 @@ export default function Navbar(props) {
     setSpeciality("");
     setCity("")
     setMonth("");
+    setSelectedMonths([]);
     if (e.target.value === "All") {
       window.location.reload();
     } else {
@@ -146,12 +152,19 @@ export default function Navbar(props) {
   function getCityHandeler(e) {
     setMonth("");
     setSpeciality("");
+    setSelectedMonths([]);
     setCity(e.target.value)
   }
   function monthHandelar(e) {
     setSpeciality("");
     setMonth(e.target.value)
   }
+
+  useEffect(() => {
+    if (selectedMonths) {
+      setSpeciality("");
+    }
+  }, [selectedMonths]);
 
 
   useEffect(() => {
@@ -201,7 +214,7 @@ export default function Navbar(props) {
     if (data.result[0].branches) {
       setCitys(data.result[0].branches)
     }
-    
+
 
     if (data.countOfProfiles && data.countOfProfiles.length > 0) {
       console.log("New countOfProfiles:", data.countOfProfiles);
@@ -250,7 +263,7 @@ export default function Navbar(props) {
       setAllSpeciality(getspecialitydetails)
     }
 
-   
+
 
 
 
@@ -270,43 +283,42 @@ export default function Navbar(props) {
     setLogo(localStorage.getItem("logo"))
   }, [])
 
+  // useEffect(() => {
+  //   const today = new Date();
+  //   const currentYear = today.getFullYear();
+  //   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  //   let lastSixMonths = [];
+  //   for (let i = 6; i > 0; i--) {
+  //     const monthIndex = (today.getMonth() - i + 12) % 12;
+  //     const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
+  //     lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
+  //   }
+
+  //   // Filter months based on selected year
+  //   if (selectedYear) {
+  //     setFilteredMonths(lastSixMonths.filter(m => m.year === selectedYear));
+  //   } else {
+  //     setFilteredMonths(lastSixMonths);
+  //   }
+  // }, [selectedYear]);
+
   useEffect(() => {
     const today = new Date();
     const currentYear = today.getFullYear();
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     let lastSixMonths = [];
-    for (let i = 7; i > 0; i--) {
+    for (let i = 6; i > 0; i--) {
       const monthIndex = (today.getMonth() - i + 12) % 12;
       const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
       lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
     }
 
-    // Filter months based on selected year
     if (selectedYear) {
-      setFilteredMonths(lastSixMonths.filter(m => m.year === selectedYear));
+      setFilteredMonths(lastSixMonths.filter(m => m.year === selectedYear).map(m => `${m.name}`));
     } else {
-      setFilteredMonths(lastSixMonths);
-    }
-  }, [selectedYear]);
-
-  useEffect(() => {
-    const today = new Date();
-    const currentYear = today.getFullYear();
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-    let lastSixMonths = [];
-    for (let i = 7; i > 0; i--) {
-      const monthIndex = (today.getMonth() - i + 12) % 12;
-      const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
-      lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
-    }
-
-    // Filter months based on selected year
-    if (selectedYear) {
-      setFilteredMonths(lastSixMonths.filter(m => m.year === selectedYear).map(m => m.name));
-    } else {
-      setFilteredMonths(lastSixMonths.map(m => m.name));
+      setFilteredMonths(lastSixMonths.map(m => `${m.name}`));
     }
   }, [selectedYear]);
 
@@ -575,15 +587,16 @@ export default function Navbar(props) {
                       style={{ display: props.monthfilter ? "block" : "none" }}
                     >
                       <div className="data_list_selection m-1">
-                        <div className="input-group">
+                        {/* <div className="input-group">
                           <select value={getMonth} onChange={monthHandelar} style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
                             <option value="">Select Month</option>
                             {filteredMonths.map((month, index) => (
                               <option key={index} value={month}>{month}</option>
                             ))}
                           </select>
+                          </div> */}
 
-                          {/* <button
+                        {/* <button
                       onClick={() => {
                         monthseter();
                       }}
@@ -595,9 +608,19 @@ export default function Navbar(props) {
                     >
                       <FaSearch className="CircleRightIcon" />
                     </button> */}
+                        <div>
+                          <MultiMonthSelector
+                            filteredMonths={filteredMonths}
+                            selectedMonths={selectedMonths}
+                            setSelectedMonths={setSelectedMonths}
+                          />
+                          {/* <div style={{ marginTop: "10px" }}>
+                            <strong>Selected Months:</strong> {selectedMonths.join(", ")}
+                          </div> */}
                         </div>
                       </div>
                     </div>
+
 
 
 
@@ -614,7 +637,7 @@ export default function Navbar(props) {
                     <NewMenuBar speciality={speciality}></NewMenuBar>
                   </div>
                 )}
-{/* ===============================Speciality ===========================================*/}
+                {/* ===============================Speciality ===========================================*/}
                 <div className="datepicker">
                   <div className="data_list_selection m-1">
                     <div className="input-group">
@@ -658,7 +681,7 @@ export default function Navbar(props) {
                       onClick={() => {
                         setInsightsState(getState);
                         setInsightsCity(getCity);
-                        setContextMonth(getMonth);
+                        setContextMonth(selectedMonths);
                         setContextCity(getCity)
                         setContextSpeciality(speciality);
                         setLocationProfiles(getcountOfProfiles);

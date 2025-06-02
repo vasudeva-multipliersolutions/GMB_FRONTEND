@@ -81,7 +81,7 @@ export default function Dashboard(props) {
   const Cluster = localStorage.getItem("Cluster");
   const token = localStorage.getItem("token");
 
-  //console.log("COntext Month  :" + contextMonth);
+  console.log("COntext Month  :" + contextMonth);
 
 
   useEffect(() => {

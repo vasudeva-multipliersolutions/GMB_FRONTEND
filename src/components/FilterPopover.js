@@ -21,13 +21,14 @@ export function NewMenuBar({speciality}) {
       : loginBranch
   );
 
-  useEffect(() => {
-    speciality="";
-  }, [selectedItem])
-
+  
   // Use context directly without destructuring
   const { setcontextHospitals, setLocationProfiles } = useContext(SharedContext);
   const { setDrNameContext, setSpecialityContext } = useContext(SidebarContext);
+  useEffect(() => {
+    speciality="";
+    setSpecialityContext("");
+  }, [selectedItem])
 
   // Handler function to manage item clicks
   const handleItemClick = (event, item) => {
