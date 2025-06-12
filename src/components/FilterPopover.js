@@ -7,7 +7,7 @@ import { FaHospitalAlt } from "react-icons/fa";
 import { SharedContext } from "../context/SharedContext";
 import { SidebarContext } from "../SidebarContext";
 
-export function NewMenuBar({speciality}) {
+export function NewMenuBar({ speciality, rating }) {
   const api = localStorage.getItem("API");
   const mail = localStorage.getItem("mail");
   const loginBranch = localStorage.getItem("Branch");
@@ -17,16 +17,16 @@ export function NewMenuBar({speciality}) {
     mail === "manipal@gmail.com"
       ? "Locations"
       : loginBranch === "undefined"
-      ? Cluster
-      : loginBranch
+        ? Cluster
+        : loginBranch
   );
 
-  
+
   // Use context directly without destructuring
   const { setcontextHospitals, setLocationProfiles } = useContext(SharedContext);
   const { setDrNameContext, setSpecialityContext } = useContext(SidebarContext);
   useEffect(() => {
-    speciality="";
+    speciality = "";
     setSpecialityContext("");
   }, [selectedItem])
 
@@ -40,46 +40,52 @@ export function NewMenuBar({speciality}) {
     setcontextHospitals(item.label); // Set the selected item in context
   };
 
- // useEffect(() => {
-    // This function will run whenever `selectedItem` changes
+  // useEffect(() => {
+  // This function will run whenever `selectedItem` changes
 
-    useEffect(() => {
-      async function filterApi(city) {
-        try {
-          let sendCity = city === "Locations" ? "" : city;
-          let sendState = "";
-    
-          if (city === "undefined") {
-            sendState = Cluster;
-          }
+  useEffect(() => {
+    async function filterApi(city) {
+      try {
+        let sendCity = city === "Locations" ? "" : city;
+        let sendState = "";
 
-          let spcialitytoSend = speciality? speciality : "";
-    
-          const response = await fetch(`${api}/getfilterdata`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ state: sendState, branch: sendCity, speciality: spcialitytoSend }),
-          });
-    
-          const data = await response.json();
-          setLocationProfiles(data.countOfProfiles);
+        if (city === "undefined") {
+          sendState = Cluster;
+        }
+
+        let spcialitytoSend = speciality ? speciality : "";
+
+        let ratingtoSend = rating ? rating : "";
+
+        const response = await fetch(`${api}/getfilterdata`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ state: sendState, branch: sendCity, speciality: spcialitytoSend, rating: ratingtoSend }),
+        });
+
+        const data = await response.json();
+        setLocationProfiles(data.countOfProfiles);
+        if (data.result?.length > 0) {
           setDrNameContext(data.result[0].businessNames);
-          if (data.result[0].specialities) {
-            setSpecialityContext(data.result[0].specialities);
-          }
-        } catch (error) {
-          console.error("Error fetching data:", error);
+        } else {
+          setDrNameContext([]); // Important: Clear the names if nothing returned
         }
+        if (data.result[0].specialities) {
+          setSpecialityContext(data.result[0].specialities);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
-        if (selectedItem) {
-          filterApi(selectedItem); // Ensures the function runs when selectedItem is set
-        }
-        
-    }, [selectedItem, mail, loginBranch, setLocationProfiles, speciality]);
+    }
+    if (selectedItem) {
+      filterApi(selectedItem); // Ensures the function runs when selectedItem is set
+    }
 
- // Run on component mount
+  }, [selectedItem, mail, loginBranch, setLocationProfiles, speciality, rating]);
+
+  // Run on component mount
 
   useEffect(() => {
     const handlePageRefresh = () => {
@@ -232,7 +238,7 @@ export function NewMenuBar({speciality}) {
         items: [
           {
             label: "Goa",
-            callback: handleItemClick, 
+            callback: handleItemClick,
           },
           {
             label: "Mangalore",
@@ -246,7 +252,7 @@ export function NewMenuBar({speciality}) {
         items: [
           {
             label: "BBR",
-            callback: handleItemClick, 
+            callback: handleItemClick,
           },
           {
             label: "Vijayawada",
@@ -261,7 +267,7 @@ export function NewMenuBar({speciality}) {
           {
             label: "Bangladesh",
             leftIcon: <FaRegHospital className="text-green-500" />,
-            callback: handleItemClick, 
+            callback: handleItemClick,
           },
           {
             label: "Burundi",
@@ -334,122 +340,122 @@ export function NewMenuBar({speciality}) {
         ],
       },
 
-    //   {
-    //     label: "Hospitals",
-    //     leftIcon: <FaHospitalAlt className="text-indigo-500" />,
-    //     items: [
-    //       {
-    //         label: "Delhi",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Ghaziabad",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: 'Palamvihar',
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Jaipur",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Patiala",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Pune",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks,
-    //       },
-    //       {
-    //         label: "Baner",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Goa",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Mangalore",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick,
-    //       },
-    //       {
-    //         label: "Doddaballapur",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Old Airport Road",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Sarjapur",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Jayanagar",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Varthur",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Malleshwaram",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Whitefield",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Millers Road",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Yeshwanthpur",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Salem",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Mysore",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Vijayawada",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //       {
-    //         label: "Hospitals",
-    //         leftIcon: <FaRegHospital className="text-green-500" />,
-    //         callback: handleItemClick, // Use the handler for clicks
-    //       },
-    //     ],
-    //   },
+      //   {
+      //     label: "Hospitals",
+      //     leftIcon: <FaHospitalAlt className="text-indigo-500" />,
+      //     items: [
+      //       {
+      //         label: "Delhi",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Ghaziabad",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: 'Palamvihar',
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Jaipur",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Patiala",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Pune",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks,
+      //       },
+      //       {
+      //         label: "Baner",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Goa",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Mangalore",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick,
+      //       },
+      //       {
+      //         label: "Doddaballapur",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Old Airport Road",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Sarjapur",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Jayanagar",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Varthur",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Malleshwaram",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Whitefield",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Millers Road",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Yeshwanthpur",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Salem",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Mysore",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Vijayawada",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //       {
+      //         label: "Hospitals",
+      //         leftIcon: <FaRegHospital className="text-green-500" />,
+      //         callback: handleItemClick, // Use the handler for clicks
+      //       },
+      //     ],
+      //   },
     ] : [],
   };
 
@@ -469,8 +475,8 @@ export function NewMenuBar({speciality}) {
         ButtonProps={{
           variant: "outlined",
           className:
-            "text-white bg-slate-400 hover:bg-purple-400 rounded-2xl px-4 py-2",
-          style: { borderRadius: "10px", height: "4.2vh" },
+            "text-white bg-slate-400 hover:bg-purple-400 rounded-2xl px-4 ",
+          style: { borderRadius: "10px", height: "3.5vh" },
         }}
         onClick={() => console.log("Clicked")}
       />

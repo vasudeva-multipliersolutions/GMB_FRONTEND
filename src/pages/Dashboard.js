@@ -69,6 +69,7 @@ export default function Dashboard(props) {
   const [currentCluster, setCurrentCluster] = useState("");
   const [topDoctorData, setTopDoctorData] = useState([]);
   const [contextSpeciality, setContextSpeciality] = useState();
+  const [contextRating, setContextRating] = useState();
 
 
 
@@ -154,6 +155,7 @@ export default function Dashboard(props) {
           branch: cityToSend,
           state: stateToSend,
           speciality: contextSpeciality,
+          rating: contextRating,
         }),
       });
       if (response.status === 403 || response.status === 404) {
@@ -352,14 +354,14 @@ export default function Dashboard(props) {
 
   useEffect(() => {
     // console.log("getContextCity@@@@@@@@ : " + contextCity);
-    if (contextCity) {
+    if (contextMonth < 0 && contextCity) {
       getMonthData("");
     }
   }, [contextCity]);
 
   useEffect(() => {
     //console.log("getInsightState@@@@@@@@ : " + getInsightState);
-    if (getInsightState) {
+    if (contextMonth < 0 &&  getInsightState) {
       getMonthData("");
     }
   }, [getInsightState]);
@@ -375,6 +377,12 @@ export default function Dashboard(props) {
       getMonthData(contextMonth);
     }
   }, [contextSpeciality]);
+
+  useEffect(() => {
+    if (contextRating) {
+      getMonthData(contextMonth);
+    }
+  }, [contextRating]);
 
   useEffect(() => {
     if (currentCluster) {
@@ -730,6 +738,8 @@ export default function Dashboard(props) {
         contextSpeciality,
         setContextSpeciality,
         contextSpeciality,
+        setContextRating,
+        contextRating,
       }}
     >
       <div style={{ background: "#EFEFEF" }}>

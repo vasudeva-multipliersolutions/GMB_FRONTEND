@@ -14,7 +14,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
   const [insightdata, setInsightData] = useState(null);
 
 
-  const { getDrName, getInsightState, getInsightsCity, currentCluster, contextMonth, setTopDoctorData, contextSpeciality } = useContext(SharedContext);
+  const { getDrName, getInsightState, getInsightsCity, currentCluster, contextMonth, setTopDoctorData, contextSpeciality, contextRating } = useContext(SharedContext);
 
   const api = localStorage.getItem("API");
   const mail = localStorage.getItem("mail");
@@ -55,7 +55,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
       // console.log("Hello--------"+ contextMonth)
 
 
-      if (getInsightState || getInsightsCity || contextHospitals || contextMonth || contextSpeciality) {
+      if (getInsightState || getInsightsCity || contextHospitals || contextMonth || contextSpeciality || contextRating) {
         //console.log("Hello"+ 1)
         try {
           let cityToSend = location === "All" ? "" : location;
@@ -70,6 +70,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
               branch: cityToSend,
               month: monthToSend,
               speciality: contextSpeciality,
+              rating: contextRating,
             }),
           });
           const data = await response.json();
@@ -86,7 +87,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
       }
     }
     fetchDataFilter();
-  }, [getInsightState, getInsightsCity, contextHospitals, contextMonth, contextSpeciality]);
+  }, [getInsightState, getInsightsCity, contextHospitals, contextMonth, contextSpeciality, contextRating]);
 
 
 
