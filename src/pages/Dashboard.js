@@ -433,8 +433,8 @@ export default function Dashboard(props) {
     cloneContainer.appendChild(clone);
     cloneContainer.style.display = 'block';
 
-    const scale = 2;
-    const pdf = new jsPDF('p', 'mm', 'a4');
+    const scale = 4;
+    const pdf = new jsPDF('p', 'mm', 'a2');
 
     // Padding values
     const topPadding = 10;     // mm
@@ -660,7 +660,9 @@ export default function Dashboard(props) {
         "GM - Desktop",
         "Website Clicks",
         "Directions Clicks",
-        "Phone Calls"
+        "Phone Calls",
+        "Reviews",
+        "Rating",
       ];
       const rows = topDoctorData.map(row => {
         if (Array.isArray(row)) return row;

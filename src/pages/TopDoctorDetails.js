@@ -212,6 +212,8 @@ export default function TopDoctorDetails({ contextHospitals }) {
                       "Website Clicks",
                       "Directions Clicks",
                       "Phone Calls",
+                      "Reviews",
+                      "Rating",
                     ]}
                     rows={rows}
                   />
@@ -232,6 +234,8 @@ export default function TopDoctorDetails({ contextHospitals }) {
                       "Website Clicks",
                       "Directions Clicks",
                       "Phone Calls",
+                      "Reviews",
+                      "Rating",
                     ]}
                     rows={rows}
                   />
