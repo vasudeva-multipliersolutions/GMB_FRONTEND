@@ -5,7 +5,7 @@ import { SharedContext } from "../context/SharedContext";
 import { FaAlignJustify, FaAnglesLeft, FaDashcube } from "react-icons/fa6";
 import { FaChartBar, FaSearch, FaUserMd } from "react-icons/fa";
 import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
-import { MdTableChart } from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
 import { GiTimeBomb } from "react-icons/gi";
 import { SidebarContext } from "../SidebarContext";
 import Popover from "@mui/material/Popover";
@@ -56,7 +56,7 @@ export default function Navbar(props) {
 
   const location = useLocation();
 
-  console.log("^^^^^^^^^^^^^^^^^------------>" + selectedMonths)
+  //console.log("^^^^^^^^^^^^^^^^^------------>" + selectedMonths)
 
 
   const isActive = (path) => location.pathname === path;
@@ -70,14 +70,23 @@ export default function Navbar(props) {
     const speciality = e.target.value;
     setSpeciality(speciality);
     setRating("");
-    // filterApi();
+    if (e.target.value === "All") {
+      setSpeciality("");
+      setRating("");
+    } else {
+      setSpeciality(e.target.value)
+    }
+
   }
 
   function ratingHandler(e) {
     const rating = e.target.value;
-    setSpeciality("");
     setRating(rating);
-    // filterApi();
+     if (e.target.value === "All") {
+      setRating("");
+    } else {
+      setRating(e.target.value)
+    }
   }
 
   // useEffect(() => {
@@ -150,17 +159,19 @@ export default function Navbar(props) {
     setCity("")
     setMonth("");
     setSpeciality("");
+    setSelectedYear("");
     setRating("");
     setSelectedMonths([]);
     if (e.target.value === "All") {
       //window.location.reload();
-    setState("");
-    setSpeciality("");
-    setCity("")
-    setMonth("");
-    setRating("");
-   // filterApi();
-    
+      setState("");
+      setSpeciality("");
+      setSelectedYear("");
+      setCity("")
+      setMonth("");
+      setRating("");
+      // filterApi();
+
     } else {
       setState(e.target.value)
     }
@@ -170,7 +181,18 @@ export default function Navbar(props) {
     setMonth("");
     setSpeciality("");
     setSelectedMonths([]);
+    setSelectedYear("");
+    setRating("");
     setCity(e.target.value)
+    if (e.target.value === "All") {
+      setSpeciality("");
+      setSelectedYear("");
+      setCity("")
+      setMonth("");
+      setRating("");
+    } else {
+      setCity(e.target.value)
+    }
   }
   function monthHandelar(e) {
     setSpeciality("");
@@ -180,13 +202,14 @@ export default function Navbar(props) {
   useEffect(() => {
     if (selectedMonths) {
       setSpeciality("");
+      filterApi();
     }
   }, [selectedMonths]);
 
 
   useEffect(() => {
     if (getState) {
-    } 
+    }
     filterApi();
   }, [getState]);
 
@@ -200,10 +223,10 @@ export default function Navbar(props) {
   useEffect(() => {
     if (speciality) {
       //setContextCity(getCity);
-     // setRating("");
+      // setRating("");
       filterApi();
       setName("");
-      
+
     }
   }, [speciality]);
 
@@ -212,7 +235,7 @@ export default function Navbar(props) {
       setAllNames("");
       //filterApi();
       setName("");
-      
+
     }
   }, [rating]);
 
@@ -228,13 +251,13 @@ export default function Navbar(props) {
   async function filterApi() {
     // alert(getState)
     let cityToSend = getCity === "All" ? "" : getCity;
-    //let stateToSend = getState === "All" ? "" : getState;
+    let monthToSend = selectedMonths.length > 0 ? selectedMonths : "";
     const response = await fetch(api + '/getfilterdata', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ "state": getState, "branch": cityToSend, "speciality": speciality, "rating": rating })
+      body: JSON.stringify({ "state": getState, "branch": cityToSend, month: monthToSend, "speciality": speciality, "rating": rating })
     });
     const data = await response.json();
     // alert("Hello")
@@ -242,21 +265,21 @@ export default function Navbar(props) {
     if (data.result?.length > 0) {
       setAllNames(data.result[0].businessNames);
       if (data.result[0].specialities) {
-      setAllSpeciality(data.result[0].specialities)
-    }
-    if (data.result[0].branches) {
-      setCitys(data.result[0].branches)
-    }
+        setAllSpeciality(data.result[0].specialities);
+      }
+      if (data.result[0].branches) {
+        setCitys(data.result[0].branches)
+      }
     } else {
-      setAllNames([]); // Important: Clear the names if nothing returned
-      setAllSpeciality([]); // Clear the speciality if nothing returned
-      setCitys([]); // Clear the citys if nothing returned
+      // setAllNames([]); // Important: Clear the names if nothing returned
+      // setAllSpeciality([]); // Clear the speciality if nothing returned
+      // setCitys([]); // Clear the citys if nothing returned
     }
-    
+
 
 
     if (data.countOfProfiles && data.countOfProfiles.length > 0) {
-      console.log("New countOfProfiles:", data.countOfProfiles);
+      //  console.log("New countOfProfiles:", data.countOfProfiles);
       setcountOfProfiles([...data.countOfProfiles]); // Ensure new array reference
     }
     //setContextCity(getCity)
@@ -265,6 +288,9 @@ export default function Navbar(props) {
     //   setContextCity(getCity)
     // }
   }
+
+  //console.log("🔍 getSpeciality state value:", getSpeciality);
+
 
   useEffect(() => {
     async function getAllDoctrosNames() {
@@ -347,7 +373,7 @@ export default function Navbar(props) {
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     let lastSixMonths = [];
-    for (let i = 7; i > 0; i--) {
+    for (let i = 8; i > 0; i--) {
       const monthIndex = (today.getMonth() - i + 12) % 12;
       const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
       lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
@@ -519,19 +545,21 @@ export default function Navbar(props) {
                         }}
                       >
                         <option value="">Select State...</option>
-                        <option value="All">All</option>
                         {getStates &&
                           getStates
-                            .filter(item => item !== "#N/A")
+                          .filter(item => item !== "#N/A")
                             .sort()
                             .map((item, index) => {
                               if (item != "#N/A")
                                 return (
-                                  <option key={index} value={item}>
+                              <option key={index} value={item}>
                                     {item}
                                   </option>
                                 );
-                            })}
+                              })}
+                              <option value="All"  style={{
+                         color: "#EF5F80",
+                        }} >Clear All</option>
                       </select>
 
                       {/* <button
@@ -569,12 +597,11 @@ export default function Navbar(props) {
                         }}
                       >
                         <option value="">Select City...</option>
-                        <option value="All">All</option>
                         {getCitys &&
                           getCitys
-                            .filter(item => item !== "#N/A")
-                            .sort()
-                            .map((item, index) => {
+                          .filter(item => item !== "#N/A")
+                          .sort()
+                          .map((item, index) => {
                               if (item != "#N/A")
                                 return (
                                   <option key={index} value={item}>
@@ -582,6 +609,9 @@ export default function Navbar(props) {
                                   </option>
                                 );
                             })}
+                      <option value="All"  style={{
+                         color: "#EF5F80",
+                        }} >Clear All</option>
                       </select>
                       {/* <button
                         onClick={() => {
@@ -666,7 +696,7 @@ export default function Navbar(props) {
 
                 {props.filterpopover && (
                   <div>
-                    <NewMenuBar speciality={speciality} rating={rating}></NewMenuBar>
+                    <NewMenuBar speciality={speciality} rating={rating} ></NewMenuBar>
                   </div>
                 )}
                 {/* ===============================Speciality ===========================================*/}
@@ -686,7 +716,6 @@ export default function Navbar(props) {
                         }}
                       >
                         <option value="">Select Speciality...</option>
-                        <option value="">All</option>
                         {getSpeciality &&
                           getSpeciality
                             .filter(item => item !== "#N/A")
@@ -698,18 +727,21 @@ export default function Navbar(props) {
                                     {item}
                                   </option>
                                 );
-                            })}
+                              })}
+                              <option value="" style={{
+                         color: "#EF5F80",
+                        }} >Clear All</option>
                       </select>
                     </div>
                   </div>
                 </div>
 
-                
+
                 {/* ===============================Rating ===========================================*/}
                 <div className="datepicker"
-                  // style={{
-                  //   display: props.filterpopover || props.clusterlogin ? "block" : "none",
-                  // }}
+                // style={{
+                //   display: props.filterpopover || props.clusterlogin ? "block" : "none",
+                // }}
                 >
                   <div className="data_list_selection m-1">
                     <div className="input-group">
@@ -726,12 +758,14 @@ export default function Navbar(props) {
                         }}
                       >
                         <option value="">Select Rating...</option>
-                        <option value="">All</option>
                         <option value="1">0-1</option>
                         <option value="2">1-2</option>
                         <option value="3">2-3</option>
                         <option value="5">4-5</option>
                         <option value="4">3-4</option>
+                        <option value="" style={{
+                         color: "#EF5F80",
+                        }} >Clear All</option>
 
                       </select>
                     </div>

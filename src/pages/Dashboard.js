@@ -373,15 +373,14 @@ export default function Dashboard(props) {
   }, [contextMonth]);
 
   useEffect(() => {
-    if (contextSpeciality) {
+
       getMonthData(contextMonth);
-    }
+    
   }, [contextSpeciality]);
 
   useEffect(() => {
-    if (contextRating) {
+   
       getMonthData(contextMonth);
-    }
   }, [contextRating]);
 
   useEffect(() => {

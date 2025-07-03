@@ -54,12 +54,14 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
                         background: "#fff",
                         border: "1px solid #ccc",
                         borderRadius: "10px",
-                        //maxHeight: "200px",
                         overflowY: "auto",
                         zIndex: 999,
                         marginTop: "4px"
                     }}
                 >
+                 
+
+                    {/* Month Options */}
                     {filteredMonths.map((month, idx) => (
                         <div key={idx} style={{ display: "flex", alignItems: "center", padding: "5px 10px" }}>
                             <input
@@ -72,8 +74,22 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
                             <span>{month}</span>
                         </div>
                     ))}
+                       {/* Clear All Option */}
+                    <div
+                        onClick={() => setSelectedMonths([])}
+                        style={{
+                            padding: "5px 10px",
+                            cursor: "pointer",
+                            textAlign: "center",
+                            color: "#EF5F80",
+                            borderTop: "1px solid #eee"
+                        }}
+                    >
+                        Clear All
+                    </div>
                 </div>
             )}
+
         </div>
     );
 };
