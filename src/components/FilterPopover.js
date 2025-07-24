@@ -476,7 +476,7 @@ export function NewMenuBar({ speciality, rating }) {
           variant: "outlined",
           className:
             "text-white bg-slate-400 hover:bg-purple-400 rounded-2xl px-4 ",
-          style: { borderRadius: "10px", height: "3.5vh" },
+          style: { borderRadius: "10px", height: "35px" },
         }}
         onClick={() => console.log("Clicked")}
       />

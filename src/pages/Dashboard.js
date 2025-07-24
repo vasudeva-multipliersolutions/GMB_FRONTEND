@@ -280,7 +280,7 @@ export default function Dashboard(props) {
 
     async function getAnalysisData() {
       try {
-        const response = await fetch("http://localhost:2024/api/logindata", {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/logindata`, {
           method: "POST",
           headers: { "Content-Type": "application/json", },
           body: JSON.stringify({ username: loginEmail, psw: psw1 }),

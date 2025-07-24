@@ -224,7 +224,7 @@ export default function Navbar(props) {
     if (speciality) {
       //setContextCity(getCity);
       // setRating("");
-      filterApi();
+     // filterApi();
       setName("");
 
     }
@@ -544,7 +544,7 @@ export default function Navbar(props) {
                           outline: "none",
                         }}
                       >
-                        <option value="">Select State...</option>
+                        <option value="">Select Location...</option>
                         {getStates &&
                           getStates
                           .filter(item => item !== "#N/A")
@@ -596,7 +596,7 @@ export default function Navbar(props) {
                           outline: "none",
                         }}
                       >
-                        <option value="">Select City...</option>
+                        <option value="">Select Unit...</option>
                         {getCitys &&
                           getCitys
                           .filter(item => item !== "#N/A")
@@ -728,7 +728,7 @@ export default function Navbar(props) {
                                   </option>
                                 );
                               })}
-                              <option value="" style={{
+                              <option value="All" style={{
                          color: "#EF5F80",
                         }} >Clear All</option>
                       </select>
@@ -761,9 +761,9 @@ export default function Navbar(props) {
                         <option value="1">0-1</option>
                         <option value="2">1-2</option>
                         <option value="3">2-3</option>
-                        <option value="5">4-5</option>
                         <option value="4">3-4</option>
-                        <option value="" style={{
+                        <option value="5">4-5</option>
+                        <option value="All" style={{
                          color: "#EF5F80",
                         }} >Clear All</option>
 
@@ -802,20 +802,7 @@ export default function Navbar(props) {
                     </button>
                   </div>
                 )}
-
-
-
-
-                {/* <label>Select Doctor:</label>&nbsp; */}
-
-
-
-
-
-
-
-
-
+               {/* <label>Select Doctor:</label>&nbsp; */}
                 <div
                   className="data_list_selection m-1"
                   style={{
@@ -925,12 +912,6 @@ export default function Navbar(props) {
                 {/* <Link to="/gen-ai" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Gen AI</Link>  */}
               </div>
             )}
-
-
-
-
-
-
             {/* <div className="d-flex">
               <div
                 className="datepicker"

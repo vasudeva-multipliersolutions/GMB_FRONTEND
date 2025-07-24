@@ -59,7 +59,7 @@ const Verification = () => {
   const verify2FA = async () => {
 
     try {
-      const res = await axios.post("http://localhost:2024/api/verification", {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/verification`, {
         userId,
         token
       });
