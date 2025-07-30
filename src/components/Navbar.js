@@ -24,7 +24,7 @@ export default function Navbar(props) {
   const { isCollapsed, toggleSidebar, drNameContext, specialityContext } =
     useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles, setContextMonth, setContextSpeciality, setContextRating } = useContext(SharedContext);
+  const { setContextCity, setLocationProfiles, setContextMonth, setContextSpeciality, setContextRating, setContextDepartment} = useContext(SharedContext);
   const { setInsightsState, setInsightsCity, setContextYear, } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
@@ -52,6 +52,8 @@ export default function Navbar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [getSpeciality, setAllSpeciality] = useState();
   const [speciality, setSpeciality] = useState();
+  const [getAllDepartments, setAllDepartments] = useState();
+  const [department, setdepartment] = useState();
   const [rating, setRating] = useState();
 
   const location = useLocation();
@@ -76,16 +78,40 @@ export default function Navbar(props) {
     } else {
       setSpeciality(e.target.value)
     }
-
   }
 
   function ratingHandler(e) {
     const rating = e.target.value;
     setRating(rating);
-     if (e.target.value === "All") {
+    if (e.target.value === "All") {
       setRating("");
     } else {
       setRating(e.target.value)
+    }
+  }
+
+
+    function deptHandler(e) {
+    const dept = e.target.value;
+    setdepartment(dept);
+    setState("");
+    setCity("");
+    setMonth("");
+    setSpeciality("");
+    setSelectedYear("");
+    setRating("");
+    setSelectedMonths([]);
+    if (e.target.value === "All") {
+    setdepartment("");
+    setState("");
+    setCity("");
+    setMonth("");
+    setSpeciality("");
+    setSelectedYear("");
+    setRating("");
+    setSelectedMonths([]);
+    } else {
+      setdepartment(e.target.value)
     }
   }
 
@@ -98,6 +124,10 @@ export default function Navbar(props) {
   useEffect(() => {
     setAllSpeciality(specialityContext)
   }, [specialityContext]);
+
+  //   useEffect(() => {
+  //   setAllSpeciality(specialityContext)
+  // }, [specialityContext]);
 
 
 
@@ -224,7 +254,7 @@ export default function Navbar(props) {
     if (speciality) {
       //setContextCity(getCity);
       // setRating("");
-     // filterApi();
+      // filterApi();
       setName("");
 
     }
@@ -257,7 +287,7 @@ export default function Navbar(props) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ "state": getState, "branch": cityToSend, month: monthToSend, "speciality": speciality, "rating": rating })
+      body: JSON.stringify({  "dept": department, "state": getState, "branch": cityToSend, month: monthToSend, "speciality": speciality, "rating": rating })
     });
     const data = await response.json();
     // alert("Hello")
@@ -266,6 +296,9 @@ export default function Navbar(props) {
       setAllNames(data.result[0].businessNames);
       if (data.result[0].specialities) {
         setAllSpeciality(data.result[0].specialities);
+      }
+      if (data.result[0].states) {
+        setStates(data.result[0].states)
       }
       if (data.result[0].branches) {
         setCitys(data.result[0].branches)
@@ -312,21 +345,36 @@ export default function Navbar(props) {
         }
       })
       const getlocdetails = await locDetails.json()
-      setStates(getlocdetails[0].states)
+      //setStates(getlocdetails[0].states)
       //setCitys(getlocdetails[0].branches)
     }
     async function getAllSpeciality() {
+      try {
+        const response = await fetch(api + '/getallspeciality', {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
 
-      const SpecialityDetails = await fetch(api + '/getallspeciality', {
-        method: "post",
-        headers: {
-          'Content-Type': 'application/json'
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-      })
-      const getspecialitydetails = await SpecialityDetails.json()
-      setAllSpeciality(getspecialitydetails)
-    }
 
+        const data = await response.json();
+
+        // Check if you have Specialities and Departments
+        console.log("Specialities:", data.Specialities);
+        //console.log("Departments:", data.Departments);
+
+        // Assuming you want to save both in state
+        setAllSpeciality(data.Specialities); // or whatever state you're using
+        setAllDepartments(data.Departments); // if you have another state
+
+      } catch (error) {
+        console.error("Error fetching specialities:", error.message);
+      }
+    }
 
 
 
@@ -529,6 +577,50 @@ export default function Navbar(props) {
               }}
             >
               <div className="filers_sprding">
+
+
+                {/* ===============================Department ===========================================*/}
+                <div className="datepicker">
+                  <div className="data_list_selection m-1">
+                    {props.serach && (<div className="input-group">
+                      <select
+                        value={department}
+                        onChange={deptHandler}
+                        //onInputCapture={filterApi}
+                        style={{
+                          width: "150px",
+                          borderRadius: " 10px",
+                          padding: "4px",
+                          border: "1px solid #ccc",
+                          outline: "none",
+                        }}
+                      >
+                        <option value="">Select Department...</option>
+                        { getAllDepartments &&
+                          getAllDepartments
+                            .filter(item => item !== "#N/A")
+                            .sort()
+                            .map((item, index) => {
+                              if (item != "#N/A")
+                                return (
+                                  <option key={index} value={item}>
+                                    {item}
+                                  </option>
+                                );
+                            })}
+                        <option value="All" style={{
+                          color: "#EF5F80",
+                        }} >Clear All</option>
+                      </select>
+                    </div>)}
+                  </div>
+                </div>
+
+
+
+
+
+
                 <div className="data_list_selection m-1">
                   {props.serach && (
                     <div className="input-group">
@@ -547,18 +639,18 @@ export default function Navbar(props) {
                         <option value="">Select Location...</option>
                         {getStates &&
                           getStates
-                          .filter(item => item !== "#N/A")
+                            .filter(item => item !== "#N/A")
                             .sort()
                             .map((item, index) => {
                               if (item != "#N/A")
                                 return (
-                              <option key={index} value={item}>
+                                  <option key={index} value={item}>
                                     {item}
                                   </option>
                                 );
-                              })}
-                              <option value="All"  style={{
-                         color: "#EF5F80",
+                            })}
+                        <option value="All" style={{
+                          color: "#EF5F80",
                         }} >Clear All</option>
                       </select>
 
@@ -599,9 +691,9 @@ export default function Navbar(props) {
                         <option value="">Select Unit...</option>
                         {getCitys &&
                           getCitys
-                          .filter(item => item !== "#N/A")
-                          .sort()
-                          .map((item, index) => {
+                            .filter(item => item !== "#N/A")
+                            .sort()
+                            .map((item, index) => {
                               if (item != "#N/A")
                                 return (
                                   <option key={index} value={item}>
@@ -609,8 +701,8 @@ export default function Navbar(props) {
                                   </option>
                                 );
                             })}
-                      <option value="All"  style={{
-                         color: "#EF5F80",
+                        <option value="All" style={{
+                          color: "#EF5F80",
                         }} >Clear All</option>
                       </select>
                       {/* <button
@@ -727,9 +819,9 @@ export default function Navbar(props) {
                                     {item}
                                   </option>
                                 );
-                              })}
-                              <option value="All" style={{
-                         color: "#EF5F80",
+                            })}
+                        <option value="All" style={{
+                          color: "#EF5F80",
                         }} >Clear All</option>
                       </select>
                     </div>
@@ -764,7 +856,7 @@ export default function Navbar(props) {
                         <option value="4">3-4</option>
                         <option value="5">4-5</option>
                         <option value="All" style={{
-                         color: "#EF5F80",
+                          color: "#EF5F80",
                         }} >Clear All</option>
 
                       </select>
@@ -784,10 +876,11 @@ export default function Navbar(props) {
                         setContextMonth(selectedMonths);
                         setContextCity(getCity);
                         setContextSpeciality(speciality);
+                        setContextDepartment(department);
                         setContextRating(rating);
                         setLocationProfiles(getcountOfProfiles);
                         filterApi();
-                      }}
+                      }} 
                       style={{
                         borderRadius: " 10px",
                         border: "1px solid #ccc",
@@ -802,7 +895,7 @@ export default function Navbar(props) {
                     </button>
                   </div>
                 )}
-               {/* <label>Select Doctor:</label>&nbsp; */}
+                {/* <label>Select Doctor:</label>&nbsp; */}
                 <div
                   className="data_list_selection m-1"
                   style={{

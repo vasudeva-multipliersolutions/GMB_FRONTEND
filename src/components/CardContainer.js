@@ -28,7 +28,7 @@ export default function CardContainer(props) {
     'Google Maps Desktop': 'bi-pc-display-horizontal',
     'Calls': 'bi-telephone-inbound',
     'Directions': 'bi-signpost-split',
-    'Websit Clicks': ' bi-sliders',
+    'Website Clicks': ' bi-sliders',
     'Searches' : 'bi-search',
   };
 

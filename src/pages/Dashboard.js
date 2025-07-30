@@ -69,7 +69,9 @@ export default function Dashboard(props) {
   const [currentCluster, setCurrentCluster] = useState("");
   const [topDoctorData, setTopDoctorData] = useState([]);
   const [contextSpeciality, setContextSpeciality] = useState();
+  const [contextDepartment, setContextDepartment] = useState();
   const [contextRating, setContextRating] = useState();
+  const [deptDetails, setDeptDetails] = useState();
 
 
 
@@ -82,7 +84,20 @@ export default function Dashboard(props) {
   const Cluster = localStorage.getItem("Cluster");
   const token = localStorage.getItem("token");
 
-  console.log("COntext Month  :" + contextMonth);
+  // console.log("COntext Month  :" + contextMonth);
+
+  console.log("Hello--------" + contextDepartment)
+
+  const profileData = [
+        {
+            "_id": null,
+            "Hospital": 1,
+            "Department": 2,
+            "Clinic": 0,
+            "Doctor": 367,
+            "MARS": 5,
+        }
+    ]
 
 
   useEffect(() => {
@@ -151,6 +166,7 @@ export default function Dashboard(props) {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
+          dept: contextDepartment,
           month: monthToSend,
           branch: cityToSend,
           state: stateToSend,
@@ -339,6 +355,15 @@ export default function Dashboard(props) {
         { "Not Intrested": analysisData[0]["Not Intrested"] },
         { "Out of Organization": analysisData[0]["Organization"] },
       ];
+
+      const deptDetails = [
+        { "Department": analysisData[0]["Department"] },
+        { "Clinic": analysisData[0]["Clinic"] },
+        { "Doctor": analysisData[0]["Doctor"] },
+        { "Clinic": analysisData[0]["Clinic"] },
+        { "MARS": analysisData[0]["MARS"] },
+      ]
+      setDeptDetails(deptDetails);
       setUse(verificationData);
     }
   }, [analysisData, locationProfiles]);
@@ -361,7 +386,7 @@ export default function Dashboard(props) {
 
   useEffect(() => {
     //console.log("getInsightState@@@@@@@@ : " + getInsightState);
-    if (contextMonth < 0 &&  getInsightState) {
+    if (contextMonth < 0 && getInsightState) {
       getMonthData("");
     }
   }, [getInsightState]);
@@ -374,13 +399,13 @@ export default function Dashboard(props) {
 
   useEffect(() => {
 
-      getMonthData(contextMonth);
-    
+    getMonthData(contextMonth);
+
   }, [contextSpeciality]);
 
   useEffect(() => {
-   
-      getMonthData(contextMonth);
+
+    getMonthData(contextMonth);
   }, [contextRating]);
 
   useEffect(() => {
@@ -388,6 +413,13 @@ export default function Dashboard(props) {
       getClusterData(currentCluster);
     }
   }, [currentCluster]);
+
+  useEffect(() => {
+
+    getMonthData(contextMonth);
+
+  }, [contextDepartment]);
+
 
 
   const username = analysisData?.[0]?.user;
@@ -736,7 +768,8 @@ export default function Dashboard(props) {
         setReloadCondition,
         currentCluster,
         setTopDoctorData,
-        contextSpeciality,
+        setContextDepartment,
+        contextDepartment,
         setContextSpeciality,
         contextSpeciality,
         setContextRating,
@@ -768,6 +801,9 @@ export default function Dashboard(props) {
         <div id="mainDashboardContent">
           {showAllData && showAllData.length !== 0 ? (
             <>
+            <div >
+            <ContentContainer data={deptDetails} />
+            </div>
               {use && <ContentContainer data={use} />}
               <div
                 className="second-container"
@@ -804,15 +840,14 @@ export default function Dashboard(props) {
                 )}
               </div>
 
-              <TopDoctor contextHospitals={contextHospitals} contextMonth={contextMonth} />
 
               <div
                 className="grapharea"
                 style={{
                   marginLeft:
-                    windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
+                  windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
                   width:
-                    windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
+                  windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
                   transition: "margin-left 0.5s ease",
                 }}
               >
@@ -821,16 +856,18 @@ export default function Dashboard(props) {
                     <ShimmerThumbnail height={420} width={2000} rounded />
                   ) : (
                     <>
-                      {showAllData?.graphDataCalls?.length > 0 && (
+                      {showAllData?.graphDataSearchesMobils?.length > 0 && (
                         <GraphicalContainer
                           gtype={"ColumnChart"}
                           averageBlock={true}
-                          title={"Calls"}
-                          callsGraphData={reorderGraphData(showAllData.graphDataCalls[0], true)}
+                          title={"Mobile Searches"}
+                          callsGraphData={reorderGraphData(showAllData.graphDataSearchesMobils[0])}
                           bcolor={"#FFFFFF"}
                           width={"50%"}
                         />
                       )}
+
+                     
                       {showAllData?.graphDataSearches?.length > 0 && (
                         <GraphicalContainer
                           gtype={"ColumnChart"}
@@ -850,16 +887,66 @@ export default function Dashboard(props) {
                     <ShimmerThumbnail height={420} width={2000} rounded />
                   ) : (
                     <>
-                      {showAllData?.graphDataSearchesMobils?.length > 0 && (
+                      {showAllData?.graphDataMapsMobils?.length > 0 && (
                         <GraphicalContainer
                           gtype={"ColumnChart"}
                           averageBlock={true}
-                          title={"Mobile Searches"}
-                          callsGraphData={reorderGraphData(showAllData.graphDataSearchesMobils[0])}
+                          title={"Maps Mobile"}
+                          callsGraphData={reorderGraphData(showAllData.graphDataMapsMobils[0])}
                           bcolor={"#FFFFFF"}
                           width={"50%"}
                         />
                       )}
+                       {showAllData?.graphDataMapsDesktop?.length > 0 && (
+                        <GraphicalContainer
+                          gtype={"ColumnChart"}
+                          averageBlock={true}
+                          title={" Maps Desktop"}
+                          callsGraphData={reorderGraphData(showAllData.graphDataMapsDesktop[0], true)}
+                          bcolor={"#FFFFFF"}
+                          width={"50%"}
+                          />
+                      )}
+                    </>
+                  )}
+                </div>
+
+                <div className="right-container">
+                  {isLoading ? (
+                    <ShimmerThumbnail height={420} width={2000} rounded />
+                  ) : (
+                    <>
+                        {showAllData?.graphDataCalls?.length > 0 && (
+                        <GraphicalContainer
+                        gtype={"ColumnChart"}
+                          averageBlock={true}
+                          title={"Calls"}
+                          callsGraphData={reorderGraphData(showAllData.graphDataCalls[0], true)}
+                          bcolor={"#FFFFFF"}
+                          width={"50%"}
+                        />
+                      )}
+                      {showAllData?.directions?.length > 0 && (
+                        <GraphicalContainer
+                          gtype={"ColumnChart"}
+                          averageBlock={true}
+                          title={"Directions"}
+                          callsGraphData={reorderGraphData(showAllData.directions[0])}
+                          bcolor={"#FFFFFF"}
+                          width={"50%"}
+                        />
+                      )}
+                    </>
+                  )}
+                </div>
+
+
+                <div className="right-container">
+                  {isLoading ? (
+                    <ShimmerThumbnail height={420} width={2000} rounded />
+                  ) : (
+                    <>
+                     
                       {showAllData?.graphDataWebsiteClicks?.length > 0 && (
                         <GraphicalContainer
                           gtype={"ColumnChart"}
@@ -870,10 +957,26 @@ export default function Dashboard(props) {
                           width={"50%"}
                         />
                       )}
+
+                       {showAllData?.combinedGraphData?.length > 0 && (
+                        <GraphicalContainer
+                          gtype={"ColumnChart"}
+                          averageBlock={true}
+                          title={"Overall Searches"}
+                          callsGraphData={reorderGraphData(showAllData.combinedGraphData[0])}
+                          bcolor={"#FFFFFF"}
+                          width={"50%"}
+                        />
+                      )}
+
                     </>
                   )}
                 </div>
+
+
+
               </div>
+              <TopDoctor contextHospitals={contextHospitals} contextMonth={contextMonth} />
             </>
           ) : (
             <div class="d-flex justify-content-center align-items-center">Loading...</div> // Message if showAllData is empty or missing

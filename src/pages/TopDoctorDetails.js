@@ -14,7 +14,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
   const [insightdata, setInsightData] = useState(null);
 
 
-  const { getDrName, getInsightState, getInsightsCity, currentCluster, contextMonth, setTopDoctorData, contextSpeciality, contextRating } = useContext(SharedContext);
+  const { getDrName, getInsightState, getInsightsCity, currentCluster, contextMonth, setTopDoctorData, contextSpeciality, contextRating, contextDepartment } = useContext(SharedContext);
 
   const api = localStorage.getItem("API");
   const mail = localStorage.getItem("mail");
@@ -28,7 +28,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
 
   //console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals + "contextMonth", contextMonth);
 
- // console.log("getInsightState⚔⚔⚔🗡🗡🗡⚔⚔🗡🗡" + contextSpeciality )
+ console.log("getInsightState⚔⚔⚔🗡🗡🗡⚔⚔🗡🗡" + contextDepartment )
 
 
 
@@ -52,10 +52,10 @@ export default function TopDoctorDetails({ contextHospitals }) {
       //   monthToSend = contextMonth;
       // }
 
-      // console.log("Hello--------"+ contextMonth)
+      // console.log("Hello--------"+ contextDepartment)
 
 
-      if (getInsightState || getInsightsCity || contextHospitals || contextMonth || contextSpeciality || contextRating) {
+      if (getInsightState || getInsightsCity || contextHospitals || contextMonth || contextSpeciality || contextRating || contextDepartment) {
         //console.log("Hello"+ 1)
         try {
           let cityToSend = location === "All" ? "" : location;
@@ -66,6 +66,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
+              dept: contextDepartment,
               state: cluster,
               branch: cityToSend,
               month: monthToSend,
@@ -94,7 +95,6 @@ export default function TopDoctorDetails({ contextHospitals }) {
   useEffect(() => {
     async function fetchTopDocdata() {
       try {
-
         let requestBody = "";
         if (currentCluster === "") {
           requestBody = mail !== "manipal@gmail.com" ? JSON.stringify({ branch: Branch }) : undefined;

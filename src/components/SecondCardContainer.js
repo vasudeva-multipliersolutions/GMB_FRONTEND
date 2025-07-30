@@ -29,7 +29,7 @@ export default function SecondCardContainer(props) {
     'Calls': 'bi-telephone-inbound',
     
     'Directions': 'bi-signpost-split',
-    'Websit Clicks': ' bi-sliders',
+    'Website Clicks': ' bi-sliders',
     'Searches' : 'bi-search',
   };
 

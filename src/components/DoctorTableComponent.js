@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import { ShimmerTable } from 'react-shimmer-effects';
 import { FaCaretUp } from 'react-icons/fa6';
 import { FaCaretDown } from 'react-icons/fa';
+import { SharedContext } from "../context/SharedContext";
 
 export default function DoctorTableComponent(props) {
     const [isLoading, setIsLoading] = useState(true);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+    const { contextDepartment} = useContext(SharedContext);
 
     // Handle sorting logic
     const sortedRows = React.useMemo(() => {
@@ -41,7 +43,7 @@ export default function DoctorTableComponent(props) {
 
     return (
         <TableContainer component={Paper} sx={{ margin: '20px 0', backgroundColor: props.bcolor, opacity: 0.9,  borderRadius : '1rem' }}>
-            <div className='graphs'><h3 style={{ padding: '16px', textAlign: 'center', color: 'white', }}>Top Ten Doctor's Data</h3></div>
+            <div className='graphs'><h3 style={{ padding: '16px', textAlign: 'center', color: 'white', }}>Top {contextDepartment ? contextDepartment : "Profiles"} Data</h3></div>
             {isLoading ? (
                 <ShimmerTable row={5} col={5} />
             ) : (
