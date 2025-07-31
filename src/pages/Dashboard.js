@@ -71,7 +71,7 @@ export default function Dashboard(props) {
   const [contextSpeciality, setContextSpeciality] = useState();
   const [contextDepartment, setContextDepartment] = useState();
   const [contextRating, setContextRating] = useState();
-  const [deptDetails, setDeptDetails] = useState();
+  const [deptDetails, setDeptDetails] = useState([]);
 
 
 
@@ -84,9 +84,17 @@ export default function Dashboard(props) {
   const Cluster = localStorage.getItem("Cluster");
   const token = localStorage.getItem("token");
 
-  // console.log("COntext Month  :" + contextMonth);
+ // console.log("COntext Month  :" + locationProfiles[0]["Total Profiles"]);
 
-  console.log("Hello--------" + contextDepartment)
+//  locationProfiles.forEach((item) => {
+//   const key = Object.keys(item)[0];
+//   const value = item[key];
+//   console.log(`H__________________---------${key}: ${value}`);
+// });
+
+
+console.log("📦 Props received by ContentContainer:", locationProfiles);
+
 
   const profileData = [
         {
@@ -337,15 +345,22 @@ export default function Dashboard(props) {
     if (locationProfiles && locationProfiles[0]) {
       const verificationData = [
         {
-          "Total Profiles":
-            locationProfiles[0]["Total Profiles"]
-          //-locationProfiles[0]["Need Access"],
-        },
+          "Total Profiles":  locationProfiles[0]["Total Profiles"]  },
         { "Verified Profiles": locationProfiles[0]["Verified Profiles"] },
         { "Unverified Profiles": locationProfiles[0]["Unverfied Profiles"] },
         { "Not Intrested": locationProfiles[0]["Not Intrested"] },
         { "Out of Organization": locationProfiles[0]["Out Of Organization"] },
       ];
+
+    const deptDetails = [
+        { "Department": locationProfiles[0]["Department"] },
+        { "Hospitals": locationProfiles[0]["Hospitals"] },
+        { "Doctor": locationProfiles[0]["Doctor"] },
+        { "Clinic": locationProfiles[0]["Clinic"] },
+        { "MARS": locationProfiles[0]["MARS"] },
+      ]
+      setDeptDetails(deptDetails);
+      //console.log("Verification Data:", verificationData);
       setUse(verificationData);
     } else if (analysisData && analysisData[0]) {
       const verificationData = [
@@ -358,12 +373,12 @@ export default function Dashboard(props) {
 
       const deptDetails = [
         { "Department": analysisData[0]["Department"] },
-        { "Clinic": analysisData[0]["Clinic"] },
+        { "Hospitals": analysisData[0]["Hospitals"] },
         { "Doctor": analysisData[0]["Doctor"] },
         { "Clinic": analysisData[0]["Clinic"] },
         { "MARS": analysisData[0]["MARS"] },
       ]
-      setDeptDetails(deptDetails);
+        setDeptDetails(deptDetails);
       setUse(verificationData);
     }
   }, [analysisData, locationProfiles]);
@@ -802,7 +817,7 @@ export default function Dashboard(props) {
           {showAllData && showAllData.length !== 0 ? (
             <>
             <div >
-            <ContentContainer data={deptDetails} />
+            { deptDetails &&<ContentContainer data={deptDetails} />}
             </div>
               {use && <ContentContainer data={use} />}
               <div

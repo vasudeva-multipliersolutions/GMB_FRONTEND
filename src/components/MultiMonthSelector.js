@@ -50,45 +50,67 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
                         position: "absolute",
                         top: "100%",
                         left: 0,
-                        width: "15vh",
+                        minWidth: "150px", // more reliable width
                         background: "#fff",
                         border: "1px solid #ccc",
                         borderRadius: "10px",
+                        maxHeight: "250px", // so dropdown doesn't overflow
                         overflowY: "auto",
                         zIndex: 999,
-                        marginTop: "4px"
+                        marginTop: "4px",
+                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" // optional for nicer look
                     }}
                 >
-                 
+                    <div style={{ padding: "8px", fontFamily: "sans-serif" }}>
+                        {/* Month Options */}
+                        {filteredMonths
+                            .filter((m) => typeof m === "string" && m.trim() !== "")
+                            .map((month, idx) => (
+                                <label
+                                    key={idx}
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        padding: "6px 8px",
+                                        fontSize: "14px",
+                                        cursor: "pointer"
+                                    }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        value={month}
+                                        checked={selectedMonths.includes(month)}
+                                        onChange={() => toggleMonth(month)}
+                                        style={{
+                                            marginRight: "8px",
+                                            width: "16px",
+                                            height: "16px"
+                                        }}
+                                    />
+                                    <span style={{ flex: 1, color: "#333" }}>{month}</span>
+                                </label>
+                            ))}
 
-                    {/* Month Options */}
-                    {filteredMonths.map((month, idx) => (
-                        <div key={idx} style={{ display: "flex", alignItems: "center", padding: "5px 10px" }}>
-                            <input
-                                type="checkbox"
-                                value={month}
-                                checked={selectedMonths.includes(month)}
-                                onChange={() => toggleMonth(month)}
-                                style={{ marginRight: "8px" }}
-                            />
-                            <span>{month}</span>
+
+                        {/* Clear All Option */}
+                        <div
+                            onClick={() => setSelectedMonths([])}
+                            style={{
+                                padding: "8px",
+                                cursor: "pointer",
+                                textAlign: "center",
+                                color: "#EF5F80",
+                                fontWeight: "bold",
+                                borderTop: "1px solid #eee",
+                                fontSize: "14px"
+                            }}
+                        >
+                            Clear All
                         </div>
-                    ))}
-                       {/* Clear All Option */}
-                    <div
-                        onClick={() => setSelectedMonths([])}
-                        style={{
-                            padding: "5px 10px",
-                            cursor: "pointer",
-                            textAlign: "center",
-                            color: "#EF5F80",
-                            borderTop: "1px solid #eee"
-                        }}
-                    >
-                        Clear All
                     </div>
                 </div>
             )}
+
 
         </div>
     );

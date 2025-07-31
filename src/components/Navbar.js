@@ -312,7 +312,7 @@ export default function Navbar(props) {
 
 
     if (data.countOfProfiles && data.countOfProfiles.length > 0) {
-      //  console.log("New countOfProfiles:", data.countOfProfiles);
+      console.log("New countOfProfiles:", data.countOfProfiles);
       setcountOfProfiles([...data.countOfProfiles]); // Ensure new array reference
     }
     //setContextCity(getCity)
@@ -595,7 +595,7 @@ export default function Navbar(props) {
                           outline: "none",
                         }}
                       >
-                        <option value="">Select Department...</option>
+                        <option value="">Select Profile Type...</option>
                         { getAllDepartments &&
                           getAllDepartments
                             .filter(item => item !== "#N/A")
@@ -636,7 +636,7 @@ export default function Navbar(props) {
                           outline: "none",
                         }}
                       >
-                        <option value="">Select Location...</option>
+                        <option value="">Select Region...</option>
                         {getStates &&
                           getStates
                             .filter(item => item !== "#N/A")

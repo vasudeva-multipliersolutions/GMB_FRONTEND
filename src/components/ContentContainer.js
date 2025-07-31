@@ -20,6 +20,8 @@ export default function ContentContainer(props) {
   //   };
   // }, []);
 
+  // console.log("📦 Props received by ContentContainer:", props);
+
   return (
     <Fragment>
       <div
