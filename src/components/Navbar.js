@@ -421,7 +421,7 @@ export default function Navbar(props) {
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     let lastSixMonths = [];
-    for (let i = 8; i > 0; i--) {
+    for (let i = 6; i > 0; i--) {
       const monthIndex = (today.getMonth() - i + 12) % 12;
       const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
       lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });

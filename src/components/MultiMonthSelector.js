@@ -37,7 +37,6 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
                     justifyContent: "space-between",
                     alignItems: "center",
                     minWidth: "15vh",
-
                 }}
             >
                 <span>{selectedMonths.length > 0 ? selectedMonths.join(", ") : "Select Months"}</span>
