@@ -17,6 +17,8 @@ import { BsFiletypePdf } from "react-icons/bs";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import jsPDF from 'jspdf'
 import * as XLSX from "xlsx";
+import CombinedLineChart from "../components/CombinedLineChart";
+
 
 
 
@@ -84,28 +86,15 @@ export default function Dashboard(props) {
   const Cluster = localStorage.getItem("Cluster");
   const token = localStorage.getItem("token");
 
- // console.log("COntext Month  :" + locationProfiles[0]["Total Profiles"]);
+  // console.log("COntext Month  :" + locationProfiles[0]["Total Profiles"]);
 
-//  locationProfiles.forEach((item) => {
-//   const key = Object.keys(item)[0];
-//   const value = item[key];
-//   console.log(`H__________________---------${key}: ${value}`);
-// });
-
-
-console.log("📦 Props received by ContentContainer:", locationProfiles);
+  //  locationProfiles.forEach((item) => {
+  //   const key = Object.keys(item)[0];
+  //   const value = item[key];
+  //   console.log(`H__________________---------${key}: ${value}`);
+  // });
 
 
-  const profileData = [
-        {
-            "_id": null,
-            "Hospital": 1,
-            "Department": 2,
-            "Clinic": 0,
-            "Doctor": 367,
-            "MARS": 5,
-        }
-    ]
 
 
   useEffect(() => {
@@ -345,14 +334,15 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
     if (locationProfiles && locationProfiles[0]) {
       const verificationData = [
         {
-          "Total Profiles":  locationProfiles[0]["Total Profiles"]  },
+          "Total Profiles": locationProfiles[0]["Total Profiles"]
+        },
         { "Verified Profiles": locationProfiles[0]["Verified Profiles"] },
         { "Unverified Profiles": locationProfiles[0]["Unverfied Profiles"] },
         { "Not Intrested": locationProfiles[0]["Not Intrested"] },
         { "Out of Organization": locationProfiles[0]["Out Of Organization"] },
       ];
 
-    const deptDetails = [
+      const deptDetails = [
         { "Department": locationProfiles[0]["Department"] },
         { "Hospitals": locationProfiles[0]["Hospitals"] },
         { "Doctor": locationProfiles[0]["Doctor"] },
@@ -378,7 +368,7 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
         { "Clinic": analysisData[0]["Clinic"] },
         { "MARS": analysisData[0]["MARS"] },
       ]
-        setDeptDetails(deptDetails);
+      setDeptDetails(deptDetails);
       setUse(verificationData);
     }
   }, [analysisData, locationProfiles]);
@@ -816,10 +806,25 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
         <div id="mainDashboardContent">
           {showAllData && showAllData.length !== 0 ? (
             <>
-            <div >
-            { deptDetails &&<ContentContainer data={deptDetails} />}
-            </div>
+              <div >
+                <div className="graphs2"  style={{
+                  marginLeft:
+                    windowWidth > 768 ? (isCollapsed ? "8.5%" : "20.5%") : "10%",
+
+                  transition: "margin-left 0.5s ease",
+                }}><h3 style={{ padding: '10px', textAlign: 'center', color: 'white', }}>Overview</h3></div>
+                {deptDetails && <ContentContainer data={deptDetails} />}
+              </div>
               {use && <ContentContainer data={use} />}
+
+              <div >
+                <div className="graphs2"  style={{
+                  marginLeft:
+                    windowWidth > 768 ? (isCollapsed ? "8.5%" : "20.5%") : "20%",
+
+                  transition: "margin-left 0.5s ease",
+                }}><h3 style={{ padding: '10px', textAlign: 'center', color: 'white', }}>Performance</h3></div>
+              </div>
               <div
                 className="second-container"
                 style={{
@@ -828,6 +833,8 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
                   transition: "margin-left 0.5s ease",
                 }}
               >
+
+                
                 <div className="left-container m-2">
                   {showAllData?.reviewRating?.length > 0 ? (
                     <ReviewRating
@@ -860,13 +867,13 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
                 className="grapharea"
                 style={{
                   marginLeft:
-                  windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
+                    windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
                   width:
-                  windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
+                    windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
                   transition: "margin-left 0.5s ease",
                 }}
               >
-                <div className="right-container me-5">
+                {/* <div className="right-container me-5">
                   {isLoading ? (
                     <ShimmerThumbnail height={420} width={2000} rounded />
                   ) : (
@@ -882,7 +889,7 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
                         />
                       )}
 
-                     
+
                       {showAllData?.graphDataSearches?.length > 0 && (
                         <GraphicalContainer
                           gtype={"ColumnChart"}
@@ -912,7 +919,7 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
                           width={"50%"}
                         />
                       )}
-                       {showAllData?.graphDataMapsDesktop?.length > 0 && (
+                      {showAllData?.graphDataMapsDesktop?.length > 0 && (
                         <GraphicalContainer
                           gtype={"ColumnChart"}
                           averageBlock={true}
@@ -920,7 +927,7 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
                           callsGraphData={reorderGraphData(showAllData.graphDataMapsDesktop[0], true)}
                           bcolor={"#FFFFFF"}
                           width={"50%"}
-                          />
+                        />
                       )}
                     </>
                   )}
@@ -931,9 +938,9 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
                     <ShimmerThumbnail height={420} width={2000} rounded />
                   ) : (
                     <>
-                        {showAllData?.graphDataCalls?.length > 0 && (
+                      {showAllData?.graphDataCalls?.length > 0 && (
                         <GraphicalContainer
-                        gtype={"ColumnChart"}
+                          gtype={"ColumnChart"}
                           averageBlock={true}
                           title={"Calls"}
                           callsGraphData={reorderGraphData(showAllData.graphDataCalls[0], true)}
@@ -961,7 +968,7 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
                     <ShimmerThumbnail height={420} width={2000} rounded />
                   ) : (
                     <>
-                     
+
                       {showAllData?.graphDataWebsiteClicks?.length > 0 && (
                         <GraphicalContainer
                           gtype={"ColumnChart"}
@@ -973,7 +980,7 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
                         />
                       )}
 
-                       {showAllData?.combinedGraphData?.length > 0 && (
+                      {showAllData?.combinedGraphData?.length > 0 && (
                         <GraphicalContainer
                           gtype={"ColumnChart"}
                           averageBlock={true}
@@ -986,11 +993,29 @@ console.log("📦 Props received by ContentContainer:", locationProfiles);
 
                     </>
                   )}
+                </div> */}
+
+                <div>
+
+                  {!isLoading && showAllData && (
+                    <CombinedLineChart
+                      data={{
+                        Calls: showAllData?.graphDataCalls?.[0],
+                        "Mobile Searches": showAllData?.graphDataSearchesMobils?.[0],
+                        "Desktop Searches": showAllData?.graphDataSearches?.[0],
+                        "Maps Mobile": showAllData?.graphDataMapsMobils?.[0],
+                        "Maps Desktop": showAllData?.graphDataMapsDesktop?.[0],
+                        "Website Clicks": showAllData?.graphDataWebsiteClicks?.[0],
+                        Directions: showAllData?.directions?.[0],
+                        "Overall Searches": showAllData?.combinedGraphData?.[0],
+                      }}
+                    />
+                  )}
                 </div>
 
-
-
               </div>
+
+
               <TopDoctor contextHospitals={contextHospitals} contextMonth={contextMonth} />
             </>
           ) : (

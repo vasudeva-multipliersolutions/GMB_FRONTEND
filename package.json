@@ -25,6 +25,8 @@
     "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
+    "highcharts": "^12.3.0",
+    "highcharts-react-official": "^3.2.2",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.3",
     "jspdf": "^2.5.1",

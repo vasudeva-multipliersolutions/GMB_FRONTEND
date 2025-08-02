@@ -24,6 +24,7 @@ export default function ContentContainer(props) {
 
   return (
     <Fragment>
+      
       <div
         className="content-container-2"
         style={{
@@ -31,6 +32,7 @@ export default function ContentContainer(props) {
           transition: "margin-left 0.5s ease",
         }}
       >
+        
         {props.data.map((item) => {
           return Object.entries(item).map(([key, value]) => {
             // Skip the "_id" field

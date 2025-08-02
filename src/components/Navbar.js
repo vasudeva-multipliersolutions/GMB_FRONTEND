@@ -364,7 +364,7 @@ export default function Navbar(props) {
         const data = await response.json();
 
         // Check if you have Specialities and Departments
-        console.log("Specialities:", data.Specialities);
+       // console.log("Specialities:", data.Specialities);
         //console.log("Departments:", data.Departments);
 
         // Assuming you want to save both in state

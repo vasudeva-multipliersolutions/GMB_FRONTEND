@@ -28,7 +28,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
 
   //console.log("getInsightState" + getInsightState + "getInsighCity : " + getInsightsCity + "getContextHospitals : "+contextHospitals + "contextMonth", contextMonth);
 
- console.log("getInsightState⚔⚔⚔🗡🗡🗡⚔⚔🗡🗡" + contextDepartment )
+ //console.log("getInsightState⚔⚔⚔🗡🗡🗡⚔⚔🗡🗡" + contextDepartment )
 
 
 
