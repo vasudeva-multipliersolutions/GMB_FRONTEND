@@ -67,8 +67,8 @@ export default function TopDoctorDetails({ contextHospitals }) {
             },
             body: JSON.stringify({
               dept: contextDepartment,
-              state: cluster,
-              branch: cityToSend,
+              state: Cluster !== "undefined" ? Cluster : cluster,
+              branch: Branch !== "undefined" ? Branch : cityToSend,
               month: monthToSend,
               speciality: contextSpeciality,
               rating: contextRating,
@@ -88,7 +88,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
       }
     }
     fetchDataFilter();
-  }, [getInsightState, getInsightsCity, contextHospitals, contextMonth, contextSpeciality, contextRating]);
+  }, [getInsightState, getInsightsCity, contextHospitals, contextMonth, contextSpeciality, contextRating, contextDepartment]);
 
 
 
@@ -187,17 +187,10 @@ export default function TopDoctorDetails({ contextHospitals }) {
       ) : (
         (getDrName || getInsightState || getInsightsCity || contextHospitals || insightdata) && (
           <div
-            id="capture"
-            style={{
-              marginLeft:
-                windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
-              width:
-                windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
-              transition: "margin-left 0.5s ease",
-            }}
+           
           >
             {docData ? (
-              <div className="maniContainer p-3 ">
+              <div>
 
                 {rows.length > 0 && (
                   <DoctorTableComponent
@@ -220,7 +213,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
                 )}
               </div>
             ) : (
-              <div className="maniContainer p-2">
+              <div >
                 {rows.length > 0 && (
                   <DoctorTableComponent
                     bcolor="white"

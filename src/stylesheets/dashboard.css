@@ -471,16 +471,7 @@ select {
   transition: background-color 0.3s ease; /* Smooth transition for background color */
   z-index: 50;
 }
-.menu-item .ps-menu-button:hover {
-  background-color: #E0FBEE; /* Change this to your desired hover color */
-  cursor: pointer; /* Change cursor to pointer on hover */
-  border-radius: 1em;
-}
 
-.sidemenu .menu-item a:hover {
-  background-color: #E0FBEE; /* Change this to your desired hover color */
-  cursor: pointer; /* Change cursor to pointer on hover */
-}
 
 .sidemenu img {
   padding-top: 10px;

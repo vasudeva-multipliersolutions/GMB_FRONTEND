@@ -8,6 +8,10 @@ export const SidebarProvider = ({ children }) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [drNameContext, setDrNameContext] = useState([]);
   const [specialityContext, setSpecialityContext] = useState([]);
+  const [profileType, setContextProfileType] = useState("");
+  const [profileCounts, setContextProfileCounts] = useState("");
+  const [sidebarRating, setSidebarRating] = useState("");
+
 
   const toggleSidebar = () => {
     if (windowWidth >= 1250) {
@@ -33,7 +37,7 @@ export const SidebarProvider = ({ children }) => {
   }, []);
 
   return (
-    <SidebarContext.Provider value={{ isCollapsed, toggleSidebar, windowWidth, drNameContext, setDrNameContext, specialityContext, setSpecialityContext }}>
+    <SidebarContext.Provider value={{ isCollapsed, toggleSidebar, windowWidth, drNameContext, setDrNameContext, specialityContext, setSpecialityContext,profileType, setContextProfileType, profileCounts, setContextProfileCounts, sidebarRating, setSidebarRating }}>
       {children}
     </SidebarContext.Provider>
   );

@@ -119,7 +119,7 @@ const Verification = () => {
         />
       </div> */}
       <div className="bg-white p-4 rounded shadow-lg text-center" style={{ maxWidth: "400px", width: "100%" }}>
-        <div className="mb-3">
+        <div className="mb-3 text-center">
           <img
             src="https://multipliersolutions.in/manipalhospitals/manipallogo2.png"
             alt="manipalhospitals"

@@ -8,24 +8,22 @@ export default function CombinedLineChart({ data }) {
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   ];
 
-  const series = Object.entries(data).map(([key, values]) => {
-    const lineData = months.map(month => values?.[month] ?? null);
-    const readableName = key
-      .replace(/^graphData/, '')
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/_/g, ' ')
-      .trim();
+  // Get the first (and only) entry from the data
+  const [[rawName, values]] = Object.entries(data);
 
-    return {
-      name: readableName,
-      data: lineData
-    };
-  });
+  // Convert to readable name
+  const readableName = rawName
+    .replace(/^graphData/, '')
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/_/g, ' ')
+    .trim();
+
+  const lineData = months.map(month => values?.[month] ?? null);
 
   const options = {
     chart: {
       type: 'line',
-      height: 600 // ✅ Increase height here
+      height: 600
     },
     title: {
       text: null
@@ -51,24 +49,31 @@ export default function CombinedLineChart({ data }) {
       }
     },
     credits: {
-      enabled: false // ✅ Remove watermark
+      enabled: false
     },
-    series: series
+    series: [
+      {
+        name: readableName,
+        data: lineData
+      }
+    ]
   };
 
   return (
     <div
       style={{
         backgroundColor: "#fff",
-        marginRight: "20%",
-        borderRadius: "1em 1em 1em 1em",
+        borderRadius: "1em",
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-        margin: "20px 45px 0px 10px",
-        minHeight: "600px", // Optional container fallback
+        minHeight: "600px",
         opacity: 0.8,
       }}
     >
-      <div className="graphs3"><h3  style={{ padding: '20px', textAlign: 'center', color: 'white', }}>Unit Profile Performance</h3></div>
+      <div className="graphs3">
+        <h3 style={{ padding: '20px', textAlign: 'center', color: 'white' }}>
+          {readableName} Performance
+        </h3>
+      </div>
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );

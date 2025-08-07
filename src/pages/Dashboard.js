@@ -95,6 +95,7 @@ export default function Dashboard(props) {
   // });
 
 
+  console.log("1234🎉✨🎉🎉 : " + contextDepartment);
 
 
   useEffect(() => {
@@ -165,8 +166,8 @@ export default function Dashboard(props) {
         body: JSON.stringify({
           dept: contextDepartment,
           month: monthToSend,
-          branch: cityToSend,
-          state: stateToSend,
+          branch: Branch !== "undefined" ? Branch : cityToSend,
+          state: Cluster !== "undefined" ? Cluster : stateToSend,
           speciality: contextSpeciality,
           rating: contextRating,
         }),
@@ -338,6 +339,7 @@ export default function Dashboard(props) {
         },
         { "Verified Profiles": locationProfiles[0]["Verified Profiles"] },
         { "Unverified Profiles": locationProfiles[0]["Unverfied Profiles"] },
+        { "Need Access": locationProfiles[0]["Need Access"] },
         { "Not Intrested": locationProfiles[0]["Not Intrested"] },
         { "Out of Organization": locationProfiles[0]["Out Of Organization"] },
       ];
@@ -357,6 +359,7 @@ export default function Dashboard(props) {
         { "Total Profiles": analysisData[0]["Total Profiles"] },
         { "Verified Profiles": analysisData[0]["Total Verified"] },
         { "Unverified Profiles": analysisData[0]["Unverified"] },
+        { "Need Access": analysisData[0]["Need Access"] },
         { "Not Intrested": analysisData[0]["Not Intrested"] },
         { "Out of Organization": analysisData[0]["Organization"] },
       ];
@@ -726,34 +729,6 @@ export default function Dashboard(props) {
   };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   return (
     <SharedContext.Provider
       value={{
@@ -781,7 +756,7 @@ export default function Dashboard(props) {
         contextRating,
       }}
     >
-      <div style={{ background: "#EFEFEF" }}>
+      <div style={{ background: "#F8F8FB", minHeight: "100vh" }}>
         <Navbar
           logoimg={logo ? logo : ""}
           username={username}
@@ -793,238 +768,158 @@ export default function Dashboard(props) {
           contextHospitals={contextHospitals}
           currentCluster={currentCluster}
         />
-        <div className="text-end me-5 mt-4">
-          <button className="btn btn-outline-primary me-1 " onClick={downloadPDF}><BsFiletypePdf /></button>
-          <button className="btn btn-outline-success" onClick={downloadDataAsExcel}>
-            <RiFileExcel2Fill />
-          </button>
 
-        </div>
+        <div
+          className="main-content"
+          style={{
+            marginLeft: isCollapsed ? "5rem" : "16rem",
+            paddingTop: "10rem",
+            transition: "margin-left 0.5s ease, padding-top 0.5s ease",
+          }}
+        >
+          <div className="flex justify-end items-center p-4 mt-4 mr-4">
+            <button
+              className="flex items-center bg-white text-[#8D89BF] border border-[#8D89BF] rounded-lg px-4 py-2 mr-3 hover:bg-[#F0EFFF] transition-colors shadow-sm"
+              onClick={downloadPDF}
+            >
+              <BsFiletypePdf className="mr-2" /> Export PDF
+            </button>
+            <button
+              className="flex items-center bg-[#8D89BF] text-white rounded-lg px-4 py-2 hover:bg-[#7A76A8] transition-colors shadow-md"
+              onClick={downloadDataAsExcel}
+            >
+              <RiFileExcel2Fill className="mr-2" /> Export Excel
+            </button>
+          </div>
+
+          {/* Root-level check for showAllData */}
+          <div id="mainDashboardContent">
+            {showAllData && showAllData.length !== 0 ? (
+              <div className="px-8">
+                {/* Overview Section */}
+                <div className="bg-[#8D89BF] rounded-xl py-2 shadow-lg mb-6">
+                  <h3 className="text-xl font-semibold text-white text-center py-2">Overview</h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8">
+                  <div className="bg-white rounded-xl shadow-md p-6 border border-[#E5E3FF]">
+                    {/* {deptDetails && (
+                        <ContentContainer data={deptDetails} />
+                    )} */}
+
+                    {use && (
+                      <ContentContainer data={use} />
+                    )}
+                  </div>
+                </div>
+
+                {/* Performance Section */}
+                <div className="bg-[#8D89BF] rounded-xl py-2 shadow-lg mb-6">
+                  <h3 className="text-xl font-semibold text-white text-center py-2">Performance</h3>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+                  {/* Review Rating Card */}
+                  <div className="bg-white rounded-xl shadow-md p-6 border border-[#E5E3FF]">
+                    {showAllData?.reviewRating?.length > 0 ? (
+                      <ReviewRating
+                        review={
+                          showAllData.reviewRating[0]?.totalreviews ?? "No reviews"
+                        }
+                        rating={
+                          showAllData.reviewRating[0]?.averagerating ??
+                          "No rating available"
+                        }
+                      />
+                    ) : (
+                      <ReviewRating
+                        review={0}
+                        rating={0}
+                      />
+                    )}
+                  </div>
+
+                  {/* Analysis Card */}
+                  <div className="bg-white rounded-xl shadow-md p-6 border border-[#E5E3FF] lg:col-span-4">
+                    {showAllData?.analysis?.length > 0 ? (
+                      <SideContentContainer data={showAllData.analysis} />
+                    ) : (
+                      <div className="flex justify-center items-center h-full">
+                        <p className="text-gray-500">No analysis data available</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Charts Section */}
+                <div className="bg-white rounded-2xl shadow-lg border border-[#E5E3FF] mb-8 p-4">
+                  {!isLoading && showAllData ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <CombinedLineChart
+                        data={{
+                          "Overall Searches": showAllData?.combinedGraphData?.[0],
+                        }}
+                      />
+                      <CombinedLineChart
+                        data={{
+                          "Mobile (Searches + Maps)": showAllData?.graphDataSearchesMobils?.[0],
+                        }}
+                      />
+                      <CombinedLineChart
+                        data={{
+                          "Desktop (Searches + Maps)": showAllData?.graphDataSearches?.[0],
+                        }}
+                      />
+                      <CombinedLineChart
+                        data={{
+                          "Website Clicks": showAllData?.graphDataWebsiteClicks?.[0],
+                        }}
+                      />
+                      <CombinedLineChart
+                        data={{
+                          Directions: showAllData?.directions?.[0],
+                        }}
+                      />
+                      <CombinedLineChart
+                        data={{
+                          Calls: showAllData?.graphDataCalls?.[0],
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex justify-center items-center h-64">
+                      <div className="animate-pulse flex space-x-4">
+                        <div className="rounded-full bg-[#E5E3FF] h-12 w-12"></div>
+                        <div className="flex-1 space-y-4 py-1">
+                          <div className="h-4 bg-[#E5E3FF] rounded w-3/4"></div>
+                          <div className="space-y-2">
+                            <div className="h-4 bg-[#E5E3FF] rounded"></div>
+                            <div className="h-4 bg-[#E5E3FF] rounded w-5/6"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
 
-        {/* Root-level check for showAllData */}
-        <div id="mainDashboardContent">
-          {showAllData && showAllData.length !== 0 ? (
-            <>
-              <div >
-                <div className="graphs2"  style={{
-                  marginLeft:
-                    windowWidth > 768 ? (isCollapsed ? "8.5%" : "20.5%") : "10%",
-
-                  transition: "margin-left 0.5s ease",
-                }}><h3 style={{ padding: '10px', textAlign: 'center', color: 'white', }}>Overview</h3></div>
-                {deptDetails && <ContentContainer data={deptDetails} />}
+                {/* Top Doctors Section */}
+                <div className="mb-8">
+                  <TopDoctor contextHospitals={contextHospitals} contextMonth={contextMonth} />
+                </div>
               </div>
-              {use && <ContentContainer data={use} />}
-
-              <div >
-                <div className="graphs2"  style={{
-                  marginLeft:
-                    windowWidth > 768 ? (isCollapsed ? "8.5%" : "20.5%") : "20%",
-
-                  transition: "margin-left 0.5s ease",
-                }}><h3 style={{ padding: '10px', textAlign: 'center', color: 'white', }}>Performance</h3></div>
+            ) : (
+              <div className="flex justify-center items-center h-64">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8D89BF] mx-auto mb-4"></div>
+                  <p className="text-[#6A6792] font-medium">Loading dashboard data...</p>
+                </div>
               </div>
-              <div
-                className="second-container"
-                style={{
-                  marginLeft:
-                    windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
-                  transition: "margin-left 0.5s ease",
-                }}
-              >
-
-                
-                <div className="left-container m-2">
-                  {showAllData?.reviewRating?.length > 0 ? (
-                    <ReviewRating
-                      review={
-                        showAllData.reviewRating[0]?.totalreviews ?? "No reviews"
-                      }
-                      rating={
-                        showAllData.reviewRating[0]?.averagerating ??
-                        "No rating available"
-                      }
-                    />
-                  ) : (
-                    <ReviewRating
-                      review={0}
-                      rating={0}
-                    />
-                    // <div>No reviews or ratings available</div>
-                  )}
-                </div>
-
-                {showAllData?.analysis?.length > 0 ? (
-                  <SideContentContainer data={showAllData.analysis} />
-                ) : (
-                  <h6 className="d-flex justify-content-center align-items-center">No analysis data available</h6>
-                )}
-              </div>
-
-
-              <div
-                className="grapharea"
-                style={{
-                  marginLeft:
-                    windowWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
-                  width:
-                    windowWidth > 768 ? (isCollapsed ? "91.5%" : "80%") : "80%",
-                  transition: "margin-left 0.5s ease",
-                }}
-              >
-                {/* <div className="right-container me-5">
-                  {isLoading ? (
-                    <ShimmerThumbnail height={420} width={2000} rounded />
-                  ) : (
-                    <>
-                      {showAllData?.graphDataSearchesMobils?.length > 0 && (
-                        <GraphicalContainer
-                          gtype={"ColumnChart"}
-                          averageBlock={true}
-                          title={"Mobile Searches"}
-                          callsGraphData={reorderGraphData(showAllData.graphDataSearchesMobils[0])}
-                          bcolor={"#FFFFFF"}
-                          width={"50%"}
-                        />
-                      )}
-
-
-                      {showAllData?.graphDataSearches?.length > 0 && (
-                        <GraphicalContainer
-                          gtype={"ColumnChart"}
-                          averageBlock={true}
-                          title={"Desktop Searches"}
-                          callsGraphData={reorderGraphData(showAllData.graphDataSearches[0])}
-                          bcolor={"#FFFFFF"}
-                          width={"50%"}
-                        />
-                      )}
-                    </>
-                  )}
-                </div>
-
-                <div className="right-container">
-                  {isLoading ? (
-                    <ShimmerThumbnail height={420} width={2000} rounded />
-                  ) : (
-                    <>
-                      {showAllData?.graphDataMapsMobils?.length > 0 && (
-                        <GraphicalContainer
-                          gtype={"ColumnChart"}
-                          averageBlock={true}
-                          title={"Maps Mobile"}
-                          callsGraphData={reorderGraphData(showAllData.graphDataMapsMobils[0])}
-                          bcolor={"#FFFFFF"}
-                          width={"50%"}
-                        />
-                      )}
-                      {showAllData?.graphDataMapsDesktop?.length > 0 && (
-                        <GraphicalContainer
-                          gtype={"ColumnChart"}
-                          averageBlock={true}
-                          title={" Maps Desktop"}
-                          callsGraphData={reorderGraphData(showAllData.graphDataMapsDesktop[0], true)}
-                          bcolor={"#FFFFFF"}
-                          width={"50%"}
-                        />
-                      )}
-                    </>
-                  )}
-                </div>
-
-                <div className="right-container">
-                  {isLoading ? (
-                    <ShimmerThumbnail height={420} width={2000} rounded />
-                  ) : (
-                    <>
-                      {showAllData?.graphDataCalls?.length > 0 && (
-                        <GraphicalContainer
-                          gtype={"ColumnChart"}
-                          averageBlock={true}
-                          title={"Calls"}
-                          callsGraphData={reorderGraphData(showAllData.graphDataCalls[0], true)}
-                          bcolor={"#FFFFFF"}
-                          width={"50%"}
-                        />
-                      )}
-                      {showAllData?.directions?.length > 0 && (
-                        <GraphicalContainer
-                          gtype={"ColumnChart"}
-                          averageBlock={true}
-                          title={"Directions"}
-                          callsGraphData={reorderGraphData(showAllData.directions[0])}
-                          bcolor={"#FFFFFF"}
-                          width={"50%"}
-                        />
-                      )}
-                    </>
-                  )}
-                </div>
-
-
-                <div className="right-container">
-                  {isLoading ? (
-                    <ShimmerThumbnail height={420} width={2000} rounded />
-                  ) : (
-                    <>
-
-                      {showAllData?.graphDataWebsiteClicks?.length > 0 && (
-                        <GraphicalContainer
-                          gtype={"ColumnChart"}
-                          averageBlock={true}
-                          title={"Website Clicks"}
-                          callsGraphData={reorderGraphData(showAllData.graphDataWebsiteClicks[0])}
-                          bcolor={"#FFFFFF"}
-                          width={"50%"}
-                        />
-                      )}
-
-                      {showAllData?.combinedGraphData?.length > 0 && (
-                        <GraphicalContainer
-                          gtype={"ColumnChart"}
-                          averageBlock={true}
-                          title={"Overall Searches"}
-                          callsGraphData={reorderGraphData(showAllData.combinedGraphData[0])}
-                          bcolor={"#FFFFFF"}
-                          width={"50%"}
-                        />
-                      )}
-
-                    </>
-                  )}
-                </div> */}
-
-                <div>
-
-                  {!isLoading && showAllData && (
-                    <CombinedLineChart
-                      data={{
-                        Calls: showAllData?.graphDataCalls?.[0],
-                        "Mobile Searches": showAllData?.graphDataSearchesMobils?.[0],
-                        "Desktop Searches": showAllData?.graphDataSearches?.[0],
-                        "Maps Mobile": showAllData?.graphDataMapsMobils?.[0],
-                        "Maps Desktop": showAllData?.graphDataMapsDesktop?.[0],
-                        "Website Clicks": showAllData?.graphDataWebsiteClicks?.[0],
-                        Directions: showAllData?.directions?.[0],
-                        "Overall Searches": showAllData?.combinedGraphData?.[0],
-                      }}
-                    />
-                  )}
-                </div>
-
-              </div>
-
-
-              <TopDoctor contextHospitals={contextHospitals} contextMonth={contextMonth} />
-            </>
-          ) : (
-            <div class="d-flex justify-content-center align-items-center">Loading...</div> // Message if showAllData is empty or missing
-          )}
+            )}
+          </div>
         </div>
       </div>
       <div id="pdf-clone-container" style={{ display: 'none' }}></div>
-
     </SharedContext.Provider>
   );
 }

@@ -268,7 +268,7 @@ export default function BasicDetailsComponent() {
           marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
           transition: "margin-left 0.5s ease",
         }}>
-          <div id="section1">
+          <div id="section1" className='mt-48'>
             <div className="maniContainer p-3 m-3">
               <div className='details'>
                 <div className="basi-details">

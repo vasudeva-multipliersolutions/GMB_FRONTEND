@@ -1,10 +1,10 @@
-import React, { Fragment, useEffect, useState, useContext } from "react";
+import React, { Fragment, useEffect, useState, useContext, useRef } from "react";
 
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { SharedContext } from "../context/SharedContext";
-import { FaAlignJustify, FaAnglesLeft, FaDashcube } from "react-icons/fa6";
-import { FaChartBar, FaSearch, FaUserMd } from "react-icons/fa";
-import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
+import { FaAlignJustify, FaAnglesLeft, FaDashcube, FaStar, FaUser } from "react-icons/fa6";
+import { FaChartBar, FaHome, FaSearch, FaUserMd } from "react-icons/fa";
+import { Sidebar, Menu, SubMenu } from "react-pro-sidebar";
 import { RxCross2 } from "react-icons/rx";
 import { GiTimeBomb } from "react-icons/gi";
 import { SidebarContext } from "../SidebarContext";
@@ -16,16 +16,33 @@ import { Bold } from "lucide-react";
 import MultiMonthSelector from "./MultiMonthSelector";
 
 
+// MUI Components for Sidebar
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Collapse from '@mui/material/Collapse';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import Select from '@mui/material/Select';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Box from '@mui/material/Box';
+import MenuItem from '@mui/material/MenuItem';
+
+
+
 
 export default function Navbar(props) {
   const mail = localStorage.getItem("mail");
   const loginBranch = localStorage.getItem("Branch");
   const Cluster = localStorage.getItem("Cluster");
-  const { isCollapsed, toggleSidebar, drNameContext, specialityContext } =
-    useContext(SidebarContext); // Use the correct context
+  const { isCollapsed, toggleSidebar, drNameContext, specialityContext } = useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles, setContextMonth, setContextSpeciality, setContextRating, setContextDepartment} = useContext(SharedContext);
-  const { setInsightsState, setInsightsCity, setContextYear, } = useContext(SharedContext);
+  const { setContextCity, setLocationProfiles, setContextMonth, setContextSpeciality, setContextRating, setContextDepartment } = useContext(SharedContext);
+  const { setInsightsState, setInsightsCity, } = useContext(SharedContext);
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
   const [getName, setName] = useState();
@@ -54,11 +71,36 @@ export default function Navbar(props) {
   const [speciality, setSpeciality] = useState();
   const [getAllDepartments, setAllDepartments] = useState();
   const [department, setdepartment] = useState();
+  const { profileType, setContextProfileType } = useContext(SidebarContext);
+  const { profileCounts, setContextProfileCounts } = useContext(SidebarContext);
+  const { sidebarRating, setSidebarRating } = useContext(SidebarContext);
   const [rating, setRating] = useState();
-
   const location = useLocation();
+  const departmentRef = useRef("");
 
-  //console.log("^^^^^^^^^^^^^^^^^------------>" + selectedMonths)
+
+
+  // New state for MUI sidebar
+  const [openDashboard, setOpenDashboard] = useState(false);
+  const [openProfileType, setOpenProfileType] = useState(false);
+  const [openRatingFilter, setOpenRatingFilter] = useState(false);
+
+  const handleDashboardClick = () => {
+    setOpenDashboard(!openDashboard);
+  };
+
+  const handleProfileTypeClick = () => {
+    setOpenProfileType(!openProfileType);
+  };
+
+  const handleRatingFilterClick = () => {
+    setOpenRatingFilter(!openRatingFilter);
+  };
+
+
+
+
+  console.log("^^^^^^^^^^^^^^^^^------------>" + departmentRef.current)
 
 
   const isActive = (path) => location.pathname === path;
@@ -91,29 +133,67 @@ export default function Navbar(props) {
   }
 
 
-    function deptHandler(e) {
+  // function deptHandler(e) {
+  //   const dept = e.target.value;
+  //   setdepartment(dept);
+  //   setState("");
+  //   setCity("");
+  //   setMonth("");
+  //   setSpeciality("");
+  //   setSelectedYear("");
+  //   setRating("");
+  //   setSelectedMonths([]);
+  //   console.log("Department selected: ", dept);
+  //   console.log("-------------: ", department);
+  //   if (e.target.value === "All") {
+  //     setdepartment("");
+  //     setState("");
+  //     setCity("");
+  //     setMonth("");
+  //     setSpeciality("");
+  //     setSelectedYear("");
+  //     setRating("");
+  //     setSelectedMonths([]);
+  //   } else {
+  //     setdepartment(e.target.value)
+  //   }
+  // }
+
+
+  //   function deptHandler(e) {
+  //   const dept = e.target.value;
+  //   setdepartment(dept);
+  //   setContextDepartment(dept === "All" ? "" : dept);
+  //   setState("");
+  //   setCity("");
+  //   setMonth("");
+  //   setSpeciality("");
+  //   setSelectedYear("");
+  //   setRating("");
+  //   setSelectedMonths([]);
+  //   filterApi();
+
+  //   if (dept === "All") {
+  //     setdepartment("");
+  //   } else {
+  //     setdepartment(dept);
+  //   }
+  // }
+
+
+  function deptHandler(e) {
     const dept = e.target.value;
+    const resolvedDept = dept === "All" ? "" : dept;
+
+    setContextProfileType(resolvedDept);
+    // ✅ Then apply new department & ref
     setdepartment(dept);
-    setState("");
-    setCity("");
-    setMonth("");
-    setSpeciality("");
-    setSelectedYear("");
-    setRating("");
-    setSelectedMonths([]);
-    if (e.target.value === "All") {
-    setdepartment("");
-    setState("");
-    setCity("");
-    setMonth("");
-    setSpeciality("");
-    setSelectedYear("");
-    setRating("");
-    setSelectedMonths([]);
-    } else {
-      setdepartment(e.target.value)
-    }
+    departmentRef.current = resolvedDept;
+    setContextDepartment(profileType);
   }
+
+
+
 
   // useEffect(() => {
   //   filterApi();
@@ -238,6 +318,18 @@ export default function Navbar(props) {
 
 
   useEffect(() => {
+    setState("");
+    setCity("");
+    setMonth("");
+    setSpeciality("");
+    setSelectedYear("");
+    setRating("");
+    setSelectedMonths([]);
+
+  }, [profileType]);
+
+
+  useEffect(() => {
     if (getState) {
     }
     filterApi();
@@ -287,7 +379,7 @@ export default function Navbar(props) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({  "dept": department, "state": getState, "branch": cityToSend, month: monthToSend, "speciality": speciality, "rating": rating })
+      body: JSON.stringify({ "dept": profileType, state: Cluster !== "undefined" ? Cluster : getState, branch: loginBranch !== "undefined" ? loginBranch :  cityToSend, month: monthToSend, "speciality": speciality, "rating": sidebarRating })
     });
     const data = await response.json();
     // alert("Hello")
@@ -314,6 +406,7 @@ export default function Navbar(props) {
     if (data.countOfProfiles && data.countOfProfiles.length > 0) {
       console.log("New countOfProfiles:", data.countOfProfiles);
       setcountOfProfiles([...data.countOfProfiles]); // Ensure new array reference
+      setContextProfileCounts([...data.countOfProfiles]);
     }
     //setContextCity(getCity)
     // if(props.serach)
@@ -323,6 +416,35 @@ export default function Navbar(props) {
   }
 
   //console.log("🔍 getSpeciality state value:", getSpeciality);
+
+
+  async function fetchAndSetProfiles(dept) {
+    let cityToSend = getCity === "All" ? "" : getCity;
+    let monthToSend = selectedMonths.length > 0 ? selectedMonths : "";
+
+    const response = await fetch(api + '/getfilterdata', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        dept,
+        state: Cluster !== "undefined" ? Cluster : getState,
+        branch: loginBranch !== "undefined" ? loginBranch :  cityToSend,
+        month: monthToSend,
+        speciality,
+        rating,
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.countOfProfiles && data.countOfProfiles.length > 0) {
+      setcountOfProfiles([...data.countOfProfiles]);
+      setLocationProfiles([...data.countOfProfiles]); // ✅ Only update here
+    }
+  }
+
 
 
   useEffect(() => {
@@ -345,8 +467,8 @@ export default function Navbar(props) {
         }
       })
       const getlocdetails = await locDetails.json()
-      //setStates(getlocdetails[0].states)
-      //setCitys(getlocdetails[0].branches)
+      setStates(getlocdetails[0].states)
+      setCitys(getlocdetails[0].branches)
     }
     async function getAllSpeciality() {
       try {
@@ -364,7 +486,7 @@ export default function Navbar(props) {
         const data = await response.json();
 
         // Check if you have Specialities and Departments
-       // console.log("Specialities:", data.Specialities);
+        // console.log("Specialities:", data.Specialities);
         //console.log("Departments:", data.Departments);
 
         // Assuming you want to save both in state
@@ -382,7 +504,6 @@ export default function Navbar(props) {
     if (mail === "manipal@gmail.com") {
       getallLoc()
       getAllDoctrosNames()
-      getAllSpeciality()
     } else {
       if (loginBranch === "undefined") {
         setState(Cluster);
@@ -393,6 +514,7 @@ export default function Navbar(props) {
       }
     }
     setLogo(localStorage.getItem("logo"))
+    getAllSpeciality()
   }, [])
 
   // useEffect(() => {
@@ -421,7 +543,7 @@ export default function Navbar(props) {
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     let lastSixMonths = [];
-    for (let i = 6; i > 0; i--) {
+    for (let i = 7; i > 0; i--) {
       const monthIndex = (today.getMonth() - i + 12) % 12;
       const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
       lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
@@ -437,650 +559,686 @@ export default function Navbar(props) {
   // I have this data I want to create a dashbord with this 
   return (
     <Fragment>
-      {/* Sidebar */}
+      {/* Modern Sidebar */}
+{/* MUI Sidebar */}
+<Drawer
+  variant="permanent"
+  sx={{
+    width: isCollapsed ? 80 : 240,
+    flexShrink: 0,
+    '& .MuiDrawer-paper': {
+      width: isCollapsed ? 80 : 240,
+      boxSizing: 'border-box',
+      backgroundColor: 'white',
+      color: '#5D5A85',
+      transition: 'width 0.3s ease',
+      overflowX: 'hidden',
+      borderRight: 'none',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    },
+  }}
+>
+  <Box sx={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    p: 2,
+    borderBottom: '1px solid #f0f0f0',
+    minHeight: '64px'
+  }}>
+    {!isCollapsed && (
+      <img
+        src={logo}
+        alt="Logo"
+        style={{ height: '40px', maxWidth: '160px' }}
+      />
+    )}
+    <Button
+      onClick={toggleSidebar}
+      sx={{
+        color: '#7A76A8',
+        minWidth: 'auto',
+        p: 1,
+        '&:hover': {
+          backgroundColor: 'rgba(122, 118, 168, 0.1)'
+        }
+      }}
+    >
+      {isCollapsed ? <FaAlignJustify size={20} /> : <FaAnglesLeft size={20} />}
+    </Button>
+  </Box>
 
-      <div>
-        <Sidebar
-          collapsed={isCollapsed}
-          className={isCollapsed ? "sidebar-transparent" : ""}
-          style={{
-            height: "100%",
-            position: "fixed",
-            top: "0",
-            transition: "width 0.5s ease",
+  <List sx={{ p: 1 }}>
+    {/* Dashboard Menu */}
+    <ListItemButton
+      onClick={handleDashboardClick}
+      sx={{
+        borderRadius: '8px',
+        mb: 1,
+        backgroundColor: isActive("/Dashboard") ? 'rgba(122, 118, 168, 0.1)' : 'transparent',
+        color: isActive("/Dashboard") ? '#7A76A8' : '#5D5A85',
+        '&:hover': {
+          backgroundColor: 'rgba(122, 118, 168, 0.1)'
+        }
+      }}
+    >
+      <ListItemIcon sx={{ 
+        minWidth: '40px', 
+        color: isActive("/Dashboard") ? '#7A76A8' : '#5D5A85'
+      }}>
+        <FaDashcube />
+      </ListItemIcon>
+      {!isCollapsed && (
+        <>
+          <ListItemText primary="Dashboard" />
+          {openDashboard ? <ExpandLess color="#7A76A8" /> : <ExpandMore color="#7A76A8" />}
+        </>
+      )}
+    </ListItemButton>
+
+    <Collapse in={openDashboard && !isCollapsed} timeout="auto" unmountOnExit>
+      <List component="div" disablePadding>
+        {/* Dashboard Home */}
+        <ListItemButton
+          component={Link}
+          to="/Dashboard"
+          sx={{
+            pl: 4,
+            borderRadius: '8px',
+            mb: 1,
+            backgroundColor: isActive("/Dashboard") ? 'rgba(122, 118, 168, 0.1)' : 'transparent',
+            color: isActive("/Dashboard") ? '#7A76A8' : '#5D5A85',
+            '&:hover': {
+              backgroundColor: 'rgba(122, 118, 168, 0.1)'
+            }
           }}
         >
-          <Menu iconShape="square" className="sidemenu">
-            <MenuItem
-              icon={isCollapsed ? <FaAlignJustify /> : <FaAnglesLeft />}
-              onClick={() => toggleSidebar()}
-            >
-              <img src={logo} alt="Logo" />
-            </MenuItem>
+          <ListItemIcon sx={{ 
+            minWidth: '40px', 
+            color: isActive("/Dashboard") ? '#7A76A8' : '#5D5A85'
+          }}>
+            <FaHome />
+          </ListItemIcon>
+          <ListItemText primary="Dashboard Home" />
+        </ListItemButton>
 
-            <MenuItem
-              className={`menu-item ${isActive("/Dashboard") ? "active-menu-item" : ""}`}
-              icon={<FaDashcube />}
-              onClick={() => navigate("/Dashboard")}
-            >
-              {isCollapsed && <span className="tooltip">Dashboard</span>}
-              <Link to="/Dashboard">Dashboard</Link>
-            </MenuItem>
+        {/* Profile Type Filter */}
+        <ListItemButton
+          onClick={handleProfileTypeClick}
+          sx={{ 
+            pl: 4, 
+            borderRadius: '8px', 
+            mb: 1,
+            color: '#5D5A85',
+            '&:hover': {
+              backgroundColor: 'rgba(122, 118, 168, 0.1)'
+            }
+          }}
+        >
+          <ListItemIcon sx={{ minWidth: '40px', color: '#5D5A85' }}>
+            <FaUser />
+          </ListItemIcon>
+          <ListItemText primary="Profile Type" />
+          {openProfileType ? <ExpandLess color="#7A76A8" /> : <ExpandMore color="#7A76A8" />}
+        </ListItemButton>
 
-            <MenuItem
-              className={`menu-item ${isActive("/Doc-report") ? "active-menu-item" : ""}`}
-              icon={<FaUserMd />}
-              onClick={() => navigate("/Doc-report")}
-            >
-              {isCollapsed && <span className="tooltip">Doc Report</span>}
-              <Link to="/Doc-report">Doc Report</Link>
-            </MenuItem>
-
-            <MenuItem
-              className={`menu-item ${isActive("/Insights") ? "active-menu-item" : ""}`}
-              icon={<FaChartBar />}
-              onClick={() => navigate("/Insights")}
-            >
-              {isCollapsed && <span className="tooltip">Insights</span>}
-              <Link to="/Insights">Insights</Link>
-            </MenuItem>
-
-            {["astrio@gmail.com", "lupin@gmail.com", "care@gmail.com", "mankind@gmail.com"].includes(email) ? (
-              <MenuItem
-                className={`menu-item ${isActive("/WorkTracker") ? "active-menu-item" : ""}`}
-                icon={<GiTimeBomb />}
-                onClick={() => navigate("/WorkTracker")}
+        <Collapse in={openProfileType} timeout="auto" unmountOnExit>
+          <Box sx={{ pl: 6, pr: 2, pb: 1 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel sx={{ color: '#5D5A85' }}>Select Profile Type</InputLabel>
+              <Select
+                value={department}
+                onChange={(e) => {
+                  const value = e.target.value === "All" ? "" : e.target.value;
+                  setContextProfileType(value);
+                  setContextDepartment(value);
+                  setdepartment(value);
+                  setState("");
+                  setCity("");
+                  setMonth("");
+                  setSpeciality("");
+                  setSelectedYear("");
+                  setRating("");
+                  setSelectedMonths([]);
+                  setInsightsState("");
+                  setInsightsCity("");
+                  setContextMonth([]);
+                  setContextCity("");
+                  setContextSpeciality("");
+                  setContextRating("");
+                  fetchAndSetProfiles(value);
+                }}
+                label="Select Profile Type"
+                sx={{
+                  backgroundColor: 'white',
+                  color: '#5D5A85',
+                  borderRadius: '8px',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#7A76A8',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#7A76A8',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#7A76A8',
+                    borderWidth: '1px',
+                  },
+                  '& .MuiSelect-icon': {
+                    color: '#7A76A8',
+                  }
+                }}
               >
-                {isCollapsed && <span className="tooltip">Work Tracker</span>}
-                <Link to="/WorkTracker">Work Tracker</Link>
-              </MenuItem>
-            ) : (<></>
-              // <MenuItem
-              //   className={`menu-item ${isActive("/Matrics") ? "active-menu-item" : ""}`}
-              //   icon={<MdTableChart />}
-              //   onClick={() => navigate("/Matrics")}
-              // >
-              //   {isCollapsed && <span className="tooltip">Metrics</span>}
-              //   <Link to="/Matrics">Metrics</Link>
-              // </MenuItem>
-            )}
-          </Menu>
-        </Sidebar>
-      </div>
+                <MenuItem value=""><em>Select Profile Type</em></MenuItem>
+                {getAllDepartments &&
+                  getAllDepartments
+                    .filter(item => item !== "#N/A")
+                    .sort()
+                    .map((item, index) => (
+                      <MenuItem key={index} value={item}>{item}</MenuItem>
+                    ))
+                }
+                <MenuItem
+                  value="All"
+                  sx={{ color: '#EF5F80', fontWeight: 'bold' }}
+                >
+                  Clear All
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </Collapse>
 
-      <div
-        className="navigation-bar"
-        style={{
-          marginLeft:
-            windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : "15%",
-          transition: "margin-left 0.5s ease",
+        {/* Rating Filter */}
+        <ListItemButton
+          onClick={handleRatingFilterClick}
+          sx={{ 
+            pl: 4, 
+            borderRadius: '8px', 
+            mb: 1,
+            color: '#5D5A85',
+            '&:hover': {
+              backgroundColor: 'rgba(122, 118, 168, 0.1)'
+            }
+          }}
+        >
+          <ListItemIcon sx={{ minWidth: '40px', color: '#5D5A85' }}>
+            <FaStar />
+          </ListItemIcon>
+          <ListItemText primary="Rating Filter" />
+          {openRatingFilter ? <ExpandLess color="#7A76A8" /> : <ExpandMore color="#7A76A8" />}
+        </ListItemButton>
+
+        <Collapse in={openRatingFilter} timeout="auto" unmountOnExit>
+          <Box sx={{ pl: 6, pr: 2, pb: 1 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel sx={{ color: '#5D5A85' }}>Select Rating</InputLabel>
+              <Select
+                value={rating}
+                onChange={(e) => {
+                  const value = e.target.value === "All" ? "" : e.target.value;
+                  setRating(value);
+                  setContextRating(value);
+                  setSidebarRating(value);
+                  filterApi();
+                }}
+                label="Select Rating"
+                sx={{
+                  backgroundColor: 'white',
+                  color: '#5D5A85',
+                  borderRadius: '8px',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#7A76A8',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#7A76A8',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#7A76A8',
+                    borderWidth: '1px',
+                  },
+                  '& .MuiSelect-icon': {
+                    color: '#7A76A8',
+                  },
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      backgroundColor: 'white',
+                      color: '#5D5A85',
+                      '& .MuiMenuItem-root': {
+                        '&.Mui-selected': {
+                          backgroundColor: 'rgba(122, 118, 168, 0.1)',
+                        },
+                        '&:hover': {
+                          backgroundColor: 'rgba(122, 118, 168, 0.1)',
+                        }
+                      }
+                    }
+                  }
+                }}
+                renderValue={(selected) => {
+                  if (!selected) {
+                    return <em>Select Rating</em>;
+                  }
+                  return selected === "All" ? "Clear All" : `${selected === "1" ? "0-1" :
+                    `${Number(selected) - 1}-${selected}`}`;
+                }}
+              >
+                <MenuItem value="" disabled><em>Select Rating</em></MenuItem>
+                <MenuItem value="1">0-1</MenuItem>
+                <MenuItem value="2">1-2</MenuItem>
+                <MenuItem value="3">2-3</MenuItem>
+                <MenuItem value="4">3-4</MenuItem>
+                <MenuItem value="5">4-5</MenuItem>
+                <MenuItem
+                  value="All"
+                  sx={{ color: '#EF5F80', fontWeight: 'bold' }}
+                >
+                  Clear All
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </Collapse>
+      </List>
+    </Collapse>
+
+    {/* Doc Report */}
+    <ListItemButton
+      component={Link}
+      to="/Doc-report"
+      sx={{
+        borderRadius: '8px',
+        mb: 1,
+        backgroundColor: isActive("/Doc-report") ? 'rgba(122, 118, 168, 0.1)' : 'transparent',
+        color: isActive("/Doc-report") ? '#7A76A8' : '#5D5A85',
+        '&:hover': {
+          backgroundColor: 'rgba(122, 118, 168, 0.1)'
+        }
+      }}
+    >
+      <ListItemIcon sx={{ 
+        minWidth: '40px', 
+        color: isActive("/Doc-report") ? '#7A76A8' : '#5D5A85'
+      }}>
+        <FaUserMd />
+      </ListItemIcon>
+      {!isCollapsed && <ListItemText primary="Doc Report" />}
+    </ListItemButton>
+
+    {/* Insights */}
+    <ListItemButton
+      component={Link}
+      to="/Insights"
+      sx={{
+        borderRadius: '8px',
+        mb: 1,
+        backgroundColor: isActive("/Insights") ? 'rgba(122, 118, 168, 0.1)' : 'transparent',
+        color: isActive("/Insights") ? '#7A76A8' : '#5D5A85',
+        '&:hover': {
+          backgroundColor: 'rgba(122, 118, 168, 0.1)'
+        }
+      }}
+    >
+      <ListItemIcon sx={{ 
+        minWidth: '40px', 
+        color: isActive("/Insights") ? '#7A76A8' : '#5D5A85'
+      }}>
+        <FaChartBar />
+      </ListItemIcon>
+      {!isCollapsed && <ListItemText primary="Insights" />}
+    </ListItemButton>
+
+    {/* Work Tracker */}
+    {["astrio@gmail.com", "lupin@gmail.com", "care@gmail.com", "mankind@gmail.com"].includes(email) && (
+      <ListItemButton
+        component={Link}
+        to="/WorkTracker"
+        sx={{
+          borderRadius: '8px',
+          mb: 1,
+          backgroundColor: isActive("/WorkTracker") ? 'rgba(122, 118, 168, 0.1)' : 'transparent',
+          color: isActive("/WorkTracker") ? '#7A76A8' : '#5D5A85',
+          '&:hover': {
+            backgroundColor: 'rgba(122, 118, 168, 0.1)'
+          }
         }}
       >
-        <div
-          className="menu-button-1"
-          onClick={() => setNavContentsVisible(!isNavContentsVisible)}
-        >
-          <i class="bi bi-list"></i>
-        </div>
-        <div className="nav-caption">GOOGLE MY BUSINESS PERFORMANCE</div>
+        <ListItemIcon sx={{ 
+          minWidth: '40px', 
+          color: isActive("/WorkTracker") ? '#7A76A8' : '#5D5A85'
+        }}>
+          <GiTimeBomb />
+        </ListItemIcon>
+        {!isCollapsed && <ListItemText primary="Work Tracker" />}
+      </ListItemButton>
+    )}
+  </List>
 
-        {/* <div className="logout-icon">
-          <i className="bi bi-person-circle" onClick={logoutHandeler}></i>
-        </div> */}
+  {/* Sidebar Footer */}
+  {!isCollapsed && (
+    <Box sx={{
+      p: 2,
+      mt: 'auto',
+      borderTop: '1px solid #f0f0f0',
+      textAlign: 'center'
+    }}>
+      <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#5D5A85' }}>
+        {localStorage.getItem("user")}
+      </Typography>
+      <Typography variant="caption" sx={{ color: '#7A76A8' }}>
+        {email}
+      </Typography>
+    </Box>
+  )}
+</Drawer>
 
-        <div className="logout-icon">
-          <Button aria-describedby={id} onClick={handleClick}>
-            <i className="bi bi-person-circle fa-3x"></i>
-          </Button>
-          <Popover
-            id={id}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-            style={{
-              cursor: "pointer",
-            }}
-          >
-            <Typography onClick={logoutHandeler} sx={{ p: 2 }}>
-              Logout <i className="bi bi-person-circle"></i>
-            </Typography>
-          </Popover>
+
+      {/* Modern Top Navigation Bar */}
+      <div
+        className="fixed top-0 right-0 left-0 bg-white shadow-md z-40 h-16 flex items-center px-6 transition-all duration-300"
+        style={{
+          marginLeft: isCollapsed ? "5rem" : "16rem",
+        }}
+      >
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center">
+            <button
+              onClick={() => setNavContentsVisible(!isNavContentsVisible)}
+              className="mr-4 text-gray-600 hover:text-[#8D89BF] md:hidden"
+            >
+              <FaAlignJustify size={20} />
+            </button>
+            <h1 className="text-xl font-bold text-[#6A6792] hidden md:block">
+              Google My Business Performance
+            </h1>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <Button
+                aria-describedby={id}
+                onClick={handleClick}
+                className="rounded-full bg-[#F0EFFF] hover:bg-[#E5E3FF] transition-colors"
+              >
+                <div className="w-10 h-10 rounded-full bg-[#8D89BF] flex items-center justify-center text-white">
+                  {localStorage.getItem("user")?.charAt(0) || "U"}
+                </div>
+              </Button>
+              <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+              >
+                <div className="p-4">
+                  <div className="mb-3">
+                    <p className="font-semibold">{localStorage.getItem("user")}</p>
+                    <p className="text-sm text-gray-600">{email}</p>
+                  </div>
+                  <button
+                    onClick={logoutHandeler}
+                    className="w-full py-2 px-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-md flex items-center justify-center"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </Popover>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ============================================MenuStarted ========================================================================*/}
-
-      {/* Page Content */}
+      {/* Modern Filter Bar */}
       {!props.blockmenu && (
         <div
+          className="fixed top-16 bg-white shadow-sm z-30 w-full transition-all duration-300"
           style={{
-            marginLeft:
-              window.innerWidth > 768 ? (isCollapsed ? "8%" : "20%") : "20%",
-            //padding: window.innerWidth > 768 ? "10px" : 0,
-            transition: "margin-left 0.5s ease",
+            marginLeft: isCollapsed ? "5rem" : "16rem",
+            display: isNavContentsVisible ? "block" : "none",
           }}
         >
-          {/* Place your page content here */}
-
-          <div className="sub-nav">
-            <div
-              className={`filter-contents  ${isNavContentsVisible ? "show" : ""
-                }`}
-              style={{
-                display: props.worktracker ? "none" : "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <div className="filers_sprding">
-
-
-                {/* ===============================Department ===========================================*/}
-                <div className="datepicker">
-                  <div className="data_list_selection m-1">
-                    {props.serach && (<div className="input-group">
-                      <select
-                        value={department}
-                        onChange={deptHandler}
-                        //onInputCapture={filterApi}
-                        style={{
-                          width: "150px",
-                          borderRadius: " 10px",
-                          padding: "4px",
-                          border: "1px solid #ccc",
-                          outline: "none",
-                        }}
-                      >
-                        <option value="">Select Profile Type...</option>
-                        { getAllDepartments &&
-                          getAllDepartments
-                            .filter(item => item !== "#N/A")
-                            .sort()
-                            .map((item, index) => {
-                              if (item != "#N/A")
-                                return (
-                                  <option key={index} value={item}>
-                                    {item}
-                                  </option>
-                                );
-                            })}
-                        <option value="All" style={{
-                          color: "#EF5F80",
-                        }} >Clear All</option>
-                      </select>
-                    </div>)}
+          <div className="px-6 py-4 border-b">
+            <div className={`flex flex-wrap gap-3 items-center ${props.worktracker ? "hidden" : ""}`}>
+              {/* Department Filter */}
+              {/* {props.serach && (
+                <div className="relative">
+                  <select
+                    value={department}
+                    onChange={deptHandler}
+                    className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-48"
+                  >
+                    <option value="">Profile Type</option>
+                    {getAllDepartments &&
+                      getAllDepartments
+                        .filter(item => item !== "#N/A")
+                        .sort()
+                        .map((item, index) => (
+                          <option key={index} value={item}>
+                            {item}
+                          </option>
+                        ))}
+                    <option value="All" className="text-red-500">
+                      Clear All
+                    </option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
                   </div>
                 </div>
+              )} */}
 
-
-
-
-
-
-                <div className="data_list_selection m-1">
-                  {props.serach && (
-                    <div className="input-group">
-                      <select
-                        value={getState}
-                        onChange={getStateHandeler}
-                        //onInputCapture={filterApi}
-                        style={{
-                          width: "150px",
-                          borderRadius: " 10px",
-                          padding: "5px",
-                          border: "1px solid #ccc",
-                          outline: "none",
-                        }}
-                      >
-                        <option value="">Select Region...</option>
-                        {getStates &&
-                          getStates
-                            .filter(item => item !== "#N/A")
-                            .sort()
-                            .map((item, index) => {
-                              if (item != "#N/A")
-                                return (
-                                  <option key={index} value={item}>
-                                    {item}
-                                  </option>
-                                );
-                            })}
-                        <option value="All" style={{
-                          color: "#EF5F80",
-                        }} >Clear All</option>
-                      </select>
-
-                      {/* <button
-                        onClick={() => {
-                          filterApi();
-                          insightsChecker();
-                        }}
-                        style={{
-                          borderRadius: " 0px 10px 10px 0px",
-                          border: "1px solid #ccc",
-                          outline: "none",
-                        }}
-                      >
-                        <FaSearch className="CircleRightIcon" />
-                      </button> */}
-                    </div>
-                  )}
+              {props.filterpopover && (
+                <div>
+                  <NewMenuBar speciality={speciality} rating={rating} ></NewMenuBar>
                 </div>
+              )}
 
-
-
-                {props.monthhide && (
-                  <div className="data_list_selection m-1">
-                    <div className="input-group">
-                      <select
-                        value={getCity}
-                        onChange={getCityHandeler}
-                        //onInputCapture={cityInsightHandelar}
-                        style={{
-                          width: "150px",
-                          borderRadius: " 10px",
-                          padding: "4px",
-                          border: "1px solid #ccc",
-                          outline: "none",
-                        }}
-                      >
-                        <option value="">Select Unit...</option>
-                        {getCitys &&
-                          getCitys
-                            .filter(item => item !== "#N/A")
-                            .sort()
-                            .map((item, index) => {
-                              if (item != "#N/A")
-                                return (
-                                  <option key={index} value={item}>
-                                    {item}
-                                  </option>
-                                );
-                            })}
-                        <option value="All" style={{
-                          color: "#EF5F80",
-                        }} >Clear All</option>
-                      </select>
-                      {/* <button
-                        onClick={() => {
-                          filterApi();
-                          insightsChecker();
-                        }}
-                        style={{
-                          borderRadius: " 0px 10px 10px 0px",
-                          border: "1px solid #ccc",
-                          outline: "none",
-                        }}
-                      >
-                        <FaSearch className="CircleRightIcon" />
-                      </button> */}
-                    </div>
-                  </div>
-                )}
-
-
-                {/* Date ------------select */}
-
-
-                {!props.filterpopover && (
-                  <div className="d-flex">
-                    {props.monthfilter && <div
-                      className="datepicker d-flex justify-content-end"
-                      style={{ display: props.monthfilter ? "block" : "none" }}
-                    >
-                      <div className="data_list_selection m-1">
-                        <div className="input-group">
-                          <select onChange={yearHandler} value={selectedYear} style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
-                            <option value="">Select Year</option>
-                            <option value="2024">2024</option>
-                            <option value="2025">2025</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>}
-                    <div
-                      className="datepicker"
-                      style={{ display: props.monthfilter ? "block" : "none" }}
-                    >
-                      <div className="data_list_selection m-1">
-                        {/* <div className="input-group">
-                          <select value={getMonth} onChange={monthHandelar} style={{ width: "100%", borderRadius: "10px", padding: "4px", border: "1px solid #ccc", outline: "none" }}>
-                            <option value="">Select Month</option>
-                            {filteredMonths.map((month, index) => (
-                              <option key={index} value={month}>{month}</option>
-                            ))}
-                          </select>
-                          </div> */}
-
-                        {/* <button
-                      onClick={() => {
-                        monthseter();
-                      }}
-                      style={{
-                        borderRadius: " 0px 10px 10px 0px",
-                        border: "1px solid #ccc",
-                        outline: "none",
-                      }}
-                    >
-                      <FaSearch className="CircleRightIcon" />
-                    </button> */}
-                        <div>
-                          <MultiMonthSelector
-                            filteredMonths={filteredMonths}
-                            selectedMonths={selectedMonths}
-                            setSelectedMonths={setSelectedMonths}
-                          />
-                          {/* <div style={{ marginTop: "10px" }}>
-                            <strong>Selected Months:</strong> {selectedMonths.join(", ")}
-                          </div> */}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-
-                {/* ===============================Button===========================================*/}
-
-                {props.filterpopover && (
-                  <div>
-                    <NewMenuBar speciality={speciality} rating={rating} ></NewMenuBar>
-                  </div>
-                )}
-                {/* ===============================Speciality ===========================================*/}
-                <div className="datepicker">
-                  <div className="data_list_selection m-1">
-                    <div className="input-group">
-                      <select
-                        value={speciality}
-                        onChange={specialityHandler}
-                        //onInputCapture={filterApi}
-                        style={{
-                          width: "150px",
-                          borderRadius: " 10px",
-                          padding: "4px",
-                          border: "1px solid #ccc",
-                          outline: "none",
-                        }}
-                      >
-                        <option value="">Select Speciality...</option>
-                        {getSpeciality &&
-                          getSpeciality
-                            .filter(item => item !== "#N/A")
-                            .sort()
-                            .map((item, index) => {
-                              if (item != "#N/A")
-                                return (
-                                  <option key={index} value={item}>
-                                    {item}
-                                  </option>
-                                );
-                            })}
-                        <option value="All" style={{
-                          color: "#EF5F80",
-                        }} >Clear All</option>
-                      </select>
-                    </div>
+              {/* Region Filter */}
+              {props.serach && (
+                <div className="relative">
+                  <select
+                    value={getState}
+                    onChange={getStateHandeler}
+                    className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-40"
+                  >
+                    <option value="">Region</option>
+                    {getStates &&
+                      getStates
+                        .filter(item => item !== "#N/A")
+                        .sort()
+                        .map((item, index) => (
+                          <option key={index} value={item}>
+                            {item}
+                          </option>
+                        ))}
+                    <option value="All" className="text-red-500">
+                      Clear All
+                    </option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
                   </div>
                 </div>
+              )}
 
+              {/* Unit Filter */}
+              {props.monthhide && (
+                <div className="relative">
+                  <select
+                    value={getCity}
+                    onChange={getCityHandeler}
+                    className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-40"
+                  >
+                    <option value="">Unit</option>
+                    {getCitys &&
+                      getCitys
+                        .filter(item => item !== "#N/A")
+                        .sort()
+                        .map((item, index) => (
+                          <option key={index} value={item}>
+                            {item}
+                          </option>
+                        ))}
+                    <option value="All" className="text-red-500">
+                      Clear All
+                    </option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
+              )}
 
-                {/* ===============================Rating ===========================================*/}
-                <div className="datepicker"
-                // style={{
-                //   display: props.filterpopover || props.clusterlogin ? "block" : "none",
-                // }}
+              {/* Year Selector */}
+              {props.monthfilter && (
+                <div className="relative">
+                  <select
+                    onChange={yearHandler}
+                    value={selectedYear}
+                    className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-32"
+                  >
+                    <option value="">Year</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
+              )}
+
+              {/* Month Selector */}
+              {props.monthfilter && (
+                <div className="relative w-48">
+                  <MultiMonthSelector
+                    filteredMonths={filteredMonths}
+                    selectedMonths={selectedMonths}
+                    setSelectedMonths={setSelectedMonths}
+                  />
+                </div>
+              )}
+
+              {/* Speciality Filter */}
+              <div className="relative">
+                <select
+                  value={speciality}
+                  onChange={specialityHandler}
+                  className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-44"
                 >
-                  <div className="data_list_selection m-1">
-                    <div className="input-group">
-                      <select
-                        value={rating}
-                        onChange={ratingHandler}
-                        //onInputCapture={filterApi}
-                        style={{
-                          width: "150px",
-                          borderRadius: " 10px",
-                          padding: "4px",
-                          border: "1px solid #ccc",
-                          outline: "none",
-                        }}
-                      >
-                        <option value="">Select Rating...</option>
-                        <option value="1">0-1</option>
-                        <option value="2">1-2</option>
-                        <option value="3">2-3</option>
-                        <option value="4">3-4</option>
-                        <option value="5">4-5</option>
-                        <option value="All" style={{
-                          color: "#EF5F80",
-                        }} >Clear All</option>
-
-                      </select>
-                    </div>
-                  </div>
-                </div>
-
-
-
-                {!props.filterpopover && props.monthfilter && (
-                  <div className="data_list_selection m-1">
-                    <button
-
-                      onClick={() => {
-                        setInsightsState(getState);
-                        setInsightsCity(getCity);
-                        setContextMonth(selectedMonths);
-                        setContextCity(getCity);
-                        setContextSpeciality(speciality);
-                        setContextDepartment(department);
-                        setContextRating(rating);
-                        setLocationProfiles(getcountOfProfiles);
-                        filterApi();
-                      }} 
-                      style={{
-                        borderRadius: " 10px",
-                        border: "1px solid #ccc",
-                        color: "#ffffff",
-                        background: "linear-gradient(90deg, #034ea1 0, #00b7ac 100%)",
-                        padding: "5px",
-                        outline: "none",
-                      }}
-                    >
-                      Apply
-                      {/* <FaSearch className="CircleRightIcon" /> */}
-                    </button>
-                  </div>
-                )}
-                {/* <label>Select Doctor:</label>&nbsp; */}
-                <div
-                  className="data_list_selection m-1"
-                  style={{
-                    display: props.filterpopover || props.clusterlogin ? "block" : "none",
-                  }}
-                >
-
-                  <div className="input-group">
-                    <input
-                      type="text"
-                      list="getDoctor"
-                      placeholder="Doctor Name"
-                      value={getName}
-                      onInputCapture={nameHandelar}
-                      style={{
-                        width: "150px",
-                        borderRadius: " 10px 0px 0 10px",
-                        padding: "4px",
-                        border: "1px solid #ccc",
-                        outline: "none",
-                      }}
-                    />
-                    <button
-                      onClick={nameseter}
-                      style={{
-                        paddingRight: "4px",
-                        paddingLeft: "4px",
-                        borderRadius: "0px 10px 10px 0px",
-                        border: "1px solid #ccc",
-                        outline: "none",
-                        // display:
-                        //   email === "aristro@gmail.com" ||
-                        //   email === "microlabs@gmail.com"
-                        //     ? "none"
-                        //     : "",
-                      }}
-                    >
-                      <FaSearch className="CircleRightIcon" />
-                    </button>
-                  </div>
-                </div>
-                {
-                  (drNameContext?.length > 0 || getAllnames?.length > 0) ? (
-                    <datalist id="getDoctor">
-                      {(drNameContext?.length > 0 ? drNameContext : getAllnames).map((item, index) => (
+                  <option value="">Speciality</option>
+                  {getSpeciality &&
+                    getSpeciality
+                      .filter(item => item !== "#N/A")
+                      .sort()
+                      .map((item, index) => (
                         <option key={index} value={item}>
                           {item}
                         </option>
                       ))}
-                    </datalist>
-                  ) : (
-                    <datalist id="getDoctor">
-                      <option disabled>No data available</option>
-                    </datalist>
-                  )
-                }
-
+                  <option value="All" className="text-red-500">
+                    Clear All
+                  </option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
               </div>
-            </div>
 
-            {isNavContentsVisible && (
-              <div
-                className={`nav-contents ${isNavContentsVisible ? "show" : ""}`}
-              >
-                <p
-                  style={{
-                    display: email !== "care@gmail.com" ? "none" : "block",
-                  }}
+              {/* Rating Filter */}
+              {/* <div className="relative">
+                <select
+                  value={rating}
+                  onChange={ratingHandler}
+                  className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-32"
                 >
+                  <option value="">Rating</option>
+                  <option value="1">0-1</option>
+                  <option value="2">1-2</option>
+                  <option value="3">2-3</option>
+                  <option value="4">3-4</option>
+                  <option value="5">4-5</option>
+                  <option value="All" className="text-red-500">
+                    Clear All
+                  </option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+              </div> */}
+
+              {/* Doctor Search */}
+              <div className="relative" style={{
+                display: props.filterpopover || props.clusterlogin ? "block" : "none",
+              }}>
+                <div className="flex">
+                  <input
+                    type="text"
+                    list="getDoctor"
+                    placeholder="Doctor Name"
+                    value={getName}
+                    onInputCapture={nameHandelar}
+                    className="border border-gray-300 rounded-l-lg py-2 px-3 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-44"
+                  />
                   <button
-                    className="export-btn"
-                    style={{
-                      display: !props.serach ? "block" : "none",
-                    }}
-                    // onClick={bulkExport}
-                    disabled={!getState}
+                    onClick={nameseter}
+                    className="bg-[#8D89BF] hover:bg-[#7A76A8] text-white rounded-r-lg px-3 flex items-center transition-colors"
                   >
-                    Bulk Download
+                    <FaSearch />
                   </button>
-                </p>
-                <Link to="/Dashboard" className="p-1 pe-5">
-                  Dashboard
-                </Link>
-                <Link to="/Doc-report" className="p-1 pe-5">
-                  Doc Report
-                </Link>
-                <Link to="/Insights" className="p-1 pe-5">
-                  Insights
-                </Link>
-                {email === "astrio@gmail.com" ||
-                  email === "lupin@gmail.com" ||
-                  email === "care@gmail.com" ||
-                  email === "mankind@gmail.com" ? (
-                  <Link to="/WorkTracker " className="p-1 pe-5">
-                    WorkTracker
-                  </Link>
-                ) : (
-                  <Link to="/Matrics" className="p-1 pe-5">
-                    Metrics
-                  </Link>
-                )}
-
-                {/* <Link to="/Review-management" className="p-1 pe-5">
-            Review Management
-          </Link>  */}
-                {/* <Link to="/Review Management" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Review Management</Link> */}
-                {/* <Link to="/gen-ai" className="p-1 pe-5" style={{display: (props.username === 'Manipal' && props.serach ? 'none' : 'block')}}>Gen AI</Link>  */}
-              </div>
-            )}
-            {/* <div className="d-flex">
-              <div
-                className="datepicker"
-                style={{ display: props.monthfilter ? "block" : "none" }}
-              >
-                <div className="data_list_selection m-1">
-                  <div className="input-group">
-                    <select
-                      value={getMonth}
-                      onChange={monthHandelar}
-                      onInputCapture={monthHandelar}
-                      style={{
-                        width: "80%",
-                        borderRadius: " 10px 0px 0 10px",
-                        padding: "4px",
-                        border: "1px solid #ccc",
-                        outline: "none",
-                      }}
-                    >
-                      <option value="">Select Month...</option>
-                      
-                      {props.monthsCalls?.map((month, index) => (
-                        <option key={index} value={month}>
-                          {month}
-                        </option>
-                      ))}
-                    </select>
-
-                    <button
-                      onClick={() => {
-                        monthseter();
-                      }}
-                      style={{
-                        borderRadius: " 0px 10px 10px 0px",
-                        border: "1px solid #ccc",
-                        outline: "none",
-                      }}
-                    >
-                      <FaSearch className="CircleRightIcon" />
-                    </button>
-                  </div>
                 </div>
+                <datalist id="getDoctor">
+                  {(drNameContext?.length > 0 ? drNameContext : getAllnames)?.map((item, index) => (
+                    <option key={index} value={item} />
+                  ))}
+                </datalist>
               </div>
-              <div
-                className="datepicker d-flex justify-content-end"
-                style={{ display: props.monthfilter ? "block" : "none" }}
-              >
-                <div className="data_list_selection m-1">
-                  <div className="input-group">
-                    <select
-                    
 
-                      style={{
-                        width: "100%",
-                        borderRadius: " 10px 10px 10px 10px",
-                        padding: "4px",
-                        border: "1px solid #ccc",
-                        outline: "none",
-                      }}
-                    >
-                      <option value="">Select Year </option>
-                      <option value="2024">2024</option>
-                      <option value="2025">2025</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div> */}
+              {/* Apply Button */}
+              {!props.filterpopover && props.monthfilter && (
+                <button
+                  onClick={() => {
+                    setInsightsState(getState);
+                    setInsightsCity(getCity);
+                    setContextMonth(selectedMonths);
+                    setContextCity(getCity);
+                    setContextSpeciality(speciality);
+                    // setContextRating(rating);
+                    setLocationProfiles(getcountOfProfiles);
+                    filterApi();
+                  }}
+                  className="bg-gradient-to-r from-[#8D89BF] to-[#6A6792] hover:from-[#7A76A8] hover:to-[#5D5A85] text-white py-2 px-6 rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
+                >
+                  Apply Filters
+                </button>
+              )}
+            </div>
           </div>
-
-          {props.children}
         </div>
       )}
 
-      <div className="d-flex justify-content-center"></div>
+
     </Fragment>
   );
 }
-//  
+//  In the above component I want to replace the existing Sidebar which should have nested submenu of Profile Type and and Rating 

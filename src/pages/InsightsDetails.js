@@ -266,6 +266,7 @@ export default function BasicDetailsComponent() {
                 windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
               transition: "margin-left 0.5s ease",
             }}
+            className="mt-48"
           >
             {docData ? (
               <div className="maniContainer p-3 m-3">

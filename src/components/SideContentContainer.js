@@ -7,28 +7,16 @@ export default function SideContentContainer(props) {
   // Access isCollapsed from SidebarContext
   const { isCollapsed } = useContext(SidebarContext);
   const { windowWidth } = useContext(SidebarContext);
-  // const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     setWindowWidth(window.innerWidth);
-  //   };
-
-  //   window.addEventListener('resize', handleResize);
-
-  //   return () => {
-  //     window.removeEventListener('resize', handleResize);
-  //   };
-  // }, []);
 
   return (
     <Fragment>
-      <div className="right-container-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
         {props.data.map((item) => {
           return Object.entries(item).map(([key, value]) => {
             // Skip the "_id" field
             if (key !== "_id") {
-              return <SecondCardContainer head={key} val={value} key={key} />;
+              return <CardContainer head={key} val={value} key={key} />;
             }
             return null;
           });
