@@ -86,8 +86,13 @@ export default function Navbar(props) {
   const [openRatingFilter, setOpenRatingFilter] = useState(false);
 
   const handleDashboardClick = () => {
+    // Prevent opening on Insights or Doc-report
+    if (location.pathname === "/Insights" || location.pathname === "/Doc-report") {
+      return;
+    }
     setOpenDashboard(!openDashboard);
   };
+
 
   const handleProfileTypeClick = () => {
     setOpenProfileType(!openProfileType);
@@ -96,6 +101,15 @@ export default function Navbar(props) {
   const handleRatingFilterClick = () => {
     setOpenRatingFilter(!openRatingFilter);
   };
+
+
+
+
+  useEffect(() => {
+    if (location.pathname === "/Insights" || location.pathname === "/Doc-report") {
+      setOpenDashboard(false);
+    }
+  }, [location.pathname]);
 
 
 
@@ -379,7 +393,7 @@ export default function Navbar(props) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ "dept": profileType, state: Cluster !== "undefined" ? Cluster : getState, branch: loginBranch !== "undefined" ? loginBranch :  cityToSend, month: monthToSend, "speciality": speciality, "rating": sidebarRating })
+      body: JSON.stringify({ "dept": profileType, state: Cluster !== "undefined" ? Cluster : getState, branch: loginBranch !== "undefined" ? loginBranch : cityToSend, month: monthToSend, "speciality": speciality, "rating": sidebarRating })
     });
     const data = await response.json();
     // alert("Hello")
@@ -430,7 +444,7 @@ export default function Navbar(props) {
       body: JSON.stringify({
         dept,
         state: Cluster !== "undefined" ? Cluster : getState,
-        branch: loginBranch !== "undefined" ? loginBranch :  cityToSend,
+        branch: loginBranch !== "undefined" ? loginBranch : cityToSend,
         month: monthToSend,
         speciality,
         rating,
@@ -560,378 +574,346 @@ export default function Navbar(props) {
   return (
     <Fragment>
       {/* Modern Sidebar */}
-{/* MUI Sidebar */}
-<Drawer
-  variant="permanent"
-  sx={{
-    width: isCollapsed ? 80 : 240,
-    flexShrink: 0,
-    '& .MuiDrawer-paper': {
-      width: isCollapsed ? 80 : 240,
-      boxSizing: 'border-box',
-      backgroundColor: 'white',
-      color: '#5D5A85',
-      transition: 'width 0.3s ease',
-      overflowX: 'hidden',
-      borderRight: 'none',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    },
-  }}
->
-  <Box sx={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    p: 2,
-    borderBottom: '1px solid #f0f0f0',
-    minHeight: '64px'
-  }}>
-    {!isCollapsed && (
-      <img
-        src={logo}
-        alt="Logo"
-        style={{ height: '40px', maxWidth: '160px' }}
-      />
-    )}
-    <Button
-      onClick={toggleSidebar}
-      sx={{
-        color: '#7A76A8',
-        minWidth: 'auto',
-        p: 1,
-        '&:hover': {
-          backgroundColor: 'rgba(122, 118, 168, 0.1)'
-        }
-      }}
-    >
-      {isCollapsed ? <FaAlignJustify size={20} /> : <FaAnglesLeft size={20} />}
-    </Button>
-  </Box>
-
-  <List sx={{ p: 1 }}>
-    {/* Dashboard Menu */}
-    <ListItemButton
-      onClick={handleDashboardClick}
-      sx={{
-        borderRadius: '8px',
-        mb: 1,
-        backgroundColor: isActive("/Dashboard") ? 'rgba(122, 118, 168, 0.1)' : 'transparent',
-        color: isActive("/Dashboard") ? '#7A76A8' : '#5D5A85',
-        '&:hover': {
-          backgroundColor: 'rgba(122, 118, 168, 0.1)'
-        }
-      }}
-    >
-      <ListItemIcon sx={{ 
-        minWidth: '40px', 
-        color: isActive("/Dashboard") ? '#7A76A8' : '#5D5A85'
-      }}>
-        <FaDashcube />
-      </ListItemIcon>
-      {!isCollapsed && (
-        <>
-          <ListItemText primary="Dashboard" />
-          {openDashboard ? <ExpandLess color="#7A76A8" /> : <ExpandMore color="#7A76A8" />}
-        </>
-      )}
-    </ListItemButton>
-
-    <Collapse in={openDashboard && !isCollapsed} timeout="auto" unmountOnExit>
-      <List component="div" disablePadding>
-        {/* Dashboard Home */}
-        <ListItemButton
-          component={Link}
-          to="/Dashboard"
-          sx={{
-            pl: 4,
-            borderRadius: '8px',
-            mb: 1,
-            backgroundColor: isActive("/Dashboard") ? 'rgba(122, 118, 168, 0.1)' : 'transparent',
-            color: isActive("/Dashboard") ? '#7A76A8' : '#5D5A85',
-            '&:hover': {
-              backgroundColor: 'rgba(122, 118, 168, 0.1)'
-            }
-          }}
-        >
-          <ListItemIcon sx={{ 
-            minWidth: '40px', 
-            color: isActive("/Dashboard") ? '#7A76A8' : '#5D5A85'
-          }}>
-            <FaHome />
-          </ListItemIcon>
-          <ListItemText primary="Dashboard Home" />
-        </ListItemButton>
-
-        {/* Profile Type Filter */}
-        <ListItemButton
-          onClick={handleProfileTypeClick}
-          sx={{ 
-            pl: 4, 
-            borderRadius: '8px', 
-            mb: 1,
-            color: '#5D5A85',
-            '&:hover': {
-              backgroundColor: 'rgba(122, 118, 168, 0.1)'
-            }
-          }}
-        >
-          <ListItemIcon sx={{ minWidth: '40px', color: '#5D5A85' }}>
-            <FaUser />
-          </ListItemIcon>
-          <ListItemText primary="Profile Type" />
-          {openProfileType ? <ExpandLess color="#7A76A8" /> : <ExpandMore color="#7A76A8" />}
-        </ListItemButton>
-
-        <Collapse in={openProfileType} timeout="auto" unmountOnExit>
-          <Box sx={{ pl: 6, pr: 2, pb: 1 }}>
-            <FormControl fullWidth size="small">
-              <InputLabel sx={{ color: '#5D5A85' }}>Select Profile Type</InputLabel>
-              <Select
-                value={department}
-                onChange={(e) => {
-                  const value = e.target.value === "All" ? "" : e.target.value;
-                  setContextProfileType(value);
-                  setContextDepartment(value);
-                  setdepartment(value);
-                  setState("");
-                  setCity("");
-                  setMonth("");
-                  setSpeciality("");
-                  setSelectedYear("");
-                  setRating("");
-                  setSelectedMonths([]);
-                  setInsightsState("");
-                  setInsightsCity("");
-                  setContextMonth([]);
-                  setContextCity("");
-                  setContextSpeciality("");
-                  setContextRating("");
-                  fetchAndSetProfiles(value);
-                }}
-                label="Select Profile Type"
-                sx={{
-                  backgroundColor: 'white',
-                  color: '#5D5A85',
-                  borderRadius: '8px',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#7A76A8',
-                  },
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#7A76A8',
-                  },
-                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#7A76A8',
-                    borderWidth: '1px',
-                  },
-                  '& .MuiSelect-icon': {
-                    color: '#7A76A8',
-                  }
-                }}
-              >
-                <MenuItem value=""><em>Select Profile Type</em></MenuItem>
-                {getAllDepartments &&
-                  getAllDepartments
-                    .filter(item => item !== "#N/A")
-                    .sort()
-                    .map((item, index) => (
-                      <MenuItem key={index} value={item}>{item}</MenuItem>
-                    ))
-                }
-                <MenuItem
-                  value="All"
-                  sx={{ color: '#EF5F80', fontWeight: 'bold' }}
-                >
-                  Clear All
-                </MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        </Collapse>
-
-        {/* Rating Filter */}
-        <ListItemButton
-          onClick={handleRatingFilterClick}
-          sx={{ 
-            pl: 4, 
-            borderRadius: '8px', 
-            mb: 1,
-            color: '#5D5A85',
-            '&:hover': {
-              backgroundColor: 'rgba(122, 118, 168, 0.1)'
-            }
-          }}
-        >
-          <ListItemIcon sx={{ minWidth: '40px', color: '#5D5A85' }}>
-            <FaStar />
-          </ListItemIcon>
-          <ListItemText primary="Rating Filter" />
-          {openRatingFilter ? <ExpandLess color="#7A76A8" /> : <ExpandMore color="#7A76A8" />}
-        </ListItemButton>
-
-        <Collapse in={openRatingFilter} timeout="auto" unmountOnExit>
-          <Box sx={{ pl: 6, pr: 2, pb: 1 }}>
-            <FormControl fullWidth size="small">
-              <InputLabel sx={{ color: '#5D5A85' }}>Select Rating</InputLabel>
-              <Select
-                value={rating}
-                onChange={(e) => {
-                  const value = e.target.value === "All" ? "" : e.target.value;
-                  setRating(value);
-                  setContextRating(value);
-                  setSidebarRating(value);
-                  filterApi();
-                }}
-                label="Select Rating"
-                sx={{
-                  backgroundColor: 'white',
-                  color: '#5D5A85',
-                  borderRadius: '8px',
-                  '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#7A76A8',
-                  },
-                  '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#7A76A8',
-                  },
-                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                    borderColor: '#7A76A8',
-                    borderWidth: '1px',
-                  },
-                  '& .MuiSelect-icon': {
-                    color: '#7A76A8',
-                  },
-                }}
-                MenuProps={{
-                  PaperProps: {
-                    sx: {
-                      backgroundColor: 'white',
-                      color: '#5D5A85',
-                      '& .MuiMenuItem-root': {
-                        '&.Mui-selected': {
-                          backgroundColor: 'rgba(122, 118, 168, 0.1)',
-                        },
-                        '&:hover': {
-                          backgroundColor: 'rgba(122, 118, 168, 0.1)',
-                        }
-                      }
-                    }
-                  }
-                }}
-                renderValue={(selected) => {
-                  if (!selected) {
-                    return <em>Select Rating</em>;
-                  }
-                  return selected === "All" ? "Clear All" : `${selected === "1" ? "0-1" :
-                    `${Number(selected) - 1}-${selected}`}`;
-                }}
-              >
-                <MenuItem value="" disabled><em>Select Rating</em></MenuItem>
-                <MenuItem value="1">0-1</MenuItem>
-                <MenuItem value="2">1-2</MenuItem>
-                <MenuItem value="3">2-3</MenuItem>
-                <MenuItem value="4">3-4</MenuItem>
-                <MenuItem value="5">4-5</MenuItem>
-                <MenuItem
-                  value="All"
-                  sx={{ color: '#EF5F80', fontWeight: 'bold' }}
-                >
-                  Clear All
-                </MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        </Collapse>
-      </List>
-    </Collapse>
-
-    {/* Doc Report */}
-    <ListItemButton
-      component={Link}
-      to="/Doc-report"
-      sx={{
-        borderRadius: '8px',
-        mb: 1,
-        backgroundColor: isActive("/Doc-report") ? 'rgba(122, 118, 168, 0.1)' : 'transparent',
-        color: isActive("/Doc-report") ? '#7A76A8' : '#5D5A85',
-        '&:hover': {
-          backgroundColor: 'rgba(122, 118, 168, 0.1)'
-        }
-      }}
-    >
-      <ListItemIcon sx={{ 
-        minWidth: '40px', 
-        color: isActive("/Doc-report") ? '#7A76A8' : '#5D5A85'
-      }}>
-        <FaUserMd />
-      </ListItemIcon>
-      {!isCollapsed && <ListItemText primary="Doc Report" />}
-    </ListItemButton>
-
-    {/* Insights */}
-    <ListItemButton
-      component={Link}
-      to="/Insights"
-      sx={{
-        borderRadius: '8px',
-        mb: 1,
-        backgroundColor: isActive("/Insights") ? 'rgba(122, 118, 168, 0.1)' : 'transparent',
-        color: isActive("/Insights") ? '#7A76A8' : '#5D5A85',
-        '&:hover': {
-          backgroundColor: 'rgba(122, 118, 168, 0.1)'
-        }
-      }}
-    >
-      <ListItemIcon sx={{ 
-        minWidth: '40px', 
-        color: isActive("/Insights") ? '#7A76A8' : '#5D5A85'
-      }}>
-        <FaChartBar />
-      </ListItemIcon>
-      {!isCollapsed && <ListItemText primary="Insights" />}
-    </ListItemButton>
-
-    {/* Work Tracker */}
-    {["astrio@gmail.com", "lupin@gmail.com", "care@gmail.com", "mankind@gmail.com"].includes(email) && (
-      <ListItemButton
-        component={Link}
-        to="/WorkTracker"
+      {/* MUI Sidebar */}
+      <Drawer
+        variant="permanent"
         sx={{
-          borderRadius: '8px',
-          mb: 1,
-          backgroundColor: isActive("/WorkTracker") ? 'rgba(122, 118, 168, 0.1)' : 'transparent',
-          color: isActive("/WorkTracker") ? '#7A76A8' : '#5D5A85',
-          '&:hover': {
-            backgroundColor: 'rgba(122, 118, 168, 0.1)'
-          }
+          width: isCollapsed ? 80 : 240,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: isCollapsed ? 80 : 240,
+            boxSizing: 'border-box',
+
+            color: '#C9C7E0',
+            transition: 'width 0.3s ease',
+            overflowX: 'hidden',
+          },
         }}
       >
-        <ListItemIcon sx={{ 
-          minWidth: '40px', 
-          color: isActive("/WorkTracker") ? '#7A76A8' : '#5D5A85'
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          p: 2,
+          borderBottom: '1px solid #7A76A8',
+          minHeight: '64px'
         }}>
-          <GiTimeBomb />
-        </ListItemIcon>
-        {!isCollapsed && <ListItemText primary="Work Tracker" />}
-      </ListItemButton>
-    )}
-  </List>
+          {!isCollapsed && (
+            <img
+              src={logo}
+              alt="Logo"
+              style={{ height: '40px', maxWidth: '160px' }}
+            />
+          )}
+          <Button
+            onClick={toggleSidebar}
+            sx={{
+              color: '#C9C7E0',
+              minWidth: 'auto',
+              p: 1
+            }}
+          >
+            {isCollapsed ? <FaAlignJustify size={20} /> : <FaAnglesLeft size={20} />}
+          </Button>
+        </Box>
 
-  {/* Sidebar Footer */}
-  {!isCollapsed && (
-    <Box sx={{
-      p: 2,
-      mt: 'auto',
-      borderTop: '1px solid #f0f0f0',
-      textAlign: 'center'
-    }}>
-      <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#5D5A85' }}>
-        {localStorage.getItem("user")}
-      </Typography>
-      <Typography variant="caption" sx={{ color: '#7A76A8' }}>
-        {email}
-      </Typography>
-    </Box>
-  )}
-</Drawer>
+        <List sx={{ p: 1 }}>
+          {/* Dashboard Menu */}
+          <ListItemButton
+            onClick={handleDashboardClick}
+            component={Link}
+            to="/Dashboard"
+            sx={{
+              borderRadius: '8px',
+              mb: 1,
+              backgroundColor: isActive("/Dashboard") ? '#7A76A8' : 'transparent',
+              '&:hover': {
+                backgroundColor: '#808080'
+              }
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: '40px', color: isActive("/Dashboard") ? 'white' : '#7A76A8' }}>
+              <FaDashcube />
+            </ListItemIcon>
+            {!isCollapsed && (
+              <>
+                <ListItemText primary="Dashboard" />
+                {openDashboard ? <ExpandLess /> : <ExpandMore />}
+              </>
+            )}
+          </ListItemButton>
+
+          <Collapse in={openDashboard && !isCollapsed} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {/* Dashboard Home */}
+              {/* <ListItemButton
+                component={Link}
+                to="/Dashboard"
+                sx={{
+                  pl: 4,
+                  borderRadius: '8px',
+                  mb: 1,
+                  backgroundColor: isActive("/Dashboard") ? 'rgba(122, 118, 168, 0.5)' : 'transparent',
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: '40px', color: isActive("/Dashboard") ? 'white' : '#7A76A8' }}>
+                  <FaHome />
+                </ListItemIcon>
+                <ListItemText primary="Dashboard Home" />
+              </ListItemButton> */}
+
+              {/* Profile Type Filter */}
+              <ListItemButton
+                onClick={handleProfileTypeClick}
+                sx={{ pl: 4, borderRadius: '8px', mb: 1 }}
+              >
+                <ListItemIcon sx={{ minWidth: '40px', color: '#7A76A8' }}>
+                  <FaUser />
+                </ListItemIcon>
+                <ListItemText primary="Profile Type" />
+                {openProfileType ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+
+              <Collapse in={openProfileType} timeout="auto" unmountOnExit>
+                <Box sx={{ pl: 6, pr: 2, pb: 1 }}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel sx={{ color: '#C9C7E0' }}>Select Profile Type</InputLabel>
+                    <Select
+                      value={department}
+                      onChange={(e) => {
+                        const value = e.target.value === "All" ? "" : e.target.value;
+
+                        // ✅ Update profile type contexts
+                        setContextProfileType(value);
+                        setContextDepartment(value);
+                        setdepartment(value); // Update local UI select value
+
+                        // ✅ Reset LOCAL states
+                        setState("");
+                        setCity("");
+                        setMonth("");
+                        setSpeciality("");
+                        setSelectedYear("");
+                        setRating("");
+                        setSelectedMonths([]);
+
+                        // ✅ Reset CONTEXT values immediately
+                        setInsightsState("");
+                        setInsightsCity("");
+                        setContextMonth([]);
+                        setContextCity("");
+                        setContextSpeciality("");
+                        setContextRating("");
+
+                        // ✅ Update data for selected profile type
+                        fetchAndSetProfiles(value);
+                      }}
+
+                      label="Select Profile Type"
+                      sx={{
+                        backgroundColor: '#5D5A85',
+                        color: 'white',
+                        borderRadius: '8px',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#7A76A8',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#8D89BF',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#8D89BF',
+                          borderWidth: '1px',
+                        },
+                        '& .MuiSelect-icon': {
+                          color: '#C9C7E0',
+                        }
+                      }}
+                    >
+                      <MenuItem value=""><em>Select Profile Type</em></MenuItem>
+                      {getAllDepartments &&
+                        getAllDepartments
+                          .filter(item => item !== "#N/A")
+                          .sort()
+                          .map((item, index) => (
+                            <MenuItem key={index} value={item}>{item}</MenuItem>
+                          ))
+                      }
+                      <MenuItem
+                        value="All"
+                        sx={{ color: '#EF5F80', fontWeight: 'bold' }}
+                      >
+                        Clear All
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Collapse>
+
+              {/* Rating Filter */}
+              <ListItemButton
+                onClick={handleRatingFilterClick}
+                sx={{ pl: 4, borderRadius: '8px', mb: 1 }}
+              >
+                <ListItemIcon sx={{ minWidth: '40px', color: '#7A76A8' }}>
+                  <FaStar />
+                </ListItemIcon>
+                <ListItemText primary="Rating Filter" />
+                {openRatingFilter ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+
+              <Collapse in={openRatingFilter} timeout="auto" unmountOnExit>
+                <Box sx={{ pl: 6, pr: 2, pb: 1 }}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel sx={{ color: '#C9C7E0' }}>Select Rating</InputLabel>
+                    <Select
+                      value={rating}
+                      onChange={(e) => {
+                        const value = e.target.value === "All" ? "" : e.target.value;
+                        setRating(value); // Update local state
+                        setContextRating(value); // Update context
+                        setSidebarRating(value); // Update sidebar state
+                        filterApi(); // Call filter API with new rating
+                      }}
+                      label="Select Rating"
+                      sx={{
+                        backgroundColor: '#5D5A85',
+                        color: 'white',
+                        borderRadius: '8px',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#7A76A8',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#8D89BF',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#8D89BF',
+                          borderWidth: '1px',
+                        },
+                        '& .MuiSelect-icon': {
+                          color: '#C9C7E0',
+                        },
+                      }}
+                      MenuProps={{
+                        PaperProps: {
+                          sx: {
+                            backgroundColor: '#5D5A85',
+                            color: 'white',
+                            '& .MuiMenuItem-root': {
+                              '&.Mui-selected': {
+                                backgroundColor: '#7A76A8',
+                              },
+                              '&:hover': {
+                                backgroundColor: '#CBC3E3',
+                              }
+                            }
+                          }
+                        }
+                      }}
+                      renderValue={(selected) => {
+                        if (!selected) {
+                          return <em>Select Rating</em>;
+                        }
+                        // Custom display for selected value
+                        return selected === "All" ? "Clear All" : `${selected === "1" ? "0-1" :
+                          `${Number(selected) - 1}-${selected}`}`;
+                      }}
+                    >
+                      <MenuItem value="" disabled><em>Select Rating</em></MenuItem>
+                      <MenuItem value="1">0-1</MenuItem>
+                      <MenuItem value="2">1-2</MenuItem>
+                      <MenuItem value="3">2-3</MenuItem>
+                      <MenuItem value="4">3-4</MenuItem>
+                      <MenuItem value="5">4-5</MenuItem>
+                      <MenuItem
+                        value="All"
+                        sx={{ color: '#EF5F80', fontWeight: 'bold' }}
+                      >
+                        Clear All
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+              </Collapse>
+            </List>
+          </Collapse>
+
+          {/* Doc Report */}
+          <ListItemButton
+            component={Link}
+            to="/Doc-report"
+            sx={{
+              borderRadius: '8px',
+              mb: 1,
+              backgroundColor: isActive("/Doc-report") ? '#7A76A8' : 'transparent',
+              '&:hover': {
+                backgroundColor: '#CBC3E3'
+              }
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: '40px', color: isActive("/Doc-report") ? 'white' : '#7A76A8' }}>
+              <FaUserMd />
+            </ListItemIcon>
+            {!isCollapsed && <ListItemText primary="Doc Report" />}
+          </ListItemButton>
+
+          {/* Insights */}
+          <ListItemButton
+            component={Link}
+            to="/Insights"
+            sx={{
+              borderRadius: '8px',
+              mb: 1,
+              backgroundColor: isActive("/Insights") ? '#7A76A8' : 'transparent',
+              '&:hover': {
+                backgroundColor: '#CBC3E3'
+              }
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: '40px', color: isActive("/Insights") ? 'white' : '#7A76A8' }}>
+              <FaChartBar />
+            </ListItemIcon>
+            {!isCollapsed && <ListItemText primary="Insights" />}
+          </ListItemButton>
+
+          {/* Work Tracker */}
+          {["astrio@gmail.com", "lupin@gmail.com", "care@gmail.com", "mankind@gmail.com"].includes(email) && (
+            <ListItemButton
+              component={Link}
+              to="/WorkTracker"
+              sx={{
+                borderRadius: '8px',
+                mb: 1,
+                backgroundColor: isActive("/WorkTracker") ? '#7A76A8' : 'transparent',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                }
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: '40px', color: isActive("/WorkTracker") ? 'white' : '#7A76A8' }}>
+                <GiTimeBomb />
+              </ListItemIcon>
+              {!isCollapsed && <ListItemText primary="Work Tracker" />}
+            </ListItemButton>
+          )}
+        </List>
+
+        {/* Sidebar Footer */}
+        {!isCollapsed && (
+          <Box sx={{
+            p: 2,
+            mt: 'auto',
+            borderTop: '1px solid #7A76A8',
+            textAlign: 'center'
+          }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+              {localStorage.getItem("user")}
+            </Typography>
+            <Typography variant="caption" sx={{ opacity: 0.75 }}>
+              {email}
+            </Typography>
+          </Box>
+        )}
+      </Drawer>
 
 
       {/* Modern Top Navigation Bar */}
