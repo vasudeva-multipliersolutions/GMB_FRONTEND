@@ -3,60 +3,43 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 export default function CombinedLineChart({ data }) {
-  const months = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
 
-  // Get the first (and only) entry from the data
-  const [[rawName, values]] = Object.entries(data);
+  // Build series for Highcharts
+  const series = Object.entries(data).map(([name, values]) => ({
+    name,
+    data: months.map(month => values?.[month] ?? null)
+  }));
 
-  // Convert to readable name
-  const readableName = rawName
-    .replace(/^graphData/, '')
-    .replace(/([A-Z])/g, ' $1')
-    .replace(/_/g, ' ')
-    .trim();
+  // Determine chart heading
+  let heading = "";
+  const keys = Object.keys(data);
 
-  const lineData = months.map(month => values?.[month] ?? null);
+  if (keys.length === 1) {
+    // Single series → direct name + Performance
+    heading = `${keys[0]} Performance`;
+  } else {
+    // Multiple series → find common part (Mobile / Desktop)
+    if (keys.every(k => k.toLowerCase().includes("mobile"))) {
+      heading = "Mobile (Searches + Maps) Performance";
+    } else if (keys.every(k => k.toLowerCase().includes("desktop"))) {
+      heading = "Desktop (Searches + Maps) Performance";
+    } else {
+      heading = "Combined Performance";
+    }
+  }
 
   const options = {
-    chart: {
-      type: 'line',
-      height: 600
-    },
-    title: {
-      text: null
-    },
-    xAxis: {
-      categories: months
-    },
-    yAxis: {
-      title: {
-        text: 'Value'
-      }
-    },
-    tooltip: {
-      shared: true,
-      crosshairs: true
-    },
+    chart: { type: "line", height: 600 },
+    title: { text: null },
+    xAxis: { categories: months },
+    yAxis: { title: { text: "Value" } },
+    tooltip: { shared: true, crosshairs: true },
     plotOptions: {
-      line: {
-        dataLabels: {
-          enabled: true
-        },
-        enableMouseTracking: true
-      }
+      line: { dataLabels: { enabled: true }, enableMouseTracking: true }
     },
-    credits: {
-      enabled: false
-    },
-    series: [
-      {
-        name: readableName,
-        data: lineData
-      }
-    ]
+    credits: { enabled: false },
+    series
   };
 
   return (
@@ -66,15 +49,16 @@ export default function CombinedLineChart({ data }) {
         borderRadius: "1em",
         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
         minHeight: "600px",
-        opacity: 0.8,
+        opacity: 0.8
       }}
     >
       <div className="graphs3">
-        <h3 style={{ padding: '20px', textAlign: 'center', color: 'white' }}>
-          {readableName} Performance
+        <h3 style={{ padding: "20px", textAlign: "center", color: "white" }}>
+          {heading}
         </h3>
       </div>
       <HighchartsReact highcharts={Highcharts} options={options} />
     </div>
   );
 }
+

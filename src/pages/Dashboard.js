@@ -860,14 +860,27 @@ export default function Dashboard(props) {
                           "Overall Searches": showAllData?.combinedGraphData?.[0],
                         }}
                       />
-                      <CombinedLineChart
+                      {/* <CombinedLineChart
                         data={{
                           "Mobile (Searches + Maps)": showAllData?.graphDataSearchesMobils?.[0],
                         }}
-                      />
+                      /> */}
+
                       <CombinedLineChart
                         data={{
+                          "Google Search Mobile": showAllData?.graphDataSearchesMobils?.[0],
+                          "Google Maps mobile": showAllData?.graphDataMapsMobils?.[0],
+                        }}
+                      />
+                      {/* <CombinedLineChart
+                        data={{
                           "Desktop (Searches + Maps)": showAllData?.graphDataSearches?.[0],
+                        }}
+                      /> */}
+                       <CombinedLineChart
+                        data={{
+                          "Google Search Desktop": showAllData?.graphDataSearches?.[0],
+                          "Google Maps Desktop": showAllData?.graphDataMapsDesktop?.[0],
                         }}
                       />
                       <CombinedLineChart

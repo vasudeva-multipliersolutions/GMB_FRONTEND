@@ -67,7 +67,7 @@ export default function Navbar(props) {
   const [selectedMonths, setSelectedMonths] = useState([]);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [getSpeciality, setAllSpeciality] = useState();
+  const [getSpeciality, setAllSpeciality] = useState([]);
   const [speciality, setSpeciality] = useState();
   const [getAllDepartments, setAllDepartments] = useState();
   const [department, setdepartment] = useState();
@@ -628,7 +628,7 @@ export default function Navbar(props) {
               mb: 1,
               backgroundColor: isActive("/Dashboard") ? '#7A76A8' : 'transparent',
               '&:hover': {
-                backgroundColor: '#808080'
+                backgroundColor: '#CBC3E3'
               }
             }}
           >
