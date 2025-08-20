@@ -10,8 +10,9 @@ import WorkTracker from "./components/Worktracker/WorkTracker";
 
 import Matrics from "./components/Worktracker/Matrics"
 import { SidebarProvider } from "./SidebarContext";
-
+import PhoneMetrics from "./pages/PhoneMetrics";
 import Verification from "./pages/Verification";
+import Phone from "./pages/PhoneMetrics";
 
 
 function App() {
@@ -30,6 +31,10 @@ function App() {
         <Route
           path="/Doc-report"
           element={isAuthenticated ? <DocReport /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/Phone-Metrics"
+          element={isAuthenticated ? <PhoneMetrics /> : <Navigate to="/" />}
         />
         <Route
           path="/Insights"

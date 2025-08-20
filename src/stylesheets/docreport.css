@@ -16,7 +16,7 @@
 }
 
 .table-heading {
-    color: #1d509d;
+    color: white;
     font-weight: bolder;
 }
 
@@ -28,17 +28,18 @@
 
 button.download-btn {
     border: 0px;
-    padding: 5px;
+    padding: 10px;
     color: white;
     font-size: 16px;
     font-weight: bold;
-    background: #31c3bb;
+    background: #1565C0;
     box-shadow: 1px 0px 7px 1px gray;
+    border-radius: 5px;
 }
 
 button.download-btn:hover {
     background-color: white;
-    color: #31c3bb;
+    color: #1565C0;
 }
 
 .keywords_compititors {
@@ -50,7 +51,6 @@ button.download-btn:hover {
     /* box-shadow: -1px 2px 12px 1px #1d509d; */
     text-align: center;
     color: #3883b3;
-    opacity: 0.8;
     height: 90%;
     border-radius: 1rem;
   
@@ -64,11 +64,13 @@ button.export-btn {
     font-size: 16px;
     font-weight: bold;
     background: #54cfc9;
+    
 }
+
 
 button.export-btn:hover {
     background-color: white;
-    color: #31c3bb;
+    color: #1565C0;
 }
 /* .maniContainer{
     font-size: 1.125rem;
@@ -97,8 +99,7 @@ button.export-btn:hover {
         font-weight: 100;
     }
     .table-heading {
-        font-size: 15px;
-        font-weight: 300;
+        font-weight: 500;
         border-radius: 1rem;
 
     }

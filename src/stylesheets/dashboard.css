@@ -189,7 +189,7 @@ body {
   margin: 0;
   padding: 1vh;
   border-radius: 1em 1em 0em 0em;
-  background-color: #8D89BF ;
+  background-color: #1565C0 ;
   /* background-color: #3366CC; */ 
 }
 
@@ -200,7 +200,7 @@ body {
   margin: 10px 45px 10px 0px;
   padding: 1vh;
   border-radius: 1em 1em 1em 1em;
-  background-color: #8D89BF ;
+  background-color: #1565C0 ;
   /* background-color: #3366CC; */ 
 }
 .graphs3 {
@@ -208,7 +208,7 @@ body {
   display: flex;
   justify-content: center;
   border-radius: 1em 1em 0em 0em;
-  background-color: #8D89BF ;
+  background-color: #1565C0 ;
   margin-bottom: 2em;
   /* background-color: #3366CC; */ 
 }

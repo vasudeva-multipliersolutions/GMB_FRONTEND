@@ -19,7 +19,7 @@ export default function GraphicalContainer(props) {
     
     const options = {
         title: '',
-        hAxis: { title: 'Month', titleTextStyle: { color: '#b1c4e9' } },
+        hAxis: { title: 'Month', titleTextStyle: { color: '#1565C0' } },
         vAxis: { minValue: 0, gridlines: { color: 'transparent' } },
         backgroundColor: { fill: props.bcolor, opacity: 0.8 },
         bar: { groupWidth: "40%" },

@@ -31,6 +31,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
+import { Checkbox, FormControlLabel, FormLabel, IconButton, Radio, RadioGroup, TextField } from "@mui/material";
 
 
 
@@ -39,17 +40,19 @@ export default function Navbar(props) {
   const mail = localStorage.getItem("mail");
   const loginBranch = localStorage.getItem("Branch");
   const Cluster = localStorage.getItem("Cluster");
-  const { isCollapsed, toggleSidebar, drNameContext, specialityContext } = useContext(SidebarContext); // Use the correct context
+  const { isCollapsed, toggleSidebar, drNameContext, specialityContext, setSpecialityContext, setDoctorAnalysis } = useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
-  const { setContextCity, setLocationProfiles, setContextMonth, setContextSpeciality, setContextRating, setContextDepartment } = useContext(SharedContext);
+  const { setLocationProfiles, setContextSpeciality, setContextRating, setContextDepartment, } = useContext(SharedContext);
   const { setInsightsState, setInsightsCity, } = useContext(SharedContext);
+  const { setNewMonthContext } = useContext(SidebarContext);
+
   const navigate = useNavigate();
   const [getAllnames, setAllNames] = useState();
   const [getName, setName] = useState();
   const [getState, setState] = useState();
   const [getStates, setStates] = useState();
   const [getCity, setCity] = useState();
-  const [getCitys, setCitys] = useState();
+  // const [getCitys, setCitys] = useState([]);
   const [getMonth, setMonth] = useState();
   const [getYear, setYear] = useState();
   const api = localStorage.getItem("API");
@@ -59,22 +62,21 @@ export default function Navbar(props) {
   const [isNavContentsVisible, setNavContentsVisible] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [getcountOfProfiles, setcountOfProfiles] = useState(null);
-  const [currentCluster, setCurrentCluster] = useState();
-  const [lastFiveMonth, setLastMonths] = useState();
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedSpeciaity, setselectedSpeciaity] = useState("");
   const [filteredMonths, setFilteredMonths] = useState([]);
   const [selectedMonths, setSelectedMonths] = useState([]);
-
+  const { contextState, setContextState, contextCity, setContextCity, contextMonth, setContextMonth, getCitys, setCitys } = useContext(SidebarContext);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [getSpeciality, setAllSpeciality] = useState([]);
-  const [speciality, setSpeciality] = useState();
-  const [getAllDepartments, setAllDepartments] = useState();
-  const [department, setdepartment] = useState();
+  const [speciality, setSpeciality] = useState([]);
+  const [getAllDepartments, setAllDepartments] = useState([]);
+  const [department, setdepartment] = useState([]);
   const { profileType, setContextProfileType } = useContext(SidebarContext);
   const { profileCounts, setContextProfileCounts } = useContext(SidebarContext);
   const { sidebarRating, setSidebarRating } = useContext(SidebarContext);
-  const [rating, setRating] = useState();
+  const [specialitySearch, setSpecialitySearch] = useState("");
+  const [rating, setRating] = useState([]);
   const location = useLocation();
   const departmentRef = useRef("");
 
@@ -84,6 +86,17 @@ export default function Navbar(props) {
   const [openDashboard, setOpenDashboard] = useState(false);
   const [openProfileType, setOpenProfileType] = useState(false);
   const [openRatingFilter, setOpenRatingFilter] = useState(false);
+  const [openDocReport, setOpenDocReport] = useState(false);
+  const [openPhonemetrics, setOpenPhonemetrics] = useState(false);
+
+  const handleDocReportClick = () => {
+    setOpenDocReport(!openDocReport);
+  };
+  const handlePhoneMetricsClick = () => {
+    setOpenPhonemetrics(!openPhonemetrics);
+  };
+
+
 
   const handleDashboardClick = () => {
     // Prevent opening on Insights or Doc-report
@@ -219,25 +232,27 @@ export default function Navbar(props) {
     setAllSpeciality(specialityContext)
   }, [specialityContext]);
 
-  //   useEffect(() => {
-  //   setAllSpeciality(specialityContext)
-  // }, [specialityContext]);
+  // useEffect(() => {
+  //   setCitys(contextState)
+  // }, [contextState]);
 
 
 
-  useEffect(() => {
-    const monthNames = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
 
 
-    if (!selectedYear) {
-      setFilteredMonths(monthNames.map(m => `${m}-2024`).concat(monthNames.map(m => `${m}-2025`)));
-    } else {
-      setFilteredMonths(monthNames.map(m => `${m}-${selectedYear}`));
-    }
-  }, [selectedYear]);
+  // useEffect(() => {
+  //   const monthNames = [
+  //     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  //     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  //   ];
+
+
+  //   if (!selectedYear) {
+  //     setFilteredMonths(monthNames.map(m => `${m}-2024`).concat(monthNames.map(m => `${m}-2025`)));
+  //   } else {
+  //     setFilteredMonths(monthNames.map(m => `${m}-${selectedYear}`));
+  //   }
+  // }, [selectedYear]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -331,49 +346,49 @@ export default function Navbar(props) {
   }, [selectedMonths]);
 
 
-  useEffect(() => {
-    setState("");
-    setCity("");
-    setMonth("");
-    setSpeciality("");
-    setSelectedYear("");
-    setRating("");
-    setSelectedMonths([]);
+  // useEffect(() => {
+  //   setState("");
+  //   setCity("");
+  //   setMonth("");
+  //   setSpeciality("");
+  //   setSelectedYear("");
+  //   setRating("");
+  //   setSelectedMonths([]);
 
-  }, [profileType]);
+  // }, [profileType]);
 
 
-  useEffect(() => {
-    if (getState) {
-    }
-    filterApi();
-  }, [getState]);
+  // useEffect(() => {
+  //   if (getState) {
+  //   }
+  //   filterApi();
+  // }, [getState]);
 
-  useEffect(() => {
-    if (getCity) {
-      //setContextCity(getCity);
-      filterApi();
-    }
-  }, [getCity]);
+  // useEffect(() => {
+  //   if (getCity) {
+  //     //setContextCity(getCity);
+  //     filterApi();
+  //   }
+  // }, [getCity]);
 
-  useEffect(() => {
-    if (speciality) {
-      //setContextCity(getCity);
-      // setRating("");
-      // filterApi();
-      setName("");
+  // useEffect(() => {
+  //   if (speciality) {
+  //     //setContextCity(getCity);
+  //     // setRating("");
+  //     // filterApi();
+  //     setName("");
 
-    }
-  }, [speciality]);
+  //   }
+  // }, [speciality]);
 
-  useEffect(() => {
-    if (rating) {
-      setAllNames("");
-      //filterApi();
-      setName("");
+  // useEffect(() => {
+  //   if (rating) {
+  //     setAllNames("");
+  //     //filterApi();
+  //     setName("");
 
-    }
-  }, [rating]);
+  //   }
+  // }, [rating]);
 
 
 
@@ -384,80 +399,140 @@ export default function Navbar(props) {
   //   }
   // }, [getcountOfProfiles]); 
 
+  // async function filterApi() {
+  //   let stateToSend = contextState?.length ? contextState : [];
+  //   let cityToSend = contextCity?.length ? contextCity : [];
+  //   let monthToSend = contextMonth?.length ? contextMonth : [];
+
+  //   const response = await fetch(api + '/getfilterdata', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({
+  //       dept: department,
+  //       state: stateToSend,
+  //       branch: cityToSend,
+  //       month: monthToSend,
+  //       speciality,
+  //       rating
+  //     }),
+  //   });
+
+  //   const data = await response.json();
+
+  //   if (data.result?.length > 0) {
+  //     const result = data.result[0];
+
+  //     // ✅ always update with defaults
+  //     setAllNames(result.businessNames || []);
+  //     setAllSpeciality(result.specialities || []);
+  //     // console.log("🔍 All Names:-------------------------------------------", result.branches);
+  //     setCitys(result.branches || []);
+  //   } else {
+  //     // ✅ clear everything when result empty
+  //     // setAllNames([]);
+  //     // setAllSpeciality([]);
+  //     //setCitys([]);
+  //   }
+
+  //   if (data.countOfProfiles?.length > 0) {
+  //     setcountOfProfiles([...data.countOfProfiles]);
+  //     setLocationProfiles([...data.countOfProfiles]); // ✅ Only update here
+  //     setContextProfileCounts([...data.countOfProfiles]);
+  //   } else {
+  //     setcountOfProfiles([]);
+  //     setContextProfileCounts([]);
+  //   }
+  // }
+
+
   async function filterApi() {
-    // alert(getState)
-    let cityToSend = getCity === "All" ? "" : getCity;
-    let monthToSend = selectedMonths.length > 0 ? selectedMonths : "";
-    const response = await fetch(api + '/getfilterdata', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ "dept": profileType, state: Cluster !== "undefined" ? Cluster : getState, branch: loginBranch !== "undefined" ? loginBranch : cityToSend, month: monthToSend, "speciality": speciality, "rating": sidebarRating })
-    });
-    const data = await response.json();
-    // alert("Hello")
-    //console.log("datacountOfProfiles: ",data.result[0].countOfProfiles)
-    if (data.result?.length > 0) {
-      setAllNames(data.result[0].businessNames);
-      if (data.result[0].specialities) {
-        setAllSpeciality(data.result[0].specialities);
-      }
-      if (data.result[0].states) {
-        setStates(data.result[0].states)
-      }
-      if (data.result[0].branches) {
-        setCitys(data.result[0].branches)
-      }
-    } else {
-      // setAllNames([]); // Important: Clear the names if nothing returned
-      // setAllSpeciality([]); // Clear the speciality if nothing returned
-      // setCitys([]); // Clear the citys if nothing returned
-    }
-
-
-
-    if (data.countOfProfiles && data.countOfProfiles.length > 0) {
-      console.log("New countOfProfiles:", data.countOfProfiles);
-      setcountOfProfiles([...data.countOfProfiles]); // Ensure new array reference
-      setContextProfileCounts([...data.countOfProfiles]);
-    }
-    //setContextCity(getCity)
-    // if(props.serach)
-    // {
-    //   setContextCity(getCity)
-    // }
-  }
-
-  //console.log("🔍 getSpeciality state value:", getSpeciality);
-
-
-  async function fetchAndSetProfiles(dept) {
-    let cityToSend = getCity === "All" ? "" : getCity;
-    let monthToSend = selectedMonths.length > 0 ? selectedMonths : "";
+    let stateToSend = contextState?.length ? contextState : [];
+    let cityToSend = contextCity?.length ? contextCity : [];
+    let monthToSend = contextMonth?.length ? contextMonth : [];
 
     const response = await fetch(api + '/getfilterdata', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        dept,
-        state: Cluster !== "undefined" ? Cluster : getState,
-        branch: loginBranch !== "undefined" ? loginBranch : cityToSend,
+        dept: department,
+        state: stateToSend,
+        branch: cityToSend,
         month: monthToSend,
         speciality,
-        rating,
-      })
+        rating
+      }),
     });
 
     const data = await response.json();
 
-    if (data.countOfProfiles && data.countOfProfiles.length > 0) {
+    if (data.result?.length > 0) {
+      const result = data.result[0];
+
+      // ✅ update only if non-empty
+      if (result.businessNames?.length > 0) {
+        setAllNames(result.businessNames);
+      }
+      if (result.specialities?.length > 0) {
+        setAllSpeciality(result.specialities);
+      }
+      if (result.branches?.length > 0) {
+        setCitys(result.branches);
+      }
+       
+    }
+    if (data?.doctorAnalysis) {
+        setDoctorAnalysis(data.doctorAnalysis); // ✅ store globally
+
+      }
+
+    if (data.countOfProfiles?.length > 0) {
       setcountOfProfiles([...data.countOfProfiles]);
-      setLocationProfiles([...data.countOfProfiles]); // ✅ Only update here
+      setLocationProfiles([...data.countOfProfiles]);
+      setContextProfileCounts([...data.countOfProfiles]);
+    } else {
+      setcountOfProfiles([]);
+      setContextProfileCounts([]);
     }
   }
+
+
+  // useEffect(() => {
+  //   if (contextCity.length >= 0) {
+  //     filterApi();
+  //   }
+  // }, [contextCity]);
+
+
+
+  //console.log("🔍 getCitys state value:", getCitys);
+
+
+  // async function fetchAndSetProfiles(dept) {
+  //   let cityToSend = getCity === "All" ? "" : getCity;
+  //   let monthToSend = selectedMonths.length > 0 ? selectedMonths : "";
+
+  //   const response = await fetch(api + '/getfilterdata', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({
+  //       dept,
+  //       state: Cluster !== "undefined" ? Cluster : getState,
+  //       branch: loginBranch !== "undefined" ? loginBranch : cityToSend,
+  //       month: monthToSend,
+  //       speciality,
+  //       rating,
+  //     })
+  //   });
+
+  //   const data = await response.json();
+
+  //   if (data.countOfProfiles && data.countOfProfiles.length > 0) {
+  //     setcountOfProfiles([...data.countOfProfiles]);
+  //     setLocationProfiles([...data.countOfProfiles]); // ✅ Only update here
+  //   }
+  // }
 
 
 
@@ -551,26 +626,90 @@ export default function Navbar(props) {
   //   }
   // }, [selectedYear]);
 
+  // useEffect(() => {
+  //   const today = new Date();
+  //   const currentYear = today.getFullYear();
+  //   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  //   let lastSixMonths = [];
+  //   for (let i = 7; i > 0; i--) {
+  //     const monthIndex = (today.getMonth() - i + 12) % 12;
+  //     const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
+  //     lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
+  //   }
+
+  //   if (selectedYear) {
+  //     setFilteredMonths(lastSixMonths.filter(m => m.year === selectedYear).map(m => `${m.name}`));
+  //   } else {
+  //     setFilteredMonths(lastSixMonths.map(m => `${m.name}`));
+  //   }
+  // }, [selectedYear]);
+
   useEffect(() => {
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
     const today = new Date();
-    const currentYear = today.getFullYear();
-    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    let lastSixMonths = [];
-    for (let i = 7; i > 0; i--) {
-      const monthIndex = (today.getMonth() - i + 12) % 12;
-      const year = monthIndex > today.getMonth() ? currentYear - 1 : currentYear;
-      lastSixMonths.push({ name: monthNames[monthIndex], year: year.toString() });
-    }
+    // helper -> last 7 months including current, only month names
+    const lastSevenMonths = () => {
+      const arr = [];
+      for (let i = 7; i >= 0; i--) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        arr.push(monthNames[d.getMonth()]); // ✅ only "Mon"
+      }
+      return arr;
+    };
 
-    if (selectedYear) {
-      setFilteredMonths(lastSixMonths.filter(m => m.year === selectedYear).map(m => `${m.name}`));
+    if (!selectedYear) {
+      // default: last 7 month labels
+      setFilteredMonths(lastSevenMonths());
     } else {
-      setFilteredMonths(lastSixMonths.map(m => `${m.name}`));
+      // when a year is chosen: all 12 months of that year (still only names)
+      setFilteredMonths(monthNames.map(m => `${m}`));
     }
   }, [selectedYear]);
 
-  // I have this data I want to create a dashbord with this 
+
+
+
+  // useEffect(() => {
+  //   if (speciality.length >= 0) {
+  //     filterApi();
+  //   }
+  // }, [speciality]);
+
+  // useEffect(() => {
+  //   if (rating.length >= 0) {
+  //     filterApi();
+  //   }
+  // }, [rating]);
+
+  // useEffect(() => {
+  //   if (department.length >= 0) {
+  //     filterApi();
+  //   }
+  // }, [department]);
+
+  // useEffect(() => {
+  //   if (contextState.length >= 0) {
+  //     filterApi();
+  //   }
+  // }, [contextState]);
+
+  // useEffect(() => {
+  //   if (contextCity.length >= 0) {
+  //     filterApi();
+  //   }
+  // }, [contextCity]);
+
+  useEffect(() => {
+    filterApi();
+  }, [speciality, rating, department, contextState, contextCity, selectedMonths]);
+
+
+
   return (
     <Fragment>
       {/* Modern Sidebar */}
@@ -578,342 +717,862 @@ export default function Navbar(props) {
       <Drawer
         variant="permanent"
         sx={{
-          width: isCollapsed ? 80 : 240,
+          width: isCollapsed ? 80 : 260,
           flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: isCollapsed ? 80 : 240,
-            boxSizing: 'border-box',
-
-            color: '#C9C7E0',
-            transition: 'width 0.3s ease',
-            overflowX: 'hidden',
+          "& .MuiDrawer-paper": {
+            width: isCollapsed ? 80 : 260,
+            boxSizing: "border-box",
+            color: "#000",
+            backgroundColor: "#FFF",
+            transition: "width 0.3s ease",
+            overflowX: "hidden",
           },
         }}
       >
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          p: 2,
-          borderBottom: '1px solid #7A76A8',
-          minHeight: '64px'
-        }}>
+        {/* Top Bar inside Sidebar */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            p: 2,
+            borderBottom: "1px solid #ccc",
+            minHeight: "64px",
+          }}
+        >
           {!isCollapsed && (
-            <img
-              src={logo}
-              alt="Logo"
-              style={{ height: '40px', maxWidth: '160px' }}
-            />
+            <img src={logo} alt="Logo" style={{ height: "40px", maxWidth: "160px" }} />
           )}
-          <Button
+          <ListItemButton
             onClick={toggleSidebar}
             sx={{
-              color: '#C9C7E0',
-              minWidth: 'auto',
-              p: 1
+              color: "#000",
+              minWidth: "auto",
+              p: 1,
+              "&:hover": { backgroundColor: "#f0f0f0" },
             }}
           >
             {isCollapsed ? <FaAlignJustify size={20} /> : <FaAnglesLeft size={20} />}
-          </Button>
+          </ListItemButton>
         </Box>
 
         <List sx={{ p: 1 }}>
-          {/* Dashboard Menu */}
+          {/* Dashboard Button */}
           <ListItemButton
-            onClick={handleDashboardClick}
-            component={Link}
-            to="/Dashboard"
+            onClick={() => {
+              handleDashboardClick();
+              navigate("/Dashboard");
+            }}
             sx={{
-              borderRadius: '8px',
+              borderRadius: "8px",
               mb: 1,
-              backgroundColor: isActive("/Dashboard") ? '#7A76A8' : 'transparent',
-              '&:hover': {
-                backgroundColor: '#CBC3E3'
-              }
+              backgroundColor: isActive("/Dashboard") ? "#1976d2" : "transparent",
+              color: isActive("/Dashboard") ? "#fff" : "#000",
+              "&:hover": {
+                backgroundColor: isActive("/Dashboard") ? "#1565c0" : "#f0f0f0",
+              },
             }}
           >
-            <ListItemIcon sx={{ minWidth: '40px', color: isActive("/Dashboard") ? 'white' : '#7A76A8' }}>
+            <ListItemIcon
+              sx={{
+                minWidth: "40px",
+                color: isActive("/Dashboard") ? "#fff" : "#000",
+              }}
+            >
               <FaDashcube />
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Dashboard" />
+                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: "600" }} />
                 {openDashboard ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
           </ListItemButton>
 
+          {/* Nested Filters */}
           <Collapse in={openDashboard && !isCollapsed} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              {/* Dashboard Home */}
-              {/* <ListItemButton
-                component={Link}
-                to="/Dashboard"
-                sx={{
-                  pl: 4,
-                  borderRadius: '8px',
-                  mb: 1,
-                  backgroundColor: isActive("/Dashboard") ? 'rgba(122, 118, 168, 0.5)' : 'transparent',
+            {/* Profile Type */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+                Profile Type
+              </FormLabel>
+
+              <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+                {getAllDepartments &&
+                  getAllDepartments
+                    .filter((dep) => dep !== "#N/A")
+                    .sort()
+                    .map((dep, index) => (
+                      <label
+                        key={index}
+                        style={{
+                          color: "#000",
+                          fontSize: "14px",
+                          marginBottom: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={department.includes(dep)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...department, dep]
+                              : department.filter((val) => val !== dep);
+
+                            setdepartment(newSelection);
+                            setContextProfileType(newSelection);
+                            setContextDepartment(newSelection);
+
+                            // ✅ trigger filter with latest selections
+                            // filterApi();
+                          }}
+                        />
+                        {dep}
+                      </label>
+                    ))}
+
+                <button
+                  onClick={() => {
+                    setdepartment([]);
+                    setContextProfileType([]);
+                    setContextDepartment([]);
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box>
+
+
+            {/* Rating */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+                Rating
+              </FormLabel>
+              <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+                {["1", "2", "3", "4", "5"].map((val) => (
+                  <label key={val} style={{ color: "#000", fontSize: "14px", marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={rating.includes(val)}
+                      onChange={(e) => {
+                        let newSelection = e.target.checked
+                          ? [...rating, val]
+                          : rating.filter((r) => r !== val);
+                        setRating(newSelection);
+                        setContextRating(newSelection);
+                        setSidebarRating(newSelection);
+
+                        // ✅ instant apply
+                        // filterApi();
+                      }}
+                    />
+                    {val === "1" ? "0-1" : `${Number(val) - 1}-${val}`}
+                  </label>
+                ))}
+
+                <button
+                  onClick={() => {
+                    setRating([]);
+                    setContextRating([]);
+                    setSidebarRating([]);
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box>
+
+            {/* Specialty */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+                Specialty
+              </FormLabel>
+
+              <input
+                type="text"
+                placeholder="Search"
+                value={specialitySearch}
+                onChange={(e) => setSpecialitySearch(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "4px 8px",
+                  fontSize: "14px",
+                  marginBottom: "8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
                 }}
-              >
-                <ListItemIcon sx={{ minWidth: '40px', color: isActive("/Dashboard") ? 'white' : '#7A76A8' }}>
-                  <FaHome />
-                </ListItemIcon>
-                <ListItemText primary="Dashboard Home" />
-              </ListItemButton> */}
+              />
 
-              {/* Profile Type Filter */}
-              <ListItemButton
-                onClick={handleProfileTypeClick}
-                sx={{ pl: 4, borderRadius: '8px', mb: 1 }}
-              >
-                <ListItemIcon sx={{ minWidth: '40px', color: '#7A76A8' }}>
-                  <FaUser />
-                </ListItemIcon>
-                <ListItemText primary="Profile Type" />
-                {openProfileType ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                {getSpeciality &&
+                  getSpeciality
+                    .filter((sp) =>
+                      sp !== "#N/A" &&
+                      sp.toLowerCase().includes(specialitySearch.toLowerCase())
+                    )
+                    .sort()
+                    .slice(0, 5)
+                    .map((sp, index) => (
+                      <label key={index} style={{ color: "#000", fontSize: "14px", marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={speciality.includes(sp)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...speciality, sp]
+                              : speciality.filter((s) => s !== sp);
 
-              <Collapse in={openProfileType} timeout="auto" unmountOnExit>
-                <Box sx={{ pl: 6, pr: 2, pb: 1 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel sx={{ color: '#C9C7E0' }}>Select Profile Type</InputLabel>
-                    <Select
-                      value={department}
-                      onChange={(e) => {
-                        const value = e.target.value === "All" ? "" : e.target.value;
+                            setSpeciality(newSelection);
+                            setContextSpeciality(newSelection);
+                            setSpecialityContext(newSelection);
 
-                        // ✅ Update profile type contexts
-                        setContextProfileType(value);
-                        setContextDepartment(value);
-                        setdepartment(value); // Update local UI select value
+                            // ✅ instant apply
+                            // filterApi();
+                          }}
+                        />
+                        {sp}
+                      </label>
+                    ))}
 
-                        // ✅ Reset LOCAL states
-                        setState("");
-                        setCity("");
-                        setMonth("");
-                        setSpeciality("");
-                        setSelectedYear("");
-                        setRating("");
-                        setSelectedMonths([]);
+                <button
+                  onClick={() => {
+                    setSpeciality([]);
+                    setContextSpeciality([]);
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box>
 
-                        // ✅ Reset CONTEXT values immediately
-                        setInsightsState("");
-                        setInsightsCity("");
-                        setContextMonth([]);
-                        setContextCity("");
-                        setContextSpeciality("");
-                        setContextRating("");
-
-                        // ✅ Update data for selected profile type
-                        fetchAndSetProfiles(value);
-                      }}
-
-                      label="Select Profile Type"
-                      sx={{
-                        backgroundColor: '#5D5A85',
-                        color: 'white',
-                        borderRadius: '8px',
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#7A76A8',
-                        },
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#8D89BF',
-                        },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#8D89BF',
-                          borderWidth: '1px',
-                        },
-                        '& .MuiSelect-icon': {
-                          color: '#C9C7E0',
-                        }
-                      }}
-                    >
-                      <MenuItem value=""><em>Select Profile Type</em></MenuItem>
-                      {getAllDepartments &&
-                        getAllDepartments
-                          .filter(item => item !== "#N/A")
-                          .sort()
-                          .map((item, index) => (
-                            <MenuItem key={index} value={item}>{item}</MenuItem>
-                          ))
-                      }
-                      <MenuItem
-                        value="All"
-                        sx={{ color: '#EF5F80', fontWeight: 'bold' }}
-                      >
-                        Clear All
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
-              </Collapse>
-
-              {/* Rating Filter */}
-              <ListItemButton
-                onClick={handleRatingFilterClick}
-                sx={{ pl: 4, borderRadius: '8px', mb: 1 }}
-              >
-                <ListItemIcon sx={{ minWidth: '40px', color: '#7A76A8' }}>
-                  <FaStar />
-                </ListItemIcon>
-                <ListItemText primary="Rating Filter" />
-                {openRatingFilter ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-
-              <Collapse in={openRatingFilter} timeout="auto" unmountOnExit>
-                <Box sx={{ pl: 6, pr: 2, pb: 1 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel sx={{ color: '#C9C7E0' }}>Select Rating</InputLabel>
-                    <Select
-                      value={rating}
-                      onChange={(e) => {
-                        const value = e.target.value === "All" ? "" : e.target.value;
-                        setRating(value); // Update local state
-                        setContextRating(value); // Update context
-                        setSidebarRating(value); // Update sidebar state
-                        filterApi(); // Call filter API with new rating
-                      }}
-                      label="Select Rating"
-                      sx={{
-                        backgroundColor: '#5D5A85',
-                        color: 'white',
-                        borderRadius: '8px',
-                        '& .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#7A76A8',
-                        },
-                        '&:hover .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#8D89BF',
-                        },
-                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                          borderColor: '#8D89BF',
-                          borderWidth: '1px',
-                        },
-                        '& .MuiSelect-icon': {
-                          color: '#C9C7E0',
-                        },
-                      }}
-                      MenuProps={{
-                        PaperProps: {
-                          sx: {
-                            backgroundColor: '#5D5A85',
-                            color: 'white',
-                            '& .MuiMenuItem-root': {
-                              '&.Mui-selected': {
-                                backgroundColor: '#7A76A8',
-                              },
-                              '&:hover': {
-                                backgroundColor: '#CBC3E3',
-                              }
-                            }
-                          }
-                        }
-                      }}
-                      renderValue={(selected) => {
-                        if (!selected) {
-                          return <em>Select Rating</em>;
-                        }
-                        // Custom display for selected value
-                        return selected === "All" ? "Clear All" : `${selected === "1" ? "0-1" :
-                          `${Number(selected) - 1}-${selected}`}`;
-                      }}
-                    >
-                      <MenuItem value="" disabled><em>Select Rating</em></MenuItem>
-                      <MenuItem value="1">0-1</MenuItem>
-                      <MenuItem value="2">1-2</MenuItem>
-                      <MenuItem value="3">2-3</MenuItem>
-                      <MenuItem value="4">3-4</MenuItem>
-                      <MenuItem value="5">4-5</MenuItem>
-                      <MenuItem
-                        value="All"
-                        sx={{ color: '#EF5F80', fontWeight: 'bold' }}
-                      >
-                        Clear All
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
-              </Collapse>
-            </List>
           </Collapse>
 
-          {/* Doc Report */}
-          <ListItemButton
+
+          {/* Other Menu Items */}
+          {/* Doc Reports */}
+          {/* <ListItemButton
             component={Link}
             to="/Doc-report"
             sx={{
-              borderRadius: '8px',
+              borderRadius: "8px",
               mb: 1,
-              backgroundColor: isActive("/Doc-report") ? '#7A76A8' : 'transparent',
-              '&:hover': {
-                backgroundColor: '#CBC3E3'
-              }
+              backgroundColor: isActive("/Doc-report") ? "#1976d2" : "transparent",
+              color: isActive("/Doc-report") ? "#fff" : "#000",
+              "&:hover": {
+                backgroundColor: isActive("/Doc-report") ? "#1565c0" : "#f0f0f0",
+              },
             }}
           >
-            <ListItemIcon sx={{ minWidth: '40px', color: isActive("/Doc-report") ? 'white' : '#7A76A8' }}>
+            <ListItemIcon
+              sx={{
+                minWidth: "40px",
+                color: isActive("/Doc-report") ? "#fff" : "#000",
+              }}
+            >
               <FaUserMd />
             </ListItemIcon>
-            {!isCollapsed && <ListItemText primary="Doc Report" />}
+            {!isCollapsed && (
+              <ListItemText
+                primary="Doc Reports"
+                primaryTypographyProps={{ fontWeight: "600" }}
+              />
+            )}
           </ListItemButton>
+           */}
+
+          <ListItemButton
+            onClick={() => {
+              handleDocReportClick();   // 👈 use new handler
+              navigate("/Doc-report");
+            }}
+            sx={{
+              borderRadius: "8px",
+              mb: 1,
+              backgroundColor: isActive("/Doc-report") ? "#1976d2" : "transparent",
+              color: isActive("/Doc-report") ? "#fff" : "#000",
+              "&:hover": {
+                backgroundColor: isActive("/Doc-report") ? "#1565c0" : "#f0f0f0",
+              },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: "40px",
+                color: isActive("/Doc-report") ? "#fff" : "#000",
+              }}
+            >
+              <FaDashcube />
+            </ListItemIcon>
+            {!isCollapsed && (
+              <>
+                <ListItemText primary="Doc Report" primaryTypographyProps={{ fontWeight: "600" }} />
+                {openDocReport ? <ExpandLess /> : <ExpandMore />}
+              </>
+            )}
+          </ListItemButton>
+
+
+          {/* Nested Filters */}
+          <Collapse in={openDocReport && !isCollapsed} timeout="auto" unmountOnExit>
+            {/* Profile Type */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+                Profile Type
+              </FormLabel>
+
+              <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+                {getAllDepartments &&
+                  getAllDepartments
+                    .filter((dep) => dep !== "#N/A")
+                    .sort()
+                    .map((dep, index) => (
+                      <label
+                        key={index}
+                        style={{
+                          color: "#000",
+                          fontSize: "14px",
+                          marginBottom: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={department.includes(dep)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...department, dep]
+                              : department.filter((val) => val !== dep);
+
+                            setdepartment(newSelection);
+                            if (window.location.pathname === "/Dashboard") {
+                              setContextProfileType(newSelection);
+                              setContextDepartment(newSelection);
+                            }
+
+                            // ✅ trigger filter with latest selections
+                            // filterApi();
+                          }}
+                        />
+                        {dep}
+                      </label>
+                    ))}
+
+                <button
+                  onClick={() => {
+                    setdepartment([]);
+                    if (window.location.pathname === "/Dashboard") {
+                      setContextProfileType([]);
+                      setContextDepartment([]);
+                    }
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box>
+
+
+            {/* Rating */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+                Rating
+              </FormLabel>
+              <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+                {["1", "2", "3", "4", "5"].map((val) => (
+                  <label key={val} style={{ color: "#000", fontSize: "14px", marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={rating.includes(val)}
+                      onChange={(e) => {
+                        let newSelection = e.target.checked
+                          ? [...rating, val]
+                          : rating.filter((r) => r !== val);
+                        setRating(newSelection);
+                        if (window.location.pathname === "/Dashboard") {
+                          setContextRating(newSelection);
+                          setSidebarRating(newSelection);
+                        }
+
+                        // ✅ instant apply
+                        // filterApi();
+                      }}
+                    />
+                    {val === "1" ? "0-1" : `${Number(val) - 1}-${val}`}
+                  </label>
+                ))}
+
+                <button
+                  onClick={() => {
+                    setRating([]);
+                    if (window.location.pathname === "/Dashboard") {
+                      setContextRating([]);
+                    }
+                    setSidebarRating([]);
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box>
+
+            {/* Specialty */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+                Specialty
+              </FormLabel>
+
+              <input
+                type="text"
+                placeholder="Search"
+                value={specialitySearch}
+                onChange={(e) => setSpecialitySearch(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "4px 8px",
+                  fontSize: "14px",
+                  marginBottom: "8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              />
+
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                {getSpeciality &&
+                  getSpeciality
+                    .filter((sp) =>
+                      sp !== "#N/A" &&
+                      sp.toLowerCase().includes(specialitySearch.toLowerCase())
+                    )
+                    .sort()
+                    .slice(0, 5)
+                    .map((sp, index) => (
+                      <label key={index} style={{ color: "#000", fontSize: "14px", marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={speciality.includes(sp)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...speciality, sp]
+                              : speciality.filter((s) => s !== sp);
+
+                            setSpeciality(newSelection);
+                            if (window.location.pathname === "/Dashboard") {
+                              setContextSpeciality(newSelection);
+                            }
+
+                            // ✅ instant apply
+                            // filterApi();
+                          }}
+                        />
+                        {sp}
+                      </label>
+                    ))}
+
+                <button
+                  onClick={() => {
+                    setSpeciality([]);
+                    if (window.location.pathname === "/Dashboard") {
+                      setContextSpeciality([]);
+                    }
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box>
+
+          </Collapse>
+
+          {/* Phone Update */}
+          <ListItemButton
+            onClick={() => {
+              handlePhoneMetricsClick();   // 👈 use new handler
+              navigate("/Phone-Metrics");
+            }}
+            sx={{
+              borderRadius: "8px",
+              mb: 1,
+              backgroundColor: isActive("/Phone-Metrics") ? "#1976d2" : "transparent",
+              color: isActive("/Phone-Metrics") ? "#fff" : "#000",
+              "&:hover": {
+                backgroundColor: isActive("/Phone-Metrics") ? "#1565c0" : "#f0f0f0",
+              },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: "40px",
+                color: isActive("/Phone-Metrics") ? "#fff" : "#000",
+              }}
+            >
+              <FaDashcube />
+            </ListItemIcon>
+            {!isCollapsed && (
+              <>
+                <ListItemText primary="Phone Number Update" primaryTypographyProps={{ fontWeight: "600" }} />
+                {openPhonemetrics ? <ExpandLess /> : <ExpandMore />}
+              </>
+            )}
+          </ListItemButton>
+
+
+          {/* Nested Filters */}
+          <Collapse in={openPhonemetrics && !isCollapsed} timeout="auto" unmountOnExit>
+            {/* Profile Type */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+                Profile Type
+              </FormLabel>
+
+              <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+                {getAllDepartments &&
+                  getAllDepartments
+                    .filter((dep) => dep !== "#N/A")
+                    .sort()
+                    .map((dep, index) => (
+                      <label
+                        key={index}
+                        style={{
+                          color: "#000",
+                          fontSize: "14px",
+                          marginBottom: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={department.includes(dep)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...department, dep]
+                              : department.filter((val) => val !== dep);
+
+                            setdepartment(newSelection);
+                              setContextProfileType(newSelection);
+                              setContextDepartment(newSelection);
+
+                            // ✅ trigger filter with latest selections
+                            // filterApi();
+                          }}
+                        />
+                        {dep}
+                      </label>
+                    ))}
+
+                <button
+                  onClick={() => {
+                    setdepartment([]);
+                    if (window.location.pathname === "/Dashboard") {
+                      setContextProfileType([]);
+                      setContextDepartment([]);
+                    }
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box>
+
+
+            {/* Rating */}
+            {/* <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+                Rating
+              </FormLabel>
+              <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+                {["1", "2", "3", "4", "5"].map((val) => (
+                  <label key={val} style={{ color: "#000", fontSize: "14px", marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={rating.includes(val)}
+                      onChange={(e) => {
+                        let newSelection = e.target.checked
+                          ? [...rating, val]
+                          : rating.filter((r) => r !== val);
+                        setRating(newSelection);
+                        if (window.location.pathname === "/Dashboard") {
+                          setContextRating(newSelection);
+                          setSidebarRating(newSelection);
+                        }
+
+                        // ✅ instant apply
+                        // filterApi();
+                      }}
+                    />
+                    {val === "1" ? "0-1" : `${Number(val) - 1}-${val}`}
+                  </label>
+                ))}
+
+                <button
+                  onClick={() => {
+                    setRating([]);
+                    if (window.location.pathname === "/Dashboard") {
+                      setContextRating([]);
+                    }
+                    setSidebarRating([]);
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box> */}
+
+            {/* Specialty */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+                Specialty
+              </FormLabel>
+
+              <input
+                type="text"
+                placeholder="Search"
+                value={specialitySearch}
+                onChange={(e) => setSpecialitySearch(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "4px 8px",
+                  fontSize: "14px",
+                  marginBottom: "8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              />
+
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                {getSpeciality &&
+                  getSpeciality
+                    .filter((sp) =>
+                      sp !== "#N/A" &&
+                      sp.toLowerCase().includes(specialitySearch.toLowerCase())
+                    )
+                    .sort()
+                    .slice(0, 5)
+                    .map((sp, index) => (
+                      <label key={index} style={{ color: "#000", fontSize: "14px", marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={speciality.includes(sp)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...speciality, sp]
+                              : speciality.filter((s) => s !== sp);
+
+                            setSpeciality(newSelection);
+                              setContextSpeciality(newSelection);
+                            
+
+                            // ✅ instant apply
+                            // filterApi();
+                          }}
+                        />
+                        {sp}
+                      </label>
+                    ))}
+
+                <button
+                  onClick={() => {
+                    setSpeciality([]);
+                    if (window.location.pathname === "/Dashboard") {
+                      setContextSpeciality([]);
+                    }
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box>
+
+          </Collapse>
+
+
+
+
+
+          {/* Phone Update */}
+
+          {/* <ListItemButton
+            component={Link}
+            to="/Phone-Metrics"
+            sx={{
+              borderRadius: "8px",
+              mb: 1,
+              backgroundColor: isActive("/Phone-Metrics") ? "#1976d2" : "transparent",
+              color: isActive("/Phone-Metrics") ? "#fff" : "#000",
+              "&:hover": {
+                backgroundColor: isActive("/Phone-Metrics") ? "#1565c0" : "#f0f0f0",
+              },
+            }}
+          >
+            <ListItemIcon
+              sx={{
+                minWidth: "40px",
+                color: isActive("/Phone-Metrics") ? "#fff" : "#000",
+              }}
+            >
+              <FaUser />
+            </ListItemIcon>
+            {!isCollapsed && (
+              <ListItemText
+                primary="Phone number update"
+                primaryTypographyProps={{ fontWeight: "600" }}
+              />
+            )}
+          </ListItemButton> */}
 
           {/* Insights */}
           <ListItemButton
             component={Link}
             to="/Insights"
             sx={{
-              borderRadius: '8px',
+              borderRadius: "8px",
               mb: 1,
-              backgroundColor: isActive("/Insights") ? '#7A76A8' : 'transparent',
-              '&:hover': {
-                backgroundColor: '#CBC3E3'
-              }
+              backgroundColor: isActive("/Insights") ? "#1976d2" : "transparent",
+              color: isActive("/Insights") ? "#fff" : "#000",
+              "&:hover": {
+                backgroundColor: isActive("/Insights") ? "#1565c0" : "#f0f0f0",
+              },
             }}
           >
-            <ListItemIcon sx={{ minWidth: '40px', color: isActive("/Insights") ? 'white' : '#7A76A8' }}>
-              <FaChartBar />
-            </ListItemIcon>
-            {!isCollapsed && <ListItemText primary="Insights" />}
-          </ListItemButton>
-
-          {/* Work Tracker */}
-          {["astrio@gmail.com", "lupin@gmail.com", "care@gmail.com", "mankind@gmail.com"].includes(email) && (
-            <ListItemButton
-              component={Link}
-              to="/WorkTracker"
+            <ListItemIcon
               sx={{
-                borderRadius: '8px',
-                mb: 1,
-                backgroundColor: isActive("/WorkTracker") ? '#7A76A8' : 'transparent',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                }
+                minWidth: "40px",
+                color: isActive("/Insights") ? "#fff" : "#000",
               }}
             >
-              <ListItemIcon sx={{ minWidth: '40px', color: isActive("/WorkTracker") ? 'white' : '#7A76A8' }}>
-                <GiTimeBomb />
-              </ListItemIcon>
-              {!isCollapsed && <ListItemText primary="Work Tracker" />}
-            </ListItemButton>
-          )}
+              <FaChartBar />
+            </ListItemIcon>
+            {!isCollapsed && (
+              <ListItemText
+                primary="Insights"
+                primaryTypographyProps={{ fontWeight: "600" }}
+              />
+            )}
+          </ListItemButton>
         </List>
-
-        {/* Sidebar Footer */}
-        {!isCollapsed && (
-          <Box sx={{
-            p: 2,
-            mt: 'auto',
-            borderTop: '1px solid #7A76A8',
-            textAlign: 'center'
-          }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
-              {localStorage.getItem("user")}
-            </Typography>
-            <Typography variant="caption" sx={{ opacity: 0.75 }}>
-              {email}
-            </Typography>
-          </Box>
-        )}
       </Drawer>
+
+
+
+
 
 
       {/* Modern Top Navigation Bar */}
@@ -927,7 +1586,7 @@ export default function Navbar(props) {
           <div className="flex items-center">
             <button
               onClick={() => setNavContentsVisible(!isNavContentsVisible)}
-              className="mr-4 text-gray-600 hover:text-[#8D89BF] md:hidden"
+              className="mr-4 text-gray-600 hover:text-[#1565C0] md:hidden"
             >
               <FaAlignJustify size={20} />
             </button>
@@ -943,7 +1602,7 @@ export default function Navbar(props) {
                 onClick={handleClick}
                 className="rounded-full bg-[#F0EFFF] hover:bg-[#E5E3FF] transition-colors"
               >
-                <div className="w-10 h-10 rounded-full bg-[#8D89BF] flex items-center justify-center text-white">
+                <div className="w-10 h-10 rounded-full bg-[#1565C0] flex items-center justify-center text-white">
                   {localStorage.getItem("user")?.charAt(0) || "U"}
                 </div>
               </Button>
@@ -982,7 +1641,7 @@ export default function Navbar(props) {
       {/* Modern Filter Bar */}
       {!props.blockmenu && (
         <div
-          className="fixed top-16 bg-white shadow-sm z-30 w-full transition-all duration-300"
+          className="bg-white shadow-sm z-30  transition-all duration-300 mt-16"
           style={{
             marginLeft: isCollapsed ? "5rem" : "16rem",
             display: isNavContentsVisible ? "block" : "none",
@@ -996,7 +1655,7 @@ export default function Navbar(props) {
                   <select
                     value={department}
                     onChange={deptHandler}
-                    className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-48"
+                    className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#1565C0] focus:outline-none focus:ring-1 focus:ring-[#1565C0] w-48"
                   >
                     <option value="">Profile Type</option>
                     {getAllDepartments &&
@@ -1020,109 +1679,237 @@ export default function Navbar(props) {
                 </div>
               )} */}
 
-              {props.filterpopover && (
+              {/* {props.filterpopover && (
                 <div>
                   <NewMenuBar speciality={speciality} rating={rating} ></NewMenuBar>
                 </div>
-              )}
+              )} */}
 
-              {/* Region Filter */}
-              {props.serach && (
-                <div className="relative">
-                  <select
-                    value={getState}
-                    onChange={getStateHandeler}
-                    className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-40"
-                  >
-                    <option value="">Region</option>
-                    {getStates &&
-                      getStates
-                        .filter(item => item !== "#N/A")
-                        .sort()
-                        .map((item, index) => (
-                          <option key={index} value={item}>
-                            {item}
-                          </option>
-                        ))}
-                    <option value="All" className="text-red-500">
-                      Clear All
-                    </option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
+              {/* Filters Section */}
+              <div className="flex flex-col gap-6 mt-4 w-screen px-4">
+
+                {/* Region Filter (checkboxes) */}
+                {/* Region Filter */}
+                <div className="flex flex-col">
+                  <label className="font-medium text-gray-700 mb-1">Region</label>
+                  <div className="flex flex-wrap gap-4">
+                    {getStates?.filter(s => s !== "#N/A").sort().map((region) => {
+                      const selectedStates = Array.isArray(contextState) ? contextState : [];
+                      const isChecked = selectedStates.includes(region);
+
+                      return (
+                        <label
+                          key={region}
+                          className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={(e) => {
+                              const next = e.target.checked
+                                ? [...selectedStates, region]
+                                : selectedStates.filter(r => r !== region);
+                              setContextState(next);
+                              if (window.location.pathname === "/Dashboard") {
+                                setInsightsState(next);
+                                setInsightsCity(contextCity);
+                              }
+                              //filterApi(); // ✅ include Region in payload instantly
+                            }}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          {region}
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
-              )}
 
-              {/* Unit Filter */}
-              {props.monthhide && (
-                <div className="relative">
-                  <select
-                    value={getCity}
-                    onChange={getCityHandeler}
-                    className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-40"
+
+
+
+                {/* Unit Filter (blue chips) */}
+                <div className="flex flex-col w-full max-w-[1600px]">
+                  <label className="font-medium text-gray-700 mb-1">Unit</label>
+                  <div
+                    className="flex flex-wrap gap-2 border border-gray-300 rounded-md p-2 max-h-[120px] overflow-y-auto"
+                    style={{ minWidth: "250px" }}
                   >
-                    <option value="">Unit</option>
-                    {getCitys &&
-                      getCitys
-                        .filter(item => item !== "#N/A")
-                        .sort()
-                        .map((item, index) => (
-                          <option key={index} value={item}>
-                            {item}
-                          </option>
-                        ))}
-                    <option value="All" className="text-red-500">
-                      Clear All
-                    </option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
+                    {console.log("🔍 getCitys state value------------:", getCitys)}
+                    {getCitys
+                      ?.filter(
+                        (u) =>
+                          u !== "#N/A" &&
+                          !(Array.isArray(getStates) ? getStates.includes(u) : false) // ✅ safe check
+                      )
+                      .sort()
+                      .map((unit) => {
+                        const selectedUnits = Array.isArray(contextCity) ? contextCity : [];
+                        const isSelected = selectedUnits.includes(unit);
+
+                        return (
+                          <span
+                            key={unit}
+                            className={`px-3 py-1 rounded-md text-sm cursor-pointer flex items-center gap-1 transition-colors ${isSelected
+                              ? "bg-blue-600 text-white font-semibold"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                              }`}
+                            style={{
+                              maxWidth: "140px",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                            onClick={() => {
+                              const next = isSelected
+                                ? selectedUnits.filter((u) => u !== unit)
+                                : [...selectedUnits, unit];
+                              setContextCity(next);
+                              if (window.location.pathname === "/Dashboard") {
+                                setInsightsCity(next);
+                              }
+
+                              // filterApi(); // call only if you want instant update
+                            }}
+                          >
+                            {unit}
+                            {isSelected && (
+                              <button
+                                className="ml-1 text-xs font-bold"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setContextCity((prev) =>
+                                    Array.isArray(prev) ? prev.filter((u) => u !== unit) : []
+                                  );
+                                  filterApi();
+                                }}
+                                aria-label="Remove unit"
+                              >
+                                ✕
+                              </button>
+                            )}
+                          </span>
+                        );
+                      })}
+
                   </div>
                 </div>
-              )}
 
-              {/* Year Selector */}
-              {props.monthfilter && (
-                <div className="relative">
-                  <select
-                    onChange={yearHandler}
-                    value={selectedYear}
-                    className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-32"
-                  >
-                    <option value="">Year</option>
-                    <option value="2024">2024</option>
-                    <option value="2025">2025</option>
-                  </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
+
+
+                {/* Year + Month + Apply grouped */}
+                <div className="flex items-end gap-4">
+                  {/* Year Selector */}
+                  <div className="flex flex-col w-96">
+                    <label className="font-medium text-gray-700 mb-1 block">Year</label>
+                    <select
+                      value={selectedYear}
+                      onChange={(e) => {
+                        setSelectedYear(e.target.value);
+                        setSelectedMonths([]);   // ✅ reset months on year change
+                        setContextMonth([]);
+                      }}
+                      className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                    >
+                      <option value="">Select Year</option>
+                      <option value="2024">2024</option>
+                      <option value="2025">2025</option>
+                    </select>
                   </div>
-                </div>
-              )}
 
-              {/* Month Selector */}
-              {props.monthfilter && (
-                <div className="relative w-48">
-                  <MultiMonthSelector
-                    filteredMonths={filteredMonths}
-                    selectedMonths={selectedMonths}
-                    setSelectedMonths={setSelectedMonths}
-                  />
+                  {/* Month Selector */}
+                  <div className="flex flex-col w-[800px]">
+                    <label className="font-medium text-gray-700 mb-1">Month</label>
+                    <MultiMonthSelector
+                      filteredMonths={filteredMonths}
+                      selectedMonths={selectedMonths}
+                      setSelectedMonths={(vals) => {
+                        setSelectedMonths(vals);
+                        setNewMonthContext(vals); // ✅ store month context
+                        setContextMonth(vals); // ✅ update context month
+                      }}
+                    />
+                  </div>
+
+                  {/*   */}
+
+                     {/* Doctor Search */}
+              <div
+                className="relative"
+                style={{
+                  display: props.filterpopover || props.clusterlogin ? "block" : "none",
+                }}
+              >
+                <div className="flex ml-2 flex-col w-48">
+                  {/* ✅ Label above input bar */}
+                  <label className="font-medium text-gray-700 mb-1 block">
+                    Doctor Name
+                  </label>
+
+                  {/* ✅ Input + button grouped */}
+                  <div className="flex">
+                    <input
+                      type="text"
+                      list="doctorList"
+                      placeholder="Enter doctor name"
+                      value={getName}
+                      onChange={nameHandelar}   // ✅ use onChange (better than onInputCapture for React forms)
+                      className="border border-gray-300 rounded-l-md py-[10px] px-3 text-sm 
+                    focus:outline-none f
+                    w-full"
+                    />
+                    <button
+                      type="button"
+                      onClick={nameseter}
+                      className="bg-[#1565C0] hover:bg-[#7A76A8] text-white 
+                   rounded-r-md px-3 flex items-center transition-colors"
+                    >
+                      <FaSearch />
+                    </button>
+                  </div>
+
+                  {/* ✅ Proper datalist (linked to input via list attr) */}
+                  <datalist id="doctorList">
+                    {(drNameContext?.length > 0 ? drNameContext : getAllnames)?.map(
+                      (item, index) => (
+                        <option key={index} value={item} />
+                      )
+                    )}
+                  </datalist>
                 </div>
-              )}
+              </div>
+
+              {/* Clear All Filters at bottom right */}
+              <div className="flex justify-end mt-4 w-full">
+                <button
+                  onClick={() => {
+                    setSelectedYear("");
+                    setSelectedMonths([]);
+                    setNewMonthContext([]);
+                    setContextMonth([]);
+                    setContextState([]);
+                    setContextCity([]);
+                    filterApi();
+                  }}
+                  className="bg-red-100 hover:bg-red-200 text-red-600 px-6 py-3 rounded-md text-sm font-medium"
+                >
+                  Clear all filters
+                </button>
+              </div>
+                </div>
+
+              </div>
+
+
+
+
 
               {/* Speciality Filter */}
-              <div className="relative">
+              {/* <div className="relative">
                 <select
                   value={speciality}
                   onChange={specialityHandler}
-                  className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-44"
+                  className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#1565C0] focus:outline-none focus:ring-1 focus:ring-[#1565C0] w-44"
                 >
                   <option value="">Speciality</option>
                   {getSpeciality &&
@@ -1143,14 +1930,14 @@ export default function Navbar(props) {
                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                   </svg>
                 </div>
-              </div>
+              </div> */}
 
               {/* Rating Filter */}
               {/* <div className="relative">
                 <select
                   value={rating}
                   onChange={ratingHandler}
-                  className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-32"
+                  className="appearance-none bg-white border border-gray-300 rounded-lg py-2 pl-3 pr-8 text-sm focus:border-[#1565C0] focus:outline-none focus:ring-1 focus:ring-[#1565C0] w-32"
                 >
                   <option value="">Rating</option>
                   <option value="1">0-1</option>
@@ -1169,35 +1956,12 @@ export default function Navbar(props) {
                 </div>
               </div> */}
 
-              {/* Doctor Search */}
-              <div className="relative" style={{
-                display: props.filterpopover || props.clusterlogin ? "block" : "none",
-              }}>
-                <div className="flex">
-                  <input
-                    type="text"
-                    list="getDoctor"
-                    placeholder="Doctor Name"
-                    value={getName}
-                    onInputCapture={nameHandelar}
-                    className="border border-gray-300 rounded-l-lg py-2 px-3 text-sm focus:border-[#8D89BF] focus:outline-none focus:ring-1 focus:ring-[#8D89BF] w-44"
-                  />
-                  <button
-                    onClick={nameseter}
-                    className="bg-[#8D89BF] hover:bg-[#7A76A8] text-white rounded-r-lg px-3 flex items-center transition-colors"
-                  >
-                    <FaSearch />
-                  </button>
-                </div>
-                <datalist id="getDoctor">
-                  {(drNameContext?.length > 0 ? drNameContext : getAllnames)?.map((item, index) => (
-                    <option key={index} value={item} />
-                  ))}
-                </datalist>
-              </div>
+           
+
+
 
               {/* Apply Button */}
-              {!props.filterpopover && props.monthfilter && (
+              {/* {!props.filterpopover && props.monthfilter && (
                 <button
                   onClick={() => {
                     setInsightsState(getState);
@@ -1209,11 +1973,11 @@ export default function Navbar(props) {
                     setLocationProfiles(getcountOfProfiles);
                     filterApi();
                   }}
-                  className="bg-gradient-to-r from-[#8D89BF] to-[#6A6792] hover:from-[#7A76A8] hover:to-[#5D5A85] text-white py-2 px-6 rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
+                  className="bg-gradient-to-r from-[#1565C0] to-[#6A6792] hover:from-[#7A76A8] hover:to-[#5D5A85] text-white py-2 px-6 rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
                 >
                   Apply Filters
                 </button>
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -1223,4 +1987,4 @@ export default function Navbar(props) {
     </Fragment>
   );
 }
-//  In the above component I want to replace the existing Sidebar which should have nested submenu of Profile Type and and Rating 
+//  Here while I am selecting anything in Profile Type, Rating, Specialty after selecting Region, Unit, Month, the selected values of Region, Unit, Month are not going in the payload I wnat whenever I select Profile Type, Rating, Specialty the selected values of Region, Unit, Month should also go in the payload also Insted if apply button I want to achivethe same functionality in change of options. also reduce th size of Unit because of too many units it is exceeding the width of the screen

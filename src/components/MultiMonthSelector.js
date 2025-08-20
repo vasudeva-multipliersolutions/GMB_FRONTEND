@@ -29,14 +29,14 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
                 onClick={() => setIsOpen(!isOpen)}
                 style={{
                     border: "1px solid #ccc",
-                    borderRadius: "10px",
-                    padding: "4px",
+                    borderRadius: "5px",
+                    padding: "8px",
                     cursor: "pointer",
                     background: "#fff",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    minWidth: "15vh",
+                    minWidth: "18vh",
                 }}
             >
                 <span>{selectedMonths.length > 0 ? selectedMonths.join(", ") : "Select Months"}</span>
@@ -60,7 +60,7 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
                         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" // optional for nicer look
                     }}
                 >
-                    <div style={{ padding: "8px", fontFamily: "sans-serif" }}>
+                    <div style={{ padding: "10px", fontFamily: "sans-serif" }}>
                         {/* Month Options */}
                         {filteredMonths
                             .filter((m) => typeof m === "string" && m.trim() !== "")

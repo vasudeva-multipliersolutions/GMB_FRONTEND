@@ -8,10 +8,15 @@ export const SidebarProvider = ({ children }) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [drNameContext, setDrNameContext] = useState([]);
   const [specialityContext, setSpecialityContext] = useState([]);
-  const [profileType, setContextProfileType] = useState("");
+  const [profileType, setContextProfileType] = useState([]);
   const [profileCounts, setContextProfileCounts] = useState("");
   const [sidebarRating, setSidebarRating] = useState("");
-
+  const [contextState, setContextState] = useState([]);
+  const [contextCity, setContextCity] = useState([]);
+  const [contextMonth, setContextMonth] = useState([]);
+  const [newMonthContext, setNewMonthContext] = useState([]);
+  const [doctorAnalysis, setDoctorAnalysis] = useState([]); 
+  const [getCitys, setCitys] = useState([]);
 
   const toggleSidebar = () => {
     if (windowWidth >= 1250) {
@@ -37,7 +42,10 @@ export const SidebarProvider = ({ children }) => {
   }, []);
 
   return (
-    <SidebarContext.Provider value={{ isCollapsed, toggleSidebar, windowWidth, drNameContext, setDrNameContext, specialityContext, setSpecialityContext,profileType, setContextProfileType, profileCounts, setContextProfileCounts, sidebarRating, setSidebarRating }}>
+    <SidebarContext.Provider value={{
+      isCollapsed, toggleSidebar, windowWidth, drNameContext, setDrNameContext, specialityContext, setSpecialityContext, profileType, setContextProfileType, profileCounts, setContextProfileCounts, sidebarRating, setSidebarRating, contextState, setContextState,
+      contextCity, setContextCity, getCitys, setCitys, contextMonth, setContextMonth, newMonthContext, setNewMonthContext, doctorAnalysis, setDoctorAnalysis
+    }}>
       {children}
     </SidebarContext.Provider>
   );

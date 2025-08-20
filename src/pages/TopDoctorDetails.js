@@ -15,6 +15,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
 
 
   const { getDrName, getInsightState, getInsightsCity, currentCluster, contextMonth, setTopDoctorData, contextSpeciality, contextRating, contextDepartment } = useContext(SharedContext);
+  const { contextState, contextCity, newMonthContext, profileType, specialityContext, sidebarRating } = useContext(SidebarContext);
 
   const api = localStorage.getItem("API");
   const mail = localStorage.getItem("mail");
@@ -35,8 +36,14 @@ export default function TopDoctorDetails({ contextHospitals }) {
   useEffect(() => {
     async function fetchDataFilter() {
 
-      const location = contextHospitals ? contextHospitals : getInsightsCity;
-      const cluster = contextHospitals ? "" : getInsightState;
+      let region = contextState ? contextState : getInsightState ;
+      let unit  = contextCity ? contextCity : getInsightsCity;
+      let dept = profileType ? profileType : "";
+      let rating = sidebarRating ? sidebarRating : "";
+      let speciality = specialityContext ? specialityContext : "";
+
+      const location = contextHospitals ? contextHospitals : unit;
+      const cluster = contextHospitals ? "" : region;
 
 
 
@@ -55,23 +62,24 @@ export default function TopDoctorDetails({ contextHospitals }) {
       // console.log("Hello--------"+ contextDepartment)
 
 
-      if (getInsightState || getInsightsCity || contextHospitals || contextMonth || contextSpeciality || contextRating || contextDepartment) {
+      if (getInsightState || getInsightsCity || contextHospitals || contextMonth || contextSpeciality || contextRating || contextDepartment || newMonthContext || contextCity || contextState) {
         //console.log("Hello"+ 1)
         try {
           let cityToSend = location === "All" ? "" : location;
           let monthToSend = contextMonth === "All" ? "" : contextMonth;
+          const monthsToSend = Array.isArray(newMonthContext) ? newMonthContext : [newMonthContext];
           const response = await fetch(`${api}/topdoc`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              dept: contextDepartment,
+              dept: dept,
               state: Cluster !== "undefined" ? Cluster : cluster,
               branch: Branch !== "undefined" ? Branch : cityToSend,
-              month: monthToSend,
-              speciality: contextSpeciality,
-              rating: contextRating,
+              month: monthsToSend,
+              speciality: speciality,
+              rating: rating,
             }),
           });
           const data = await response.json();
@@ -88,7 +96,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
       }
     }
     fetchDataFilter();
-  }, [getInsightState, getInsightsCity, contextHospitals, contextMonth, contextSpeciality, contextRating, contextDepartment]);
+  }, [getInsightState, getInsightsCity, contextHospitals, contextMonth, contextSpeciality, contextRating, contextDepartment, newMonthContext, contextCity, contextState]);
 
 
 

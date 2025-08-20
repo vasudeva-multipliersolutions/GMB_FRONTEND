@@ -55,16 +55,18 @@ export default function Dashboard(props) {
   const navigate = useNavigate();
   const [showAllData, setAllData] = useState(null);
   const [analysisData, setAnalysisData] = useState();
-  const [contextCity, setContextCity] = useState();
-  const [contextMonth, setContextMonth] = useState();
+  // const [contextCity, setContextCity] = useState([]);
+  // const [newMonthContext, setNewMonthContext] = useState([]);
+  const { contextState, contextCity, newMonthContext, profileType, sidebarRating } = useContext(SidebarContext);
+
   const [contextYear, setContextYear] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [locationProfiles, setLocationProfiles] = useState([]);
   const [use, setUse] = useState([]);
   const { isCollapsed } = useContext(SidebarContext);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [getInsightState, setInsightsState] = useState();
-  const [getInsightsCity, setInsightsCity] = useState();
+  const [getInsightState, setInsightsState] = useState([]);
+  const [getInsightsCity, setInsightsCity] = useState([]);
   const [contextHospitals, setcontextHospitals] = useState();
   const [InsightsAnalysis, setInsightsAnalysis] = useState();
   const [reload, setReloadCondition] = useState();
@@ -74,6 +76,7 @@ export default function Dashboard(props) {
   const [contextDepartment, setContextDepartment] = useState();
   const [contextRating, setContextRating] = useState();
   const [deptDetails, setDeptDetails] = useState([]);
+
 
 
 
@@ -95,7 +98,19 @@ export default function Dashboard(props) {
   // });
 
 
-  console.log("1234🎉✨🎉🎉 : " + contextDepartment);
+ useEffect(() => {
+  if (newMonthContext.length > 0) {
+    console.log("Selected months:", newMonthContext);
+
+    // Example API call
+    fetch(`/api/data?months=${newMonthContext.join(",")}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log("API Response:", data);
+      });
+  }
+}, [newMonthContext]);
+
 
 
   useEffect(() => {
@@ -150,11 +165,18 @@ export default function Dashboard(props) {
   }
 
   //console.log("SetContextYear : " + contextYear);
-  async function getMonthData(month) {
+  async function getMonthData(months) {
     try {
-      const cityToSend = contextCity === "All" ? "" : contextCity;
-      const monthToSend = month === "All" ? "" : month;
-      const stateToSend = getInsightState;
+
+      let region = contextState ? contextState : getInsightState ;
+      let unit  = contextCity ? contextCity : getInsightsCity;
+      let dept = profileType ? profileType : "";
+      let rating = sidebarRating ? sidebarRating : "";
+
+      const cityToSend = getInsightsCity === "All" ? "" : unit;
+      // const monthToSend = month === "All" ? "" : month;
+        const monthsToSend = Array.isArray(months) ? months : [months];
+      const stateToSend = region;
 
       //console.log("000000-----00000000000) : " + stateToSend);
       const response = await fetch(`${api}/monthdata`, {
@@ -164,12 +186,12 @@ export default function Dashboard(props) {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          dept: contextDepartment,
-          month: monthToSend,
+          dept: dept,
+          month: monthsToSend ,
           branch: Branch !== "undefined" ? Branch : cityToSend,
           state: Cluster !== "undefined" ? Cluster : stateToSend,
           speciality: contextSpeciality,
-          rating: contextRating,
+          rating: rating,
         }),
       });
       if (response.status === 403 || response.status === 404) {
@@ -387,33 +409,40 @@ export default function Dashboard(props) {
 
   useEffect(() => {
     // console.log("getContextCity@@@@@@@@ : " + contextCity);
-    if (contextMonth < 0 && contextCity) {
+    if ( contextCity) {
       getMonthData("");
     }
   }, [contextCity]);
 
+    useEffect(() => {
+    // console.log("getContextCity@@@@@@@@ : " + contextCity);
+    if ( getInsightsCity) {
+      getMonthData("");
+    }
+  }, [getInsightsCity]);
+
   useEffect(() => {
     //console.log("getInsightState@@@@@@@@ : " + getInsightState);
-    if (contextMonth < 0 && getInsightState) {
+    if (getInsightState) {
       getMonthData("");
     }
   }, [getInsightState]);
 
   useEffect(() => {
-    if (contextMonth) {
-      getMonthData(contextMonth);
+    if (newMonthContext) {
+      getMonthData(newMonthContext);
     }
-  }, [contextMonth]);
+  }, [newMonthContext]);
 
   useEffect(() => {
 
-    getMonthData(contextMonth);
+    getMonthData(newMonthContext);
 
   }, [contextSpeciality]);
 
   useEffect(() => {
 
-    getMonthData(contextMonth);
+    getMonthData(newMonthContext);
   }, [contextRating]);
 
   useEffect(() => {
@@ -424,9 +453,25 @@ export default function Dashboard(props) {
 
   useEffect(() => {
 
-    getMonthData(contextMonth);
+    getMonthData(newMonthContext);
 
   }, [contextDepartment]);
+
+
+  
+  useEffect(() => {
+
+    getMonthData(newMonthContext);
+
+  }, [contextState]);
+
+
+  
+  useEffect(() => {
+
+    getMonthData(newMonthContext);
+
+  }, [contextCity]);
 
 
 
@@ -531,7 +576,7 @@ export default function Dashboard(props) {
       const parts = [
         getInsightState || "",
         getInsightsCity || "",
-        contextMonth || "",
+        newMonthContext || "",
         contextSpeciality || "",
         // Optional: add speciality if available e.g., `speciality || ""`
       ].filter(Boolean); // removes empty strings
@@ -608,7 +653,7 @@ export default function Dashboard(props) {
   //   const parts = [
   //     getInsightState || "",
   //     getInsightsCity || "",
-  //     contextMonth || "",
+  //     newMonthContext || "",
   //     contextSpeciality || "",
   //     // Optional: add speciality if available e.g., `speciality || ""`
   //   ].filter(Boolean); // removes empty strings
@@ -716,7 +761,7 @@ export default function Dashboard(props) {
     const parts = [
       getInsightState || "",
       getInsightsCity || "",
-      contextMonth || "",
+      newMonthContext || "",
       contextSpeciality || ""
     ].filter(Boolean);
 
@@ -732,12 +777,8 @@ export default function Dashboard(props) {
   return (
     <SharedContext.Provider
       value={{
-        contextCity,
-        setContextCity,
         locationProfiles,
         setLocationProfiles,
-        setContextMonth,
-        contextMonth,
         setContextYear,
         getInsightState,
         setInsightsState,
@@ -773,19 +814,19 @@ export default function Dashboard(props) {
           className="main-content"
           style={{
             marginLeft: isCollapsed ? "5rem" : "16rem",
-            paddingTop: "10rem",
+            paddingTop: "1rem",
             transition: "margin-left 0.5s ease, padding-top 0.5s ease",
           }}
         >
           <div className="flex justify-end items-center p-4 mt-4 mr-4">
             <button
-              className="flex items-center bg-white text-[#8D89BF] border border-[#8D89BF] rounded-lg px-4 py-2 mr-3 hover:bg-[#F0EFFF] transition-colors shadow-sm"
+              className="flex items-center bg-white text-[#1565C0] border border-[#1565C0] rounded-lg px-4 py-2 mr-3 hover:bg-[#F0EFFF] transition-colors shadow-sm"
               onClick={downloadPDF}
             >
               <BsFiletypePdf className="mr-2" /> Export PDF
             </button>
             <button
-              className="flex items-center bg-[#8D89BF] text-white rounded-lg px-4 py-2 hover:bg-[#7A76A8] transition-colors shadow-md"
+              className="flex items-center bg-[#1565C0] text-white rounded-lg px-4 py-2 hover:bg-[#30839f] transition-colors shadow-md"
               onClick={downloadDataAsExcel}
             >
               <RiFileExcel2Fill className="mr-2" /> Export Excel
@@ -797,8 +838,8 @@ export default function Dashboard(props) {
             {showAllData && showAllData.length !== 0 ? (
               <div className="px-8">
                 {/* Overview Section */}
-                <div className="bg-[#8D89BF] rounded-xl py-2 shadow-lg mb-6">
-                  <h3 className="text-xl font-semibold text-white text-center py-2">Overview</h3>
+                <div className="bg-[#1565C0] rounded-xl py-2 shadow-lg mb-6">
+                  <h3 className=" font-medium text-white text-center py-2">Overview</h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-6 mb-8">
@@ -814,8 +855,8 @@ export default function Dashboard(props) {
                 </div>
 
                 {/* Performance Section */}
-                <div className="bg-[#8D89BF] rounded-xl py-2 shadow-lg mb-6">
-                  <h3 className="text-xl font-semibold text-white text-center py-2">Performance</h3>
+                <div className="bg-[#1565C0] rounded-xl py-2 shadow-lg mb-6">
+                  <h3 className="font-medium text-white text-center py-2">Performance</h3>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
@@ -877,7 +918,7 @@ export default function Dashboard(props) {
                           "Desktop (Searches + Maps)": showAllData?.graphDataSearches?.[0],
                         }}
                       /> */}
-                       <CombinedLineChart
+                      <CombinedLineChart
                         data={{
                           "Google Search Desktop": showAllData?.graphDataSearches?.[0],
                           "Google Maps Desktop": showAllData?.graphDataMapsDesktop?.[0],
@@ -918,13 +959,13 @@ export default function Dashboard(props) {
 
                 {/* Top Doctors Section */}
                 <div className="mb-8">
-                  <TopDoctor contextHospitals={contextHospitals} contextMonth={contextMonth} />
+                  <TopDoctor contextHospitals={contextHospitals} newMonthContext={newMonthContext} />
                 </div>
               </div>
             ) : (
               <div className="flex justify-center items-center h-64">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8D89BF] mx-auto mb-4"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1565C0] mx-auto mb-4"></div>
                   <p className="text-[#6A6792] font-medium">Loading dashboard data...</p>
                 </div>
               </div>

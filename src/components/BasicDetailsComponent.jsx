@@ -42,7 +42,7 @@ function reorderGraphData(rawData, isYearSpecific = false) {
 
 export default function BasicDetailsComponent() {
   const [docData, setDocData] = useState()
-  const { getDrName } = useContext(SharedContext)
+  const { getDrName, setDrName } = useContext(SharedContext)
   const [isLoading, setIsLoading] = useState(true)
   var ratingsuggestion = ""
   const api = localStorage.getItem('API')
@@ -51,6 +51,8 @@ export default function BasicDetailsComponent() {
   const { isCollapsed } = useContext(SidebarContext);
   const { windowWidth } = useContext(SidebarContext);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const { doctorAnalysis } = useContext(SidebarContext);
+
 
   useEffect(() => {
     if (getDrName) {
@@ -69,7 +71,7 @@ export default function BasicDetailsComponent() {
             localStorage.clear();
             window.location.reload();
           }
-        
+
 
           if (!response.ok) {
             // If response status is not OK, set docData to null
@@ -96,6 +98,36 @@ export default function BasicDetailsComponent() {
       getDocData();
     }
   }, [getDrName]);
+
+  console.log("Doctor Analysis Data-----------45:", doctorAnalysis);
+
+  const doctorHead = [
+    "S.No",
+    "Doctor / Business",
+    "GS - Mobile",
+    "GS - Desktop",
+    "GM - Mobile",
+    "GM - Desktop",
+    "Calls",
+    "Directions",
+    "Website Clicks",
+    "Overall Searches"
+  ];
+
+  const doctorRows = doctorAnalysis.map((d, index) => [
+    index + 1,
+    d._id || "-",
+    d["Google Search Mobile"] || 0,
+    d["Google Search Desktop"] || 0,
+    d["Google Maps Mobile"] || 0,
+    d["Google Maps Desktop"] || 0,
+    d["Calls"] || 0,
+    d["Directions"] || 0,
+    d["Website Clicks"] || 0,
+    d["overallSearches"] || 0
+  ]);
+
+
 
   const head = ['Month', "GS - Mobile", "GS - Desktop", "GM - Mobile", "GM - Desktop", "Website Cliks", "Directions Clicks", "Phone Calls"]
   const rows = []
@@ -225,28 +257,28 @@ export default function BasicDetailsComponent() {
       "Directions Clicks",
       "Phone Calls"
     ];
-  
+
     const rows = docData?.result || [];
-  
+
     if (rows.length === 0) {
       console.warn("No data available to export.");
       return;
     }
-  
+
     const worksheetData = [head, ...rows];
     const ws = XLSX.utils.aoa_to_sheet(worksheetData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Report");
-  
+
     // Use doctor's name and phone number for filename
     const name = docData?.finalDetails?.[0]?.name?.replace(/\s+/g, '_') || "Doctor";
     const phone = docData?.finalDetails?.[0]?.phone || "NoPhone";
-  
+
     const filename = `${name}_${phone}_report.xlsx`;
-  
+
     XLSX.writeFile(wb, filename);
   };
-  
+
 
   // useEffect(() => { 
   //   if (downloadExcel) { 
@@ -254,9 +286,19 @@ export default function BasicDetailsComponent() {
   //   }
   // }, [downloadExcel])
 
+  // inside your component (before return):
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5;
 
-  return docData !== null ? (
+  // Pagination logic
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentDoctorRows = doctorAnalysis.slice(indexOfFirstRow, indexOfLastRow);
+
+  const totalPages = Math.ceil(doctorAnalysis.length / rowsPerPage);
+
+  return docData && Object.keys(docData).length > 0 ? (
     <>
       {docData && isLoading ?
         <div>
@@ -268,7 +310,7 @@ export default function BasicDetailsComponent() {
           marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
           transition: "margin-left 0.5s ease",
         }}>
-          <div id="section1" className='mt-48'>
+          <div id="section1" className='mt-12'>
             <div className="maniContainer p-3 m-3">
               <div className='details'>
                 <div className="basi-details">
@@ -311,7 +353,8 @@ export default function BasicDetailsComponent() {
             </div>
             <div className="keywords_compititors">
               <div className="maniContainer p-3 m-3" style={{ width: "50%" }}>
-                <h5>Comparision with other clinicians</h5>
+
+                <h3 className="font-medium  text-[#07509D] px-3 py-2">Comparision with other clinicians</h3>
                 {
                   cRows.length !== 0 && (
                     <TableComponent bcolor="white" title="Competitors" head={cHead} rows={cRows}></TableComponent>
@@ -319,7 +362,8 @@ export default function BasicDetailsComponent() {
                 }
               </div>
               <div className="maniContainer p-3 m-3" style={{ width: "50%" }}>
-                <h5>Path to #1 on Google searches</h5>
+                {/* <h5>Path to #1 on Google searches</h5> */}
+                <h3 className="font-medium  text-[#07509D] px-3 py-2">Path to #1 on Google searches</h3>
                 {
                   lRows.length !== 0 && (
                     <TableComponent bcolor="white" title="Keywords Ranking" head={lHead} rows={lRows}></TableComponent>
@@ -332,14 +376,17 @@ export default function BasicDetailsComponent() {
             {images != '' &&
               <>
                 <div className="maniContainer p-3 m-3">
-                  <h5>See how your GMB profile looks...</h5>
+                  {/* <h5>See how your GMB profile looks...</h5> */}
+                  <h3 className="font-medium  text-[#07509D] px-3 py-2">See how your GMB profile looks...</h3>
                   <center>
                     <img src={images[0].profile} alt="" />
                   </center>
                 </div>
 
                 <div className="maniContainer p-3 m-3">
-                  <h5>Actual search results on google</h5>
+                  {/* <h5>Actual search results on google</h5> */}
+                  <h3 className="font-medium  text-[#07509D] px-3 py-4">Actual search results on google</h3>
+
                   <center>
                     <img src={images[0].lable1} width="90%" />
                     <hr />
@@ -355,7 +402,9 @@ export default function BasicDetailsComponent() {
             <div style={{ pageBreakBefore: 'always' }}></div>
 
             <div className="maniContainer p-3 m-3">
-              <h5>Analytics</h5>
+              {/* <h5>Analytics</h5> */}
+              <h3 className="font-medium  text-[#07509D] px-3 py-2">Analytics</h3>
+
               {
                 docData && (
                   <>
@@ -381,7 +430,9 @@ export default function BasicDetailsComponent() {
 
 
             <div className="maniContainer p-3 m-3">
-              <h5>Review & Rating</h5>
+              <h3 className="font-medium  text-[#07509D] px-3 py-2">Review & Rating</h3>
+
+              {/* <h5>Review & Rating</h5> */}
               {
                 docData && (
                   <>
@@ -459,11 +510,86 @@ export default function BasicDetailsComponent() {
       )}
     </>
   ) : (
-    <div class="d-flex vh-100 justify-content-center mt-3">
-      <h6>Data Unavailable....</h6>
+    <div
+      style={{
+        marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
+        transition: "margin-left 0.5s ease",
+      }}
+      className="p-6"
+    >
+      {doctorAnalysis && doctorAnalysis.length > 0 ? (
+        <>
+          <h3 className="font-medium mb-4 text-black">Doctor Analysis</h3>
+          <table className="w-full rounded-xl overflow-hidden border border-gray-200">
+            <thead className="bg-gray-100 text-black">
+              <tr>
+                <th className="font-medium p-2 text-black rounded-tl-xl">S.No</th>
+                <th className="font-medium p-2 text-black">Doctor / Business</th>
+                <th className="font-medium p-2 text-black">GS - Mobile</th>
+                <th className="font-medium p-2 text-black">GS - Desktop</th>
+                <th className="font-medium p-2 text-black">GM - Mobile</th>
+                <th className="font-medium p-2 text-black">GM - Desktop</th>
+                <th className="font-medium p-2 text-black">Calls</th>
+                <th className="font-medium p-2 text-black">Directions</th>
+                <th className="font-medium p-2 text-black">Website Clicks</th>
+                <th className="font-medium p-2 text-black rounded-tr-xl">Overall Searches</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentDoctorRows.map((row, index) => (
+                <tr
+                  key={index}
+                  className="text-center cursor-pointer hover:bg-gray-100 text-black"
+                  onClick={() => setDrName(row._id)} // update doctor name
+                >
+                  <td className="font-normal p-2 text-black">{indexOfFirstRow + index + 1}</td>
+                  <td className="font-normal p-2 text-black">{row._id}</td>
+                  <td className="font-normal p-2 text-black">{row["Google Search Mobile"]}</td>
+                  <td className="font-normal p-2 text-black">{row["Google Search Desktop"]}</td>
+                  <td className="font-normal p-2 text-black">{row["Google Maps Mobile"]}</td>
+                  <td className="font-normal p-2 text-black">{row["Google Maps Desktop"]}</td>
+                  <td className="font-normal p-2 text-black">{row["Calls"]}</td>
+                  <td className="font-normal p-2 text-black">{row["Directions"]}</td>
+                  <td className="font-normal p-2 text-black">{row["Website Clicks"]}</td>
+                  <td className="font-normal p-2 text-black">{row["overallSearches"]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+
+
+          {/* Pagination Controls */}
+          <div className="flex justify-center mt-4 gap-2 text-black">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+            >
+              Prev
+            </button>
+            <span className="px-4 py-2">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        </>
+      )
+        : (
+          <h6 className="text-center mt-5">No Doctor Analysis Data Available</h6>
+        )}
     </div>
-  )
+  );
+
+
 }
+
 
 
 const Popup = ({ exportToExcel, downloadPDF, onClose }) => (
