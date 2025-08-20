@@ -51,7 +51,7 @@ export default function BasicDetailsComponent() {
   const { isCollapsed } = useContext(SidebarContext);
   const { windowWidth } = useContext(SidebarContext);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const { doctorAnalysis } = useContext(SidebarContext);
+  const { doctorAnalysis, profileType } = useContext(SidebarContext);
 
 
   useEffect(() => {

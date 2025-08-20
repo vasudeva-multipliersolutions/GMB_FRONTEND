@@ -7,3 +7,7 @@
 * {
     font-family: 'Poppins';   
 }
+
+input[type="checkbox"] {
+  accent-color: #1976d2; /* MUI blue */
+}

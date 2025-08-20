@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState, useContext, useRef } from "react"
 
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { SharedContext } from "../context/SharedContext";
-import { FaAlignJustify, FaAnglesLeft, FaDashcube, FaStar, FaUser } from "react-icons/fa6";
+import { FaAlignJustify, FaAnglesLeft, FaDashcube, FaSquarePhone, FaStar, FaUser, FaUserDoctor } from "react-icons/fa6";
 import { FaChartBar, FaHome, FaSearch, FaUserMd } from "react-icons/fa";
 import { Sidebar, Menu, SubMenu } from "react-pro-sidebar";
 import { RxCross2 } from "react-icons/rx";
@@ -95,6 +95,19 @@ export default function Navbar(props) {
   const handlePhoneMetricsClick = () => {
     setOpenPhonemetrics(!openPhonemetrics);
   };
+
+  // add at top
+const debounceTimer = useRef(null);
+
+const triggerFilterApi = () => {
+  if (debounceTimer.current) {
+    clearTimeout(debounceTimer.current);
+  }
+  debounceTimer.current = setTimeout(() => {
+    filterApi();
+  }, 200); // wait 200ms for state updates
+};
+
 
 
 
@@ -454,7 +467,7 @@ export default function Navbar(props) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        dept: department,
+        dept: profileType,
         state: stateToSend,
         branch: cityToSend,
         month: monthToSend,
@@ -705,8 +718,8 @@ export default function Navbar(props) {
   // }, [contextCity]);
 
   useEffect(() => {
-    filterApi();
-  }, [speciality, rating, department, contextState, contextCity, selectedMonths]);
+    triggerFilterApi();
+  }, [speciality, rating, profileType, contextState, contextCity, selectedMonths]);
 
 
 
@@ -783,7 +796,7 @@ export default function Navbar(props) {
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: "600" }} />
+                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem" }} />
                 {openDashboard ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
@@ -793,7 +806,7 @@ export default function Navbar(props) {
           <Collapse in={openDashboard && !isCollapsed} timeout="auto" unmountOnExit>
             {/* Profile Type */}
             <Box sx={{ px: 2, py: 1 }}>
-              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
                 Profile Type
               </FormLabel>
 
@@ -823,13 +836,15 @@ export default function Navbar(props) {
                               ? [...department, dep]
                               : department.filter((val) => val !== dep);
 
-                            setdepartment(newSelection);
-                            setContextProfileType(newSelection);
-                            setContextDepartment(newSelection);
+                              setdepartment(newSelection);
+                              setContextProfileType(newSelection);
+                              setContextDepartment(newSelection);
+
 
                             // ✅ trigger filter with latest selections
                             // filterApi();
                           }}
+                          
                         />
                         {dep}
                       </label>
@@ -862,7 +877,7 @@ export default function Navbar(props) {
 
             {/* Rating */}
             <Box sx={{ px: 2, py: 1 }}>
-              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
                 Rating
               </FormLabel>
               <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
@@ -913,7 +928,7 @@ export default function Navbar(props) {
 
             {/* Specialty */}
             <Box sx={{ px: 2, py: 1 }}>
-              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
                 Specialty
               </FormLabel>
 
@@ -1015,7 +1030,7 @@ export default function Navbar(props) {
             {!isCollapsed && (
               <ListItemText
                 primary="Doc Reports"
-                primaryTypographyProps={{ fontWeight: "600" }}
+                primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem" }}
               />
             )}
           </ListItemButton>
@@ -1042,11 +1057,12 @@ export default function Navbar(props) {
                 color: isActive("/Doc-report") ? "#fff" : "#000",
               }}
             >
-              <FaDashcube />
+              <FaUserDoctor />
+
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Doc Report" primaryTypographyProps={{ fontWeight: "600" }} />
+                <ListItemText primary="Profile Report" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem" }} />
                 {openDocReport ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
@@ -1057,7 +1073,7 @@ export default function Navbar(props) {
           <Collapse in={openDocReport && !isCollapsed} timeout="auto" unmountOnExit>
             {/* Profile Type */}
             <Box sx={{ px: 2, py: 1 }}>
-              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
                 Profile Type
               </FormLabel>
 
@@ -1088,10 +1104,7 @@ export default function Navbar(props) {
                               : department.filter((val) => val !== dep);
 
                             setdepartment(newSelection);
-                            if (window.location.pathname === "/Dashboard") {
                               setContextProfileType(newSelection);
-                              setContextDepartment(newSelection);
-                            }
 
                             // ✅ trigger filter with latest selections
                             // filterApi();
@@ -1130,7 +1143,7 @@ export default function Navbar(props) {
 
             {/* Rating */}
             <Box sx={{ px: 2, py: 1 }}>
-              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
                 Rating
               </FormLabel>
               <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
@@ -1185,7 +1198,7 @@ export default function Navbar(props) {
 
             {/* Specialty */}
             <Box sx={{ px: 2, py: 1 }}>
-              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
                 Specialty
               </FormLabel>
 
@@ -1285,11 +1298,11 @@ export default function Navbar(props) {
                 color: isActive("/Phone-Metrics") ? "#fff" : "#000",
               }}
             >
-              <FaDashcube />
+              <FaSquarePhone />
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Phone Number Update" primaryTypographyProps={{ fontWeight: "600" }} />
+                <ListItemText primary="Phone Number Update" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem" }} />
                 {openPhonemetrics ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
@@ -1300,7 +1313,7 @@ export default function Navbar(props) {
           <Collapse in={openPhonemetrics && !isCollapsed} timeout="auto" unmountOnExit>
             {/* Profile Type */}
             <Box sx={{ px: 2, py: 1 }}>
-              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
                 Profile Type
               </FormLabel>
 
@@ -1371,7 +1384,7 @@ export default function Navbar(props) {
 
             {/* Rating */}
             {/* <Box sx={{ px: 2, py: 1 }}>
-              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
                 Rating
               </FormLabel>
               <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
@@ -1426,7 +1439,7 @@ export default function Navbar(props) {
 
             {/* Specialty */}
             <Box sx={{ px: 2, py: 1 }}>
-              <FormLabel sx={{ color: "#000", fontWeight: 700, fontSize: "15px" }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
                 Specialty
               </FormLabel>
 
@@ -1533,7 +1546,7 @@ export default function Navbar(props) {
             {!isCollapsed && (
               <ListItemText
                 primary="Phone number update"
-                primaryTypographyProps={{ fontWeight: "600" }}
+                primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem" }}
               />
             )}
           </ListItemButton> */}
@@ -1563,7 +1576,7 @@ export default function Navbar(props) {
             {!isCollapsed && (
               <ListItemText
                 primary="Insights"
-                primaryTypographyProps={{ fontWeight: "600" }}
+                primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem" }}
               />
             )}
           </ListItemButton>
@@ -1590,7 +1603,7 @@ export default function Navbar(props) {
             >
               <FaAlignJustify size={20} />
             </button>
-            <h1 className="text-xl font-bold text-[#6A6792] hidden md:block">
+            <h1 className="text-xl font-bold text-[#1565C0] hidden md:block">
               Google My Business Performance
             </h1>
           </div>
