@@ -407,12 +407,12 @@ export default function Dashboard(props) {
   //   })
   // })
 
-  useEffect(() => {
-    // console.log("getContextCity@@@@@@@@ : " + contextCity);
-    if ( contextCity) {
-      getMonthData("");
-    }
-  }, [contextCity]);
+  // useEffect(() => {
+  //   // console.log("getContextCity@@@@@@@@ : " + contextCity);
+  //   if ( contextCity) {
+  //     getMonthData("");
+  //   }
+  // }, [contextCity]);
 
     useEffect(() => {
     // console.log("getContextCity@@@@@@@@ : " + contextCity);

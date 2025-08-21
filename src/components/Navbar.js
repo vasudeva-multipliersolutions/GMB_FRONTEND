@@ -88,7 +88,8 @@ export default function Navbar(props) {
   const [openRatingFilter, setOpenRatingFilter] = useState(false);
   const [openDocReport, setOpenDocReport] = useState(false);
   const [openPhonemetrics, setOpenPhonemetrics] = useState(false);
-
+  const [unitOpen, setUnitOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const handleDocReportClick = () => {
     setOpenDocReport(!openDocReport);
   };
@@ -108,6 +109,17 @@ const triggerFilterApi = () => {
   }, 200); // wait 200ms for state updates
 };
 
+useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setUnitOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
 
 
@@ -781,7 +793,7 @@ const triggerFilterApi = () => {
               borderRadius: "8px",
               mb: 1,
               backgroundColor: isActive("/Dashboard") ? "#1976d2" : "transparent",
-              color: isActive("/Dashboard") ? "#fff" : "#000",
+              color: isActive("/Dashboard") ? "#fff" : "#4a4a4a",
               "&:hover": {
                 backgroundColor: isActive("/Dashboard") ? "#1565c0" : "#f0f0f0",
               },
@@ -797,7 +809,7 @@ const triggerFilterApi = () => {
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", color: "#4a4a4a"}} />
+                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins"}} />
                 {openDashboard ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
@@ -1046,7 +1058,7 @@ const triggerFilterApi = () => {
               borderRadius: "8px",
               mb: 1,
               backgroundColor: isActive("/Doc-report") ? "#1976d2" : "transparent",
-              color: isActive("/Doc-report") ? "#fff" : "#000",
+              color: isActive("/Doc-report") ? "#fff" : "#4a4a4a",
               "&:hover": {
                 backgroundColor: isActive("/Doc-report") ? "#1565c0" : "#f0f0f0",
               },
@@ -1063,7 +1075,7 @@ const triggerFilterApi = () => {
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Profile Report" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", color: "#4a4a4a"  }} />
+                <ListItemText primary="Profile Report" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", }} />
                 {openDocReport ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
@@ -1287,7 +1299,7 @@ const triggerFilterApi = () => {
               borderRadius: "8px",
               mb: 1,
               backgroundColor: isActive("/Phone-Metrics") ? "#1976d2" : "transparent",
-              color: isActive("/Phone-Metrics") ? "#fff" : "#000",
+              color: isActive("/Phone-Metrics") ? "#fff" : "#4a4a4a",
               "&:hover": {
                 backgroundColor: isActive("/Phone-Metrics") ? "#1565c0" : "#f0f0f0",
               },
@@ -1303,7 +1315,7 @@ const triggerFilterApi = () => {
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Phone Number Update" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", color: "#4a4a4a" }} />
+                <ListItemText primary="Phone Number Update" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", }} />
                 {openPhonemetrics ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
@@ -1742,72 +1754,96 @@ const triggerFilterApi = () => {
 
 
 
-                {/* Unit Filter (blue chips) */}
-                <div className="flex flex-col w-full max-w-[1600px]">
-                  <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Unit</label>
-                  <div
-                    className="flex flex-wrap gap-2 border border-gray-300 rounded-md p-2 max-h-[120px] overflow-y-auto"
-                    style={{ minWidth: "250px" }}
+       {/* Unit Filter (multi-select dropdown with chips) */}
+      <div
+        className="flex flex-col w-full max-w-[1600px] relative"
+        ref={dropdownRef}
+      >
+        <label className="font-normal text-[0.9rem] text-gray-700 mb-1">
+          Unit
+        </label>
+
+        {/* Dropdown Box */}
+        <div
+          className="border border-gray-300 rounded-md px-2 py-2 cursor-pointer flex justify-between items-center bg-white"
+          onClick={() => setUnitOpen((prev) => !prev)}
+        >
+          <div className="flex flex-wrap gap-1 max-h-[70px] overflow-y-auto">
+            {Array.isArray(contextCity) && contextCity.length > 0 ? (
+              contextCity.map((unit) => (
+                <span
+                  key={unit}
+                  className="bg-blue-600 text-white px-2 py-0.5 rounded-md text-sm flex items-center font-normal text-[0.9rem] text-gray-700"
+                >
+                  {unit}
+                  <button
+                    className="ml-1 text-xs font-bold"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setContextCity((prev) =>
+                        Array.isArray(prev)
+                          ? prev.filter((u) => u !== unit)
+                          : []
+                      );
+                      filterApi();
+                    }}
                   >
-                    {/* {console.log("🔍 getCitys state value------------:", getCitys)} */}
-                    {getCitys
-                      ?.filter(
-                        (u) =>
-                          u !== "#N/A" &&
-                          !(Array.isArray(getStates) ? getStates.includes(u) : false) // ✅ safe check
-                      )
-                      .sort()
-                      .map((unit) => {
-                        const selectedUnits = Array.isArray(contextCity) ? contextCity : [];
-                        const isSelected = selectedUnits.includes(unit);
+                    ✕
+                  </button>
+                </span>
+              ))
+            ) : (
+              <span className="font-normal text-[0.9rem] text-gray-700">
+                Select units...
+              </span>
+            )}
+          </div>
+          <span className="ml-2 font-normal text-[0.9rem] text-gray-700">
+            {unitOpen ? "▲" : "▼"}
+          </span>
+        </div>
 
-                        return (
-                          <span
-                            key={unit}
-                            className={`px-3 py-1 rounded-md text-sm cursor-pointer flex items-center gap-1 transition-colors ${isSelected
-                              ? "bg-blue-600 text-white font-semibold"
-                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                              }`}
-                            style={{
-                              maxWidth: "140px",
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                            }}
-                            onClick={() => {
-                              const next = isSelected
-                                ? selectedUnits.filter((u) => u !== unit)
-                                : [...selectedUnits, unit];
-                              setContextCity(next);
-                              if (window.location.pathname === "/Dashboard") {
-                                setInsightsCity(next);
-                              }
+        {/* Dropdown Menu */}
+        {unitOpen && (
+          <div className="absolute top-full left-0 mt-1 w-full max-h-48 overflow-y-auto border border-gray-300 bg-white shadow-lg rounded-md z-10">
+            {getCitys
+              ?.filter(
+                (u) =>
+                  u !== "#N/A" &&
+                  !(Array.isArray(getStates) ? getStates.includes(u) : false)
+              )
+              .sort()
+              .map((unit) => {
+                const selectedUnits = Array.isArray(contextCity)
+                  ? contextCity
+                  : [];
+                const isSelected = selectedUnits.includes(unit);
 
-                              // filterApi(); // call only if you want instant update
-                            }}
-                          >
-                            {unit}
-                            {isSelected && (
-                              <button
-                                className="ml-1 text-xs font-bold"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setContextCity((prev) =>
-                                    Array.isArray(prev) ? prev.filter((u) => u !== unit) : []
-                                  );
-                                  filterApi();
-                                }}
-                                aria-label="Remove unit"
-                              >
-                                ✕
-                              </button>
-                            )}
-                          </span>
-                        );
-                      })}
+                return (
+                  <label
+                    key={unit}
+                    className="flex items-center px-3 py-1 hover:bg-gray-100 cursor-pointer font-normal text-[0.9rem] text-gray-700"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => {
+                        const next = isSelected
+                          ? selectedUnits.filter((u) => u !== unit)
+                          : [...selectedUnits, unit];
+                        setContextCity(next);
 
-                  </div>
-                </div>
+                      }}
+                      className="mr-2"
+                    />
+                    <span className="truncate">{unit}</span>
+                  </label>
+                );
+              })}
+          </div>
+        )}
+      </div>
+
 
 
 
