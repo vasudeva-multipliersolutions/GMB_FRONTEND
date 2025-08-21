@@ -17,6 +17,7 @@ export const SidebarProvider = ({ children }) => {
   const [newMonthContext, setNewMonthContext] = useState([]);
   const [doctorAnalysis, setDoctorAnalysis] = useState([]); 
   const [getCitys, setCitys] = useState([]);
+  const [populateState, setPopulateState] = useState([]);
 
   const toggleSidebar = () => {
     if (windowWidth >= 1250) {
@@ -44,7 +45,7 @@ export const SidebarProvider = ({ children }) => {
   return (
     <SidebarContext.Provider value={{
       isCollapsed, toggleSidebar, windowWidth, drNameContext, setDrNameContext, specialityContext, setSpecialityContext, profileType, setContextProfileType, profileCounts, setContextProfileCounts, sidebarRating, setSidebarRating, contextState, setContextState,
-      contextCity, setContextCity, getCitys, setCitys, contextMonth, setContextMonth, newMonthContext, setNewMonthContext, doctorAnalysis, setDoctorAnalysis
+      contextCity, setContextCity, getCitys, setCitys, contextMonth, setContextMonth, newMonthContext, setNewMonthContext, doctorAnalysis, setDoctorAnalysis, populateState, setPopulateState
     }}>
       {children}
     </SidebarContext.Provider>

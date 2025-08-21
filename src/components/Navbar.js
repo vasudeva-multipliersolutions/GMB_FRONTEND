@@ -140,7 +140,7 @@ const triggerFilterApi = () => {
 
 
 
-  console.log("^^^^^^^^^^^^^^^^^------------>" + departmentRef.current)
+  //console.log("^^^^^^^^^^^^^^^^^------------>" + departmentRef.current)
 
 
   const isActive = (path) => location.pathname === path;
@@ -491,6 +491,7 @@ const triggerFilterApi = () => {
       if (result.branches?.length > 0) {
         setCitys(result.branches);
       }
+
        
     }
     if (data?.doctorAnalysis) {
@@ -796,7 +797,7 @@ const triggerFilterApi = () => {
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem" }} />
+                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", color: "#4a4a4a"}} />
                 {openDashboard ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
@@ -1062,7 +1063,7 @@ const triggerFilterApi = () => {
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Profile Report" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem" }} />
+                <ListItemText primary="Profile Report" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", color: "#4a4a4a"  }} />
                 {openDocReport ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
@@ -1302,7 +1303,7 @@ const triggerFilterApi = () => {
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Phone Number Update" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem" }} />
+                <ListItemText primary="Phone Number Update" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", color: "#4a4a4a" }} />
                 {openPhonemetrics ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
@@ -1576,7 +1577,7 @@ const triggerFilterApi = () => {
             {!isCollapsed && (
               <ListItemText
                 primary="Insights"
-                primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem" }}
+                primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", color: "#4a4a4a"  }}
               />
             )}
           </ListItemButton>
@@ -1704,7 +1705,7 @@ const triggerFilterApi = () => {
                 {/* Region Filter (checkboxes) */}
                 {/* Region Filter */}
                 <div className="flex flex-col">
-                  <label className="font-medium text-gray-700 mb-1">Region</label>
+                  <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Region</label>
                   <div className="flex flex-wrap gap-4">
                     {getStates?.filter(s => s !== "#N/A").sort().map((region) => {
                       const selectedStates = Array.isArray(contextState) ? contextState : [];
@@ -1743,12 +1744,12 @@ const triggerFilterApi = () => {
 
                 {/* Unit Filter (blue chips) */}
                 <div className="flex flex-col w-full max-w-[1600px]">
-                  <label className="font-medium text-gray-700 mb-1">Unit</label>
+                  <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Unit</label>
                   <div
                     className="flex flex-wrap gap-2 border border-gray-300 rounded-md p-2 max-h-[120px] overflow-y-auto"
                     style={{ minWidth: "250px" }}
                   >
-                    {console.log("🔍 getCitys state value------------:", getCitys)}
+                    {/* {console.log("🔍 getCitys state value------------:", getCitys)} */}
                     {getCitys
                       ?.filter(
                         (u) =>
@@ -1814,7 +1815,7 @@ const triggerFilterApi = () => {
                 <div className="flex items-end gap-4">
                   {/* Year Selector */}
                   <div className="flex flex-col w-96">
-                    <label className="font-medium text-gray-700 mb-1 block">Year</label>
+                    <label className="font-normal text-[0.9rem] text-gray-700 mb-1 block">Year</label>
                     <select
                       value={selectedYear}
                       onChange={(e) => {
@@ -1832,7 +1833,7 @@ const triggerFilterApi = () => {
 
                   {/* Month Selector */}
                   <div className="flex flex-col w-[800px]">
-                    <label className="font-medium text-gray-700 mb-1">Month</label>
+                    <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Month</label>
                     <MultiMonthSelector
                       filteredMonths={filteredMonths}
                       selectedMonths={selectedMonths}
