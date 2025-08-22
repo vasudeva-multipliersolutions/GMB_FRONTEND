@@ -289,7 +289,7 @@ export default function BasicDetailsComponent() {
   // inside your component (before return):
 
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
+  const rowsPerPage = 10;
 
   // Pagination logic
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -520,7 +520,7 @@ export default function BasicDetailsComponent() {
       {doctorAnalysis && doctorAnalysis.length > 0 ? (
         <>
           <h3 className="font-normal text-[0.9rem] text-gray-700 mb-4">
-            Doctor Analysis
+            Profile Analysis
           </h3>
           <table className="w-full rounded-xl overflow-hidden border border-gray-200">
             <thead className="bg-gray-100 text-center">

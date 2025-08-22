@@ -8,7 +8,7 @@ export default function PhoneMetrics() {
   const [contextDepartment, setContextDepartment] = useState();
   const [contextSpeciality, setContextSpeciality] = useState();
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage] = useState(5);
+  const [rowsPerPage] = useState(10);
   const [loading, setLoading] = useState(false); // ✅ Loading state
   const api = localStorage.getItem("API");
 

@@ -29,6 +29,8 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
                 onClick={() => setIsOpen(!isOpen)}
                 style={{
                     border: "1px solid #ccc",
+                    fontSize: "0.9rem",
+                    color: "rgb(55 65 81 / var(--tw-text-opacity, 1))",
                     borderRadius: "5px",
                     padding: "8px",
                     cursor: "pointer",
@@ -60,7 +62,7 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
                         boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" // optional for nicer look
                     }}
                 >
-                    <div style={{ padding: "10px", fontFamily: "sans-serif" }}>
+                    <div style={{ padding: "10px" }}>
                         {/* Month Options */}
                         {filteredMonths
                             .filter((m) => typeof m === "string" && m.trim() !== "")

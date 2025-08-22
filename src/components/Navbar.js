@@ -1577,7 +1577,7 @@ export default function Navbar(props) {
               backgroundColor: isActive("/Insights") ? "#1976d2" : "transparent",
               color: isActive("/Insights") ? "#fff" : "#000",
               "&:hover": {
-                backgroundColor: isActive("/Insights") ? "#1565c0" : "#f0f0f0",
+                backgroundColor: isActive("/Insights") ? "#1565c0" : "#4a4a4a",
               },
             }}
           >
@@ -1592,7 +1592,7 @@ export default function Navbar(props) {
             {!isCollapsed && (
               <ListItemText
                 primary="Insights"
-                primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", color: "#4a4a4a" }}
+                primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", }}
               />
             )}
           </ListItemButton>
@@ -1715,11 +1715,11 @@ export default function Navbar(props) {
               )} */}
 
               {/* Filters Section */}
-              <div className="flex flex-col gap-6 mt-4 w-screen px-4">
+              <div className="flex flex-col gap-6  w-screen px-4">
 
-                {/* Region Filter (checkboxes) */}
+
                 {/* Filters Row */}
-                <div className="flex flex-wrap gap-6 mt-4 w-full ">
+                <div className="flex flex-wrap gap-6 mt-2 w-full ">
                   {/* Region Filter */}
                   <div className="flex flex-col flex-1 min-w-[300px]">
                     <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Region</label>
@@ -1804,7 +1804,7 @@ export default function Navbar(props) {
                         )}
                       </div>
                       <span className="ml-2 font-normal text-[0.9rem] text-gray-700">
-                        {unitOpen ? <FaChevronDown /> : <FaChevronUp />}
+                        {unitOpen ? <FaChevronUp /> : <FaChevronDown />}
                       </span>
                     </div>
 
@@ -1865,7 +1865,7 @@ export default function Navbar(props) {
                         setSelectedMonths([]);   // ✅ reset months on year change
                         setContextMonth([]);
                       }}
-                      className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                      className="font-normal text-[0.9rem] border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full"
                     >
                       <option value="">Select Year</option>
                       <option value="2024">2024</option>
