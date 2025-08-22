@@ -62,7 +62,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
       // console.log("Hello--------"+ contextDepartment)
 
 
-      if (getInsightState || getInsightsCity || contextHospitals || contextMonth || contextSpeciality || contextRating || contextDepartment || newMonthContext || contextCity || contextState) {
+      if (getInsightState || getInsightsCity || contextHospitals || contextMonth || contextSpeciality || contextRating || contextDepartment || newMonthContext || contextCity || contextState || specialityContext) {
         //console.log("Hello"+ 1)
         try {
           let cityToSend = location === "All" ? "" : location;
@@ -96,7 +96,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
       }
     }
     fetchDataFilter();
-  }, [getInsightState, getInsightsCity, contextHospitals, contextMonth, contextSpeciality, contextRating, contextDepartment, newMonthContext, contextCity, contextState]);
+  }, [getInsightState, getInsightsCity, contextHospitals, contextMonth, contextSpeciality, contextRating, contextDepartment, newMonthContext, contextCity, contextState, specialityContext]);
 
 
 

@@ -57,7 +57,7 @@ export default function Dashboard(props) {
   const [analysisData, setAnalysisData] = useState();
   // const [contextCity, setContextCity] = useState([]);
   // const [newMonthContext, setNewMonthContext] = useState([]);
-  const { contextState, contextCity, newMonthContext, profileType, sidebarRating } = useContext(SidebarContext);
+  const { contextState, contextCity, newMonthContext, profileType, sidebarRating, specialityContext } = useContext(SidebarContext);
 
   const [contextYear, setContextYear] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -465,6 +465,12 @@ export default function Dashboard(props) {
 
   }, [contextState]);
 
+
+  useEffect(() => {
+
+    getMonthData(newMonthContext);
+
+  }, [specialityContext]);
 
   
   useEffect(() => {
