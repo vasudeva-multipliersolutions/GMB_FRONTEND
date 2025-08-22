@@ -119,62 +119,79 @@ export default function PhoneMetrics() {
         {loading ? (
           <div className="text-center py-4">Loading...</div>
         ) : (
-          <>
-            {/* ✅ Table */}
-            <table className="w-full border-collapse border border-gray-300">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="border p-2">S.No</th>
-                  <th className="border p-2">Name</th>
-                  <th className="border p-2">Unit</th>
-                  <th className="border p-2">Speciality</th>
-                  <th className="border p-2">Phone</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentRows.length > 0 ? (
-                  currentRows.map((item, index) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="border p-2">{indexOfFirstRow + index + 1}</td>
-                      <td className="border p-2">{item.name}</td>
-                      <td className="border p-2">{item.unit}</td>
-                      <td className="border p-2">{item.speciality}</td>
-                      <td className="border p-2">{item.phone}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td className="border p-2 text-center" colSpan="5">
-                      No data available
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+       <>
+  {/* Table */}
+  <table className="w-full rounded-xl overflow-hidden border border-gray-200">
+    <thead className="bg-gray-100 text-center">
+      <tr>
+        <th className="font-normal text-[0.9rem] text-gray-700 p-2 rounded-tl-xl">S.No</th>
+        <th className="font-normal text-[0.9rem] text-gray-700 p-2">Name</th>
+        <th className="font-normal text-[0.9rem] text-gray-700 p-2">Unit</th>
+        <th className="font-normal text-[0.9rem] text-gray-700 p-2">Speciality</th>
+        <th className="font-normal text-[0.9rem] text-gray-700 p-2 rounded-tr-xl">Phone</th>
+      </tr>
+    </thead>
+    <tbody>
+      {currentRows.length > 0 ? (
+        currentRows.map((item, index) => (
+          <tr
+            key={item.id}
+            className="text-center cursor-pointer hover:bg-gray-100"
+          >
+            <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+              {indexOfFirstRow + index + 1}
+            </td>
+            <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+              {item.name}
+            </td>
+            <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+              {item.unit}
+            </td>
+            <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+              {item.speciality}
+            </td>
+            <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+              {item.phone}
+            </td>
+          </tr>
+        ))
+      ) : (
+        <tr>
+          <td
+            className="font-normal text-[0.9rem] text-gray-700 p-2 text-center"
+            colSpan="5"
+          >
+            No data available
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
 
-            {/* ✅ Pagination Controls */}
-            {locationProfiles.length > rowsPerPage && (
-              <div className="flex justify-center items-center mt-4 gap-4">
-                <button
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-                >
-                  Prev
-                </button>
-                <span>
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
-            )}
-          </>
+  {/* Pagination Controls */}
+  {locationProfiles.length > rowsPerPage && (
+    <div className="flex justify-center items-center mt-4 gap-2 text-gray-700">
+      <button
+        onClick={handlePrevPage}
+        disabled={currentPage === 1}
+        className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+      >
+        Prev
+      </button>
+      <span className="px-4 py-2">
+        Page {currentPage} of {totalPages}
+      </span>
+      <button
+        onClick={handleNextPage}
+        disabled={currentPage === totalPages}
+        className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+      >
+        Next
+      </button>
+    </div>
+  )}
+</>
+
         )}
       </div>
     </SharedContext.Provider>

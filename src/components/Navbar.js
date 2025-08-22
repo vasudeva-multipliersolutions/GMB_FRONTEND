@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState, useContext, useRef } from "react"
 
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { SharedContext } from "../context/SharedContext";
-import { FaAlignJustify, FaAnglesLeft, FaDashcube, FaSquarePhone, FaStar, FaUser, FaUserDoctor } from "react-icons/fa6";
+import { FaAlignJustify, FaAnglesLeft, FaChevronDown, FaChevronUp, FaDashcube, FaSquarePhone, FaStar, FaUser, FaUserDoctor } from "react-icons/fa6";
 import { FaChartBar, FaHome, FaSearch, FaUserMd } from "react-icons/fa";
 import { Sidebar, Menu, SubMenu } from "react-pro-sidebar";
 import { RxCross2 } from "react-icons/rx";
@@ -40,7 +40,7 @@ export default function Navbar(props) {
   const mail = localStorage.getItem("mail");
   const loginBranch = localStorage.getItem("Branch");
   const Cluster = localStorage.getItem("Cluster");
-  const { isCollapsed, toggleSidebar, drNameContext, specialityContext, setSpecialityContext, setDoctorAnalysis } = useContext(SidebarContext); // Use the correct context
+  const { isCollapsed, toggleSidebar, drNameContext, specialityContext, setSpecialityContext, setDoctorAnalysis, populateState, setPopulateState } = useContext(SidebarContext); // Use the correct context
   const { setDrName } = useContext(SharedContext);
   const { setLocationProfiles, setContextSpeciality, setContextRating, setContextDepartment, } = useContext(SharedContext);
   const { setInsightsState, setInsightsCity, } = useContext(SharedContext);
@@ -98,18 +98,18 @@ export default function Navbar(props) {
   };
 
   // add at top
-const debounceTimer = useRef(null);
+  const debounceTimer = useRef(null);
 
-const triggerFilterApi = () => {
-  if (debounceTimer.current) {
-    clearTimeout(debounceTimer.current);
-  }
-  debounceTimer.current = setTimeout(() => {
-    filterApi();
-  }, 200); // wait 200ms for state updates
-};
+  const triggerFilterApi = () => {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+    debounceTimer.current = setTimeout(() => {
+      filterApi();
+    }, 200); // wait 200ms for state updates
+  };
 
-useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setUnitOpen(false);
@@ -503,13 +503,16 @@ useEffect(() => {
       if (result.branches?.length > 0) {
         setCitys(result.branches);
       }
-
-       
     }
     if (data?.doctorAnalysis) {
-        setDoctorAnalysis(data.doctorAnalysis); // ✅ store globally
+      setDoctorAnalysis(data.doctorAnalysis); // ✅ store globally
+    }
+    if (data?.statePopulate?.length > 0) {
+      setPopulateState(data.statePopulate[0].states || []);
+    } else {
+      setPopulateState([]); // Clear if no data found
+    }
 
-      }
 
     if (data.countOfProfiles?.length > 0) {
       setcountOfProfiles([...data.countOfProfiles]);
@@ -530,7 +533,7 @@ useEffect(() => {
 
 
 
-  //console.log("🔍 getCitys state value:", getCitys);
+  console.log("🔍 getCitys state value:", populateState);
 
 
   // async function fetchAndSetProfiles(dept) {
@@ -809,7 +812,7 @@ useEffect(() => {
             </ListItemIcon>
             {!isCollapsed && (
               <>
-                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins"}} />
+                <ListItemText primary="Dashboard" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins" }} />
                 {openDashboard ? <ExpandLess /> : <ExpandMore />}
               </>
             )}
@@ -849,15 +852,15 @@ useEffect(() => {
                               ? [...department, dep]
                               : department.filter((val) => val !== dep);
 
-                              setdepartment(newSelection);
-                              setContextProfileType(newSelection);
-                              setContextDepartment(newSelection);
+                            setdepartment(newSelection);
+                            setContextProfileType(newSelection);
+                            setContextDepartment(newSelection);
 
 
                             // ✅ trigger filter with latest selections
                             // filterApi();
                           }}
-                          
+
                         />
                         {dep}
                       </label>
@@ -1117,7 +1120,7 @@ useEffect(() => {
                               : department.filter((val) => val !== dep);
 
                             setdepartment(newSelection);
-                              setContextProfileType(newSelection);
+                            setContextProfileType(newSelection);
 
                             // ✅ trigger filter with latest selections
                             // filterApi();
@@ -1357,8 +1360,8 @@ useEffect(() => {
                               : department.filter((val) => val !== dep);
 
                             setdepartment(newSelection);
-                              setContextProfileType(newSelection);
-                              setContextDepartment(newSelection);
+                            setContextProfileType(newSelection);
+                            setContextDepartment(newSelection);
 
                             // ✅ trigger filter with latest selections
                             // filterApi();
@@ -1491,8 +1494,8 @@ useEffect(() => {
                               : speciality.filter((s) => s !== sp);
 
                             setSpeciality(newSelection);
-                              setContextSpeciality(newSelection);
-                            
+                            setContextSpeciality(newSelection);
+
 
                             // ✅ instant apply
                             // filterApi();
@@ -1589,7 +1592,7 @@ useEffect(() => {
             {!isCollapsed && (
               <ListItemText
                 primary="Insights"
-                primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", color: "#4a4a4a"  }}
+                primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", color: "#4a4a4a" }}
               />
             )}
           </ListItemButton>
@@ -1715,134 +1718,137 @@ useEffect(() => {
               <div className="flex flex-col gap-6 mt-4 w-screen px-4">
 
                 {/* Region Filter (checkboxes) */}
-                {/* Region Filter */}
-                <div className="flex flex-col">
-                  <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Region</label>
-                  <div className="flex flex-wrap gap-4">
-                    {getStates?.filter(s => s !== "#N/A").sort().map((region) => {
-                      const selectedStates = Array.isArray(contextState) ? contextState : [];
-                      const isChecked = selectedStates.includes(region);
+                {/* Filters Row */}
+                <div className="flex flex-wrap gap-6 mt-4 w-full ">
+                  {/* Region Filter */}
+                  <div className="flex flex-col flex-1 min-w-[300px]">
+                    <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Region</label>
+                    <div className="flex flex-wrap gap-4">
+                      {getStates?.filter((s) => s !== "#N/A").sort().map((region) => {
+                        const selectedStates =
+                          Array.isArray(populateState) && populateState.length > 0
+                            ? populateState
+                            : Array.isArray(contextState)
+                              ? contextState
+                              : [];
 
-                      return (
-                        <label
-                          key={region}
-                          className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={(e) => {
-                              const next = e.target.checked
-                                ? [...selectedStates, region]
-                                : selectedStates.filter(r => r !== region);
-                              setContextState(next);
-                              if (window.location.pathname === "/Dashboard") {
-                                setInsightsState(next);
-                                setInsightsCity(contextCity);
-                              }
-                              //filterApi(); // ✅ include Region in payload instantly
-                            }}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          />
-                          {region}
-                        </label>
-                      );
-                    })}
+                        const isChecked = selectedStates.includes(region);
+
+                        return (
+                          <label
+                            key={region}
+                            className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={(e) => {
+                                const next = e.target.checked
+                                  ? [...selectedStates, region]
+                                  : selectedStates.filter((r) => r !== region);
+
+                                setContextState(next);
+                                setPopulateState(next);
+
+                                if (window.location.pathname === "/Dashboard") {
+                                  setInsightsState(next);
+                                  setInsightsCity(contextCity);
+                                }
+                              }}
+                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            {region}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Unit Filter */}
+                  <div className="flex flex-col flex-1 min-w-[260px] relative" ref={dropdownRef}>
+                    <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Unit</label>
+
+                    {/* Dropdown Box */}
+                    <div
+                      className="border border-gray-300 rounded-md px-2 py-2 cursor-pointer flex justify-between items-center bg-white"
+                      onClick={() => setUnitOpen((prev) => !prev)}
+                    >
+                      <div className="flex flex-wrap gap-1 max-h-[70px] overflow-y-auto">
+                        {Array.isArray(contextCity) && contextCity.length > 0 ? (
+                          contextCity.map((unit) => (
+                            <span
+                              key={unit}
+                              className="bg-blue-600 text-white px-2 py-0.5 rounded-md text-sm flex items-center"
+                            >
+                              {unit}
+                              <button
+                                className="ml-1 text-xs font-bold"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setContextCity((prev) =>
+                                    Array.isArray(prev)
+                                      ? prev.filter((u) => u !== unit)
+                                      : []
+                                  );
+                                  filterApi();
+                                }}
+                              >
+                                ✕
+                              </button>
+                            </span>
+                          ))
+                        ) : (
+                          <span className="font-normal text-[0.9rem] text-gray-700">
+                            Select units...
+                          </span>
+                        )}
+                      </div>
+                      <span className="ml-2 font-normal text-[0.9rem] text-gray-700">
+                        {unitOpen ? <FaChevronDown /> : <FaChevronUp />}
+                      </span>
+                    </div>
+
+                    {/* Dropdown Menu */}
+                    {unitOpen && (
+                      <div className="absolute top-full left-0 mt-1 w-full max-h-48 overflow-y-auto border border-gray-300 bg-white shadow-lg rounded-md z-10">
+                        {getCitys
+                          ?.filter(
+                            (u) =>
+                              u !== "#N/A" &&
+                              !(Array.isArray(getStates) ? getStates.includes(u) : false)
+                          )
+                          .sort()
+                          .map((unit) => {
+                            const selectedUnits = Array.isArray(contextCity)
+                              ? contextCity
+                              : [];
+                            const isSelected = selectedUnits.includes(unit);
+
+                            return (
+                              <label
+                                key={unit}
+                                className="flex items-center px-3 py-1 hover:bg-gray-100 cursor-pointer font-normal text-[0.9rem] text-gray-700"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => {
+                                    const next = isSelected
+                                      ? selectedUnits.filter((u) => u !== unit)
+                                      : [...selectedUnits, unit];
+                                    setContextCity(next);
+                                  }}
+                                  className="mr-2"
+                                />
+                                <span className="truncate">{unit}</span>
+                              </label>
+                            );
+                          })}
+                      </div>
+                    )}
                   </div>
                 </div>
 
-
-
-
-       {/* Unit Filter (multi-select dropdown with chips) */}
-      <div
-        className="flex flex-col w-full max-w-[1600px] relative"
-        ref={dropdownRef}
-      >
-        <label className="font-normal text-[0.9rem] text-gray-700 mb-1">
-          Unit
-        </label>
-
-        {/* Dropdown Box */}
-        <div
-          className="border border-gray-300 rounded-md px-2 py-2 cursor-pointer flex justify-between items-center bg-white"
-          onClick={() => setUnitOpen((prev) => !prev)}
-        >
-          <div className="flex flex-wrap gap-1 max-h-[70px] overflow-y-auto">
-            {Array.isArray(contextCity) && contextCity.length > 0 ? (
-              contextCity.map((unit) => (
-                <span
-                  key={unit}
-                  className="bg-blue-600 text-white px-2 py-0.5 rounded-md text-sm flex items-center font-normal text-[0.9rem] text-gray-700"
-                >
-                  {unit}
-                  <button
-                    className="ml-1 text-xs font-bold"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setContextCity((prev) =>
-                        Array.isArray(prev)
-                          ? prev.filter((u) => u !== unit)
-                          : []
-                      );
-                      filterApi();
-                    }}
-                  >
-                    ✕
-                  </button>
-                </span>
-              ))
-            ) : (
-              <span className="font-normal text-[0.9rem] text-gray-700">
-                Select units...
-              </span>
-            )}
-          </div>
-          <span className="ml-2 font-normal text-[0.9rem] text-gray-700">
-            {unitOpen ? "▲" : "▼"}
-          </span>
-        </div>
-
-        {/* Dropdown Menu */}
-        {unitOpen && (
-          <div className="absolute top-full left-0 mt-1 w-full max-h-48 overflow-y-auto border border-gray-300 bg-white shadow-lg rounded-md z-10">
-            {getCitys
-              ?.filter(
-                (u) =>
-                  u !== "#N/A" &&
-                  !(Array.isArray(getStates) ? getStates.includes(u) : false)
-              )
-              .sort()
-              .map((unit) => {
-                const selectedUnits = Array.isArray(contextCity)
-                  ? contextCity
-                  : [];
-                const isSelected = selectedUnits.includes(unit);
-
-                return (
-                  <label
-                    key={unit}
-                    className="flex items-center px-3 py-1 hover:bg-gray-100 cursor-pointer font-normal text-[0.9rem] text-gray-700"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      onChange={() => {
-                        const next = isSelected
-                          ? selectedUnits.filter((u) => u !== unit)
-                          : [...selectedUnits, unit];
-                        setContextCity(next);
-
-                      }}
-                      className="mr-2"
-                    />
-                    <span className="truncate">{unit}</span>
-                  </label>
-                );
-              })}
-          </div>
-        )}
-      </div>
 
 
 
@@ -1883,69 +1889,69 @@ useEffect(() => {
 
                   {/*   */}
 
-                     {/* Doctor Search */}
-              <div
-                className="relative"
-                style={{
-                  display: props.filterpopover || props.clusterlogin ? "block" : "none",
-                }}
-              >
-                <div className="flex ml-2 flex-col w-48">
-                  {/* ✅ Label above input bar */}
-                  <label className="font-medium text-gray-700 mb-1 block">
-                    Doctor Name
-                  </label>
+                  {/* Doctor Search */}
+                  <div
+                    className="relative"
+                    style={{
+                      display: props.filterpopover || props.clusterlogin ? "block" : "none",
+                    }}
+                  >
+                    <div className="flex ml-2 flex-col w-48">
+                      {/* ✅ Label above input bar */}
+                      <label className="font-normal text-[0.9rem] text-gray-700 mb-1 block">
+                        Profile Search
+                      </label>
 
-                  {/* ✅ Input + button grouped */}
-                  <div className="flex">
-                    <input
-                      type="text"
-                      list="doctorList"
-                      placeholder="Enter doctor name"
-                      value={getName}
-                      onChange={nameHandelar}   // ✅ use onChange (better than onInputCapture for React forms)
-                      className="border border-gray-300 rounded-l-md py-[10px] px-3 text-sm 
+                      {/* ✅ Input + button grouped */}
+                      <div className="flex">
+                        <input
+                          type="text"
+                          list="doctorList"
+                          placeholder="Enter profile name"
+                          value={getName}
+                          onChange={nameHandelar}   // ✅ use onChange (better than onInputCapture for React forms)
+                          className="border border-gray-300 rounded-l-md py-[10px] px-3 text-sm text-[0.9rem] 
                     focus:outline-none f
                     w-full"
-                    />
-                    <button
-                      type="button"
-                      onClick={nameseter}
-                      className="bg-[#1565C0] hover:bg-[#7A76A8] text-white 
+                        />
+                        <button
+                          type="button"
+                          onClick={nameseter}
+                          className="bg-[#1565C0] hover:bg-[#7A76A8] text-white 
                    rounded-r-md px-3 flex items-center transition-colors"
-                    >
-                      <FaSearch />
-                    </button>
+                        >
+                          <FaSearch />
+                        </button>
+                      </div>
+
+                      {/* ✅ Proper datalist (linked to input via list attr) */}
+                      <datalist id="doctorList">
+                        {(drNameContext?.length > 0 ? drNameContext : getAllnames)?.map(
+                          (item, index) => (
+                            <option key={index} value={item} />
+                          )
+                        )}
+                      </datalist>
+                    </div>
                   </div>
 
-                  {/* ✅ Proper datalist (linked to input via list attr) */}
-                  <datalist id="doctorList">
-                    {(drNameContext?.length > 0 ? drNameContext : getAllnames)?.map(
-                      (item, index) => (
-                        <option key={index} value={item} />
-                      )
-                    )}
-                  </datalist>
-                </div>
-              </div>
-
-              {/* Clear All Filters at bottom right */}
-              <div className="flex justify-end mt-4 w-full">
-                <button
-                  onClick={() => {
-                    setSelectedYear("");
-                    setSelectedMonths([]);
-                    setNewMonthContext([]);
-                    setContextMonth([]);
-                    setContextState([]);
-                    setContextCity([]);
-                    filterApi();
-                  }}
-                  className="bg-red-100 hover:bg-red-200 text-red-600 px-6 py-3 rounded-md text-sm font-medium"
-                >
-                  Clear all filters
-                </button>
-              </div>
+                  {/* Clear All Filters at bottom right */}
+                  <div className="flex justify-end mt-4 w-full">
+                    <button
+                      onClick={() => {
+                        setSelectedYear("");
+                        setSelectedMonths([]);
+                        setNewMonthContext([]);
+                        setContextMonth([]);
+                        setContextState([]);
+                        setContextCity([]);
+                        filterApi();
+                      }}
+                      className="bg-red-100 hover:bg-red-200 text-red-600 px-6 py-3 rounded-md text-sm font-medium"
+                    >
+                      Clear all filters
+                    </button>
+                  </div>
                 </div>
 
               </div>
@@ -2006,7 +2012,7 @@ useEffect(() => {
                 </div>
               </div> */}
 
-           
+
 
 
 

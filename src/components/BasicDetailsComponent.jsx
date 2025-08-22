@@ -519,48 +519,50 @@ export default function BasicDetailsComponent() {
     >
       {doctorAnalysis && doctorAnalysis.length > 0 ? (
         <>
-          <h3 className="font-medium mb-4 text-black">Doctor Analysis</h3>
+          <h3 className="font-normal text-[0.9rem] text-gray-700 mb-4">
+            Doctor Analysis
+          </h3>
           <table className="w-full rounded-xl overflow-hidden border border-gray-200">
-            <thead className="bg-gray-100 text-black">
+            <thead className="bg-gray-100 text-center">
               <tr>
-                <th className="font-medium p-2 text-black rounded-tl-xl">S.No</th>
-                <th className="font-medium p-2 text-black">Doctor / Business</th>
-                <th className="font-medium p-2 text-black">GS - Mobile</th>
-                <th className="font-medium p-2 text-black">GS - Desktop</th>
-                <th className="font-medium p-2 text-black">GM - Mobile</th>
-                <th className="font-medium p-2 text-black">GM - Desktop</th>
-                <th className="font-medium p-2 text-black">Calls</th>
-                <th className="font-medium p-2 text-black">Directions</th>
-                <th className="font-medium p-2 text-black">Website Clicks</th>
-                <th className="font-medium p-2 text-black rounded-tr-xl">Overall Searches</th>
+                <th className="font-normal text-[0.9rem] text-gray-700 p-2 rounded-tl-xl">S.No</th>
+                <th className="font-normal text-[0.9rem] text-gray-700 p-2 ">Profile</th>
+                <th className="font-normal text-[0.9rem] text-gray-700 p-2">GS - Mobile</th>
+                <th className="font-normal text-[0.9rem] text-gray-700 p-2">GS - Desktop</th>
+                <th className="font-normal text-[0.9rem] text-gray-700 p-2">GM - Mobile</th>
+                <th className="font-normal text-[0.9rem] text-gray-700 p-2">GM - Desktop</th>
+                <th className="font-normal text-[0.9rem] text-gray-700 p-2">Calls</th>
+                <th className="font-normal text-[0.9rem] text-gray-700 p-2">Directions</th>
+                <th className="font-normal text-[0.9rem] text-gray-700 p-2">Website Clicks</th>
+                <th className="font-normal text-[0.9rem] text-gray-700 p-2 rounded-tr-xl">Overall Searches</th>
               </tr>
             </thead>
             <tbody>
               {currentDoctorRows.map((row, index) => (
                 <tr
                   key={index}
-                  className="text-center cursor-pointer hover:bg-gray-100 text-black"
+                  className="text-center cursor-pointer hover:bg-gray-100"
                   onClick={() => setDrName(row._id)} // update doctor name
                 >
-                  <td className="font-normal p-2 text-black">{indexOfFirstRow + index + 1}</td>
-                  <td className="font-normal p-2 text-black">{row._id}</td>
-                  <td className="font-normal p-2 text-black">{row["Google Search Mobile"]}</td>
-                  <td className="font-normal p-2 text-black">{row["Google Search Desktop"]}</td>
-                  <td className="font-normal p-2 text-black">{row["Google Maps Mobile"]}</td>
-                  <td className="font-normal p-2 text-black">{row["Google Maps Desktop"]}</td>
-                  <td className="font-normal p-2 text-black">{row["Calls"]}</td>
-                  <td className="font-normal p-2 text-black">{row["Directions"]}</td>
-                  <td className="font-normal p-2 text-black">{row["Website Clicks"]}</td>
-                  <td className="font-normal p-2 text-black">{row["overallSearches"]}</td>
+                  <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+                    {indexOfFirstRow + index + 1}
+                  </td>
+                  <td className="font-normal text-[0.9rem] text-gray-700 p-2">{row._id}</td>
+                  <td className="font-normal text-[0.9rem] text-gray-700 p-2">{row["Google Search Mobile"]}</td>
+                  <td className="font-normal text-[0.9rem] text-gray-700 p-2">{row["Google Search Desktop"]}</td>
+                  <td className="font-normal text-[0.9rem] text-gray-700 p-2">{row["Google Maps Mobile"]}</td>
+                  <td className="font-normal text-[0.9rem] text-gray-700 p-2">{row["Google Maps Desktop"]}</td>
+                  <td className="font-normal text-[0.9rem] text-gray-700 p-2">{row["Calls"]}</td>
+                  <td className="font-normal text-[0.9rem] text-gray-700 p-2">{row["Directions"]}</td>
+                  <td className="font-normal text-[0.9rem] text-gray-700 p-2">{row["Website Clicks"]}</td>
+                  <td className="font-normal text-[0.9rem] text-gray-700 p-2">{row["overallSearches"]}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-
-
           {/* Pagination Controls */}
-          <div className="flex justify-center mt-4 gap-2 text-black">
+          <div className="flex justify-center mt-4 gap-2 text-gray-700">
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev) => prev - 1)}
@@ -580,10 +582,9 @@ export default function BasicDetailsComponent() {
             </button>
           </div>
         </>
-      )
-        : (
-          <h6 className="text-center mt-5">No Doctor Analysis Data Available</h6>
-        )}
+      ) : (
+        <h6 className="text-center mt-5">Profile Unavailable</h6>
+      )}
     </div>
   );
 

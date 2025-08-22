@@ -71,7 +71,7 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
                                         display: "flex",
                                         alignItems: "center",
                                         padding: "6px 8px",
-                                        fontSize: "14px",
+                                        fontSize: "0.8rem",
                                         cursor: "pointer"
                                     }}
                                 >
