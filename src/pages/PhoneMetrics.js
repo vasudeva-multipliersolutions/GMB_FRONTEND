@@ -132,40 +132,43 @@ export default function PhoneMetrics() {
       </tr>
     </thead>
     <tbody>
-      {currentRows.length > 0 ? (
-        currentRows.map((item, index) => (
-          <tr
-            key={item.id}
-            className="text-center cursor-pointer hover:bg-gray-100"
-          >
-            <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-              {indexOfFirstRow + index + 1}
-            </td>
-            <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-              {item.name}
-            </td>
-            <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-              {item.unit}
-            </td>
-            <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-              {item.speciality}
-            </td>
-            <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-              {item.phone}
-            </td>
-          </tr>
-        ))
-      ) : (
-        <tr>
-          <td
-            className="font-normal text-[0.9rem] text-gray-700 p-2 text-center"
-            colSpan="5"
-          >
-            No data available
+  {currentRows.length > 0 ? (
+    [...currentRows] // spread to avoid mutating original array
+      .sort((a, b) => a.unit.localeCompare(b.unit)) // ✅ Sort by unit alphabetically
+      .map((item, index) => (
+        <tr
+          key={item.id}
+          className="text-center cursor-pointer hover:bg-gray-100"
+        >
+          <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+            {indexOfFirstRow + index + 1}
+          </td>
+          <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+            {item.name}
+          </td>
+          <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+            {item.unit}
+          </td>
+          <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+            {item.speciality}
+          </td>
+          <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+            {item.phone}
           </td>
         </tr>
-      )}
-    </tbody>
+      ))
+  ) : (
+    <tr>
+      <td
+        className="font-normal text-[0.9rem] text-gray-700 p-2 text-center"
+        colSpan="5"
+      >
+        No data available
+      </td>
+    </tr>
+  )}
+</tbody>
+
   </table>
 
   {/* Pagination Controls */}

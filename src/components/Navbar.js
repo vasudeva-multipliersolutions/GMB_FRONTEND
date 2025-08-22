@@ -1945,6 +1945,7 @@ export default function Navbar(props) {
                         setContextMonth([]);
                         setContextState([]);
                         setContextCity([]);
+
                         filterApi();
                       }}
                       className="bg-red-100 hover:bg-red-200 text-red-600 px-6 py-3 rounded-md text-sm font-medium"
