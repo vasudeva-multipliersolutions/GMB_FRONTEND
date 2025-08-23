@@ -21,6 +21,8 @@ export default function PhoneMetrics() {
     sidebarRating
   } = useContext(SidebarContext);
 
+  console.log("contextSpeciality⚔⚔⚔⚔:", contextSpeciality);
+
   const { isCollapsed, windowWidth } = useContext(SidebarContext);
 
   // ✅ Export function to download data as CSV

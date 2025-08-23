@@ -942,114 +942,112 @@ export default function Navbar(props) {
               </Box>
             </Box>
 
-           {/* Updated Specialty Section for Doc Reports */}
-<Box sx={{ px: 2, py: 1 }}>
-  <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
-    Specialty
-  </FormLabel>
+            {/* Updated Specialty Section for Doc Reports */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
+                Specialty
+              </FormLabel>
 
-  <input
-    type="text"
-    placeholder="Search"
-    value={specialitySearch}
-    onChange={(e) => setSpecialitySearch(e.target.value)}
-    style={{
-      width: "100%",
-      padding: "4px 8px",
-      fontSize: "14px",
-      marginBottom: "8px",
-      border: "1px solid #ccc",
-      borderRadius: "4px",
-    }}
-  />
+              <input
+                type="text"
+                placeholder="Search"
+                value={specialitySearch}
+                onChange={(e) => setSpecialitySearch(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "4px 8px",
+                  fontSize: "14px",
+                  marginBottom: "8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              />
 
-  <Box 
-    sx={{ 
-      display: "flex", 
-      flexDirection: "column",
-      maxHeight: "200px", // Set maximum height
-      overflowY: "auto",  // Enable vertical scrolling
-      paddingRight: "4px", // Add some padding for scrollbar
-      // Custom scrollbar styling
-      "&::-webkit-scrollbar": {
-        width: "6px",
-      },
-      "&::-webkit-scrollbar-track": {
-        backgroundColor: "#f1f1f1",
-        borderRadius: "3px",
-      },
-      "&::-webkit-scrollbar-thumb": {
-        backgroundColor: "#c1c1c1",
-        borderRadius: "3px",
-        "&:hover": {
-          backgroundColor: "#a8a8a8",
-        },
-      },
-    }}
-  >
-    {getSpeciality &&
-      getSpeciality
-        .filter((sp) =>
-          sp !== "#N/A" &&
-          sp.toLowerCase().includes(specialitySearch.toLowerCase())
-        )
-        .sort()
-        .map((sp, index) => (
-          <label 
-            key={index} 
-            style={{ 
-              color: "#000", 
-              fontSize: "14px", 
-              marginBottom: "4px", 
-              display: "flex", 
-              alignItems: "center", 
-              gap: "6px", 
-              cursor: "pointer",
-              padding: "2px 0", // Add slight vertical padding for better click area
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={speciality.includes(sp)}
-              onChange={(e) => {
-                let newSelection = e.target.checked
-                  ? [...speciality, sp]
-                  : speciality.filter((s) => s !== sp);
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  maxHeight: "200px", // Set maximum height
+                  overflowY: "auto",  // Enable vertical scrolling
+                  paddingRight: "4px", // Add some padding for scrollbar
+                  // Custom scrollbar styling
+                  "&::-webkit-scrollbar": {
+                    width: "6px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    backgroundColor: "#f1f1f1",
+                    borderRadius: "3px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "#c1c1c1",
+                    borderRadius: "3px",
+                    "&:hover": {
+                      backgroundColor: "#a8a8a8",
+                    },
+                  },
+                }}
+              >
+                {getSpeciality &&
+                  getSpeciality
+                    .filter((sp) =>
+                      sp !== "#N/A" &&
+                      sp.toLowerCase().includes(specialitySearch.toLowerCase())
+                    )
+                    .sort()
+                    .map((sp, index) => (
+                      <label
+                        key={index}
+                        style={{
+                          color: "#000",
+                          fontSize: "14px",
+                          marginBottom: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          cursor: "pointer",
+                          padding: "2px 0", // Add slight vertical padding for better click area
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={speciality.includes(sp)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...speciality, sp]
+                              : speciality.filter((s) => s !== sp);
 
-                setSpeciality(newSelection);
-                if (window.location.pathname === "/Dashboard") {
-                  setContextSpeciality(newSelection);
-                }
-              }}
-            />
-            {sp}
-          </label>
-        ))}
-  </Box>
+                            setSpeciality(newSelection);
+                            setContextSpeciality(newSelection);
+                          }}
+                        />
+                        {sp}
+                      </label>
+                    ))}
+              </Box>
 
-  <button
-    onClick={() => {
-      setSpeciality([]);
-      if (window.location.pathname === "/Dashboard") {
-        setContextSpeciality([]);
-      }
-      filterApi();
-    }}
-    style={{
-      color: "#d32f2f",
-      fontWeight: "bold",
-      fontSize: "14px",
-      marginTop: "8px",
-      background: "none",
-      border: "none",
-      cursor: "pointer",
-      textAlign: "left",
-      padding: "0",
-    }}
-  >
-    Clear All
-  </button>
-</Box>
+              <button
+                onClick={() => {
+                  setSpeciality([]);
+                  if (window.location.pathname === "/Dashboard") {
+                    setContextSpeciality([]);
+                  }
+                  filterApi();
+                }}
+                style={{
+                  color: "#d32f2f",
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                  marginTop: "8px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  padding: "0",
+                }}
+              >
+                Clear All
+              </button>
+            </Box>
 
           </Collapse>
 
@@ -1246,114 +1244,114 @@ export default function Navbar(props) {
               </Box>
             </Box>
 
-           {/* Updated Specialty Section for Doc Reports */}
-<Box sx={{ px: 2, py: 1 }}>
-  <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
-    Specialty
-  </FormLabel>
+            {/* Updated Specialty Section for Doc Reports */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
+                Specialty
+              </FormLabel>
 
-  <input
-    type="text"
-    placeholder="Search"
-    value={specialitySearch}
-    onChange={(e) => setSpecialitySearch(e.target.value)}
-    style={{
-      width: "100%",
-      padding: "4px 8px",
-      fontSize: "14px",
-      marginBottom: "8px",
-      border: "1px solid #ccc",
-      borderRadius: "4px",
-    }}
-  />
+              <input
+                type="text"
+                placeholder="Search"
+                value={specialitySearch}
+                onChange={(e) => setSpecialitySearch(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "4px 8px",
+                  fontSize: "14px",
+                  marginBottom: "8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              />
 
-  <Box 
-    sx={{ 
-      display: "flex", 
-      flexDirection: "column",
-      maxHeight: "200px", // Set maximum height
-      overflowY: "auto",  // Enable vertical scrolling
-      paddingRight: "4px", // Add some padding for scrollbar
-      // Custom scrollbar styling
-      "&::-webkit-scrollbar": {
-        width: "6px",
-      },
-      "&::-webkit-scrollbar-track": {
-        backgroundColor: "#f1f1f1",
-        borderRadius: "3px",
-      },
-      "&::-webkit-scrollbar-thumb": {
-        backgroundColor: "#c1c1c1",
-        borderRadius: "3px",
-        "&:hover": {
-          backgroundColor: "#a8a8a8",
-        },
-      },
-    }}
-  >
-    {getSpeciality &&
-      getSpeciality
-        .filter((sp) =>
-          sp !== "#N/A" &&
-          sp.toLowerCase().includes(specialitySearch.toLowerCase())
-        )
-        .sort()
-        .map((sp, index) => (
-          <label 
-            key={index} 
-            style={{ 
-              color: "#000", 
-              fontSize: "14px", 
-              marginBottom: "4px", 
-              display: "flex", 
-              alignItems: "center", 
-              gap: "6px", 
-              cursor: "pointer",
-              padding: "2px 0", // Add slight vertical padding for better click area
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={speciality.includes(sp)}
-              onChange={(e) => {
-                let newSelection = e.target.checked
-                  ? [...speciality, sp]
-                  : speciality.filter((s) => s !== sp);
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  maxHeight: "200px", // Set maximum height
+                  overflowY: "auto",  // Enable vertical scrolling
+                  paddingRight: "4px", // Add some padding for scrollbar
+                  // Custom scrollbar styling
+                  "&::-webkit-scrollbar": {
+                    width: "6px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    backgroundColor: "#f1f1f1",
+                    borderRadius: "3px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "#c1c1c1",
+                    borderRadius: "3px",
+                    "&:hover": {
+                      backgroundColor: "#a8a8a8",
+                    },
+                  },
+                }}
+              >
+                {getSpeciality &&
+                  getSpeciality
+                    .filter((sp) =>
+                      sp !== "#N/A" &&
+                      sp.toLowerCase().includes(specialitySearch.toLowerCase())
+                    )
+                    .sort()
+                    .map((sp, index) => (
+                      <label
+                        key={index}
+                        style={{
+                          color: "#000",
+                          fontSize: "14px",
+                          marginBottom: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          cursor: "pointer",
+                          padding: "2px 0", // Add slight vertical padding for better click area
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={speciality.includes(sp)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...speciality, sp]
+                              : speciality.filter((s) => s !== sp);
 
-                setSpeciality(newSelection);
-                if (window.location.pathname === "/Dashboard") {
-                  setContextSpeciality(newSelection);
-                }
-              }}
-            />
-            {sp}
-          </label>
-        ))}
-  </Box>
+                            setSpeciality(newSelection);
+                            if (window.location.pathname === "/Dashboard") {
+                              setContextSpeciality(newSelection);
+                            }
+                          }}
+                        />
+                        {sp}
+                      </label>
+                    ))}
+              </Box>
 
-  <button
-    onClick={() => {
-      setSpeciality([]);
-      if (window.location.pathname === "/Dashboard") {
-        setContextSpeciality([]);
-      }
-      filterApi();
-    }}
-    style={{
-      color: "#d32f2f",
-      fontWeight: "bold",
-      fontSize: "14px",
-      marginTop: "8px",
-      background: "none",
-      border: "none",
-      cursor: "pointer",
-      textAlign: "left",
-      padding: "0",
-    }}
-  >
-    Clear All
-  </button>
-</Box>
+              <button
+                onClick={() => {
+                  setSpeciality([]);
+                  if (window.location.pathname === "/Dashboard") {
+                    setContextSpeciality([]);
+                  }
+                  filterApi();
+                }}
+                style={{
+                  color: "#d32f2f",
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                  marginTop: "8px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  padding: "0",
+                }}
+              >
+                Clear All
+              </button>
+            </Box>
 
           </Collapse>
 
@@ -1519,111 +1517,111 @@ export default function Navbar(props) {
             </Box> */}
 
             {/* Updated Specialty Section for Phone Metrics */}
-<Box sx={{ px: 2, py: 1 }}>
-  <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
-    Specialty
-  </FormLabel>
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
+                Specialty
+              </FormLabel>
 
-  <input
-    type="text"
-    placeholder="Search"
-    value={specialitySearch}
-    onChange={(e) => setSpecialitySearch(e.target.value)}
-    style={{
-      width: "100%",
-      padding: "4px 8px",
-      fontSize: "14px",
-      marginBottom: "8px",
-      border: "1px solid #ccc",
-      borderRadius: "4px",
-    }}
-  />
+              <input
+                type="text"
+                placeholder="Search"
+                value={specialitySearch}
+                onChange={(e) => setSpecialitySearch(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "4px 8px",
+                  fontSize: "14px",
+                  marginBottom: "8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              />
 
-  <Box 
-    sx={{ 
-      display: "flex", 
-      flexDirection: "column",
-      maxHeight: "200px", // Set maximum height
-      overflowY: "auto",  // Enable vertical scrolling
-      paddingRight: "4px", // Add some padding for scrollbar
-      // Custom scrollbar styling
-      "&::-webkit-scrollbar": {
-        width: "6px",
-      },
-      "&::-webkit-scrollbar-track": {
-        backgroundColor: "#f1f1f1",
-        borderRadius: "3px",
-      },
-      "&::-webkit-scrollbar-thumb": {
-        backgroundColor: "#c1c1c1",
-        borderRadius: "3px",
-        "&:hover": {
-          backgroundColor: "#a8a8a8",
-        },
-      },
-    }}
-  >
-    {getSpeciality &&
-      getSpeciality
-        .filter((sp) =>
-          sp !== "#N/A" &&
-          sp.toLowerCase().includes(specialitySearch.toLowerCase())
-        )
-        .sort()
-        .map((sp, index) => (
-          <label 
-            key={index} 
-            style={{ 
-              color: "#000", 
-              fontSize: "14px", 
-              marginBottom: "4px", 
-              display: "flex", 
-              alignItems: "center", 
-              gap: "6px", 
-              cursor: "pointer",
-              padding: "2px 0", // Add slight vertical padding for better click area
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={speciality.includes(sp)}
-              onChange={(e) => {
-                let newSelection = e.target.checked
-                  ? [...speciality, sp]
-                  : speciality.filter((s) => s !== sp);
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  maxHeight: "200px", // Set maximum height
+                  overflowY: "auto",  // Enable vertical scrolling
+                  paddingRight: "4px", // Add some padding for scrollbar
+                  // Custom scrollbar styling
+                  "&::-webkit-scrollbar": {
+                    width: "6px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    backgroundColor: "#f1f1f1",
+                    borderRadius: "3px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "#c1c1c1",
+                    borderRadius: "3px",
+                    "&:hover": {
+                      backgroundColor: "#a8a8a8",
+                    },
+                  },
+                }}
+              >
+                {getSpeciality &&
+                  getSpeciality
+                    .filter((sp) =>
+                      sp !== "#N/A" &&
+                      sp.toLowerCase().includes(specialitySearch.toLowerCase())
+                    )
+                    .sort()
+                    .map((sp, index) => (
+                      <label
+                        key={index}
+                        style={{
+                          color: "#000",
+                          fontSize: "14px",
+                          marginBottom: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          cursor: "pointer",
+                          padding: "2px 0", // Add slight vertical padding for better click area
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={speciality.includes(sp)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...speciality, sp]
+                              : speciality.filter((s) => s !== sp);
 
-                setSpeciality(newSelection);
-                setContextSpeciality(newSelection);
-              }}
-            />
-            {sp}
-          </label>
-        ))}
-  </Box>
+                            setSpeciality(newSelection);
+                            setContextSpeciality(newSelection);
+                          }}
+                        />
+                        {sp}
+                      </label>
+                    ))}
+              </Box>
 
-  <button
-    onClick={() => {
-      setSpeciality([]);
-      if (window.location.pathname === "/Dashboard") {
-        setContextSpeciality([]);
-      }
-      filterApi();
-    }}
-    style={{
-      color: "#d32f2f",
-      fontWeight: "bold",
-      fontSize: "14px",
-      marginTop: "8px",
-      background: "none",
-      border: "none",
-      cursor: "pointer",
-      textAlign: "left",
-      padding: "0",
-    }}
-  >
-    Clear All
-  </button>
-</Box>
+              <button
+                onClick={() => {
+                  setSpeciality([]);
+                  if (window.location.pathname === "/Dashboard") {
+                    setContextSpeciality([]);
+                  }
+                  filterApi();
+                }}
+                style={{
+                  color: "#d32f2f",
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                  marginTop: "8px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  padding: "0",
+                }}
+              >
+                Clear All
+              </button>
+            </Box>
 
           </Collapse>
 

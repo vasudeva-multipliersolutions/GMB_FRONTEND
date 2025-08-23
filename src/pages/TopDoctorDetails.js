@@ -40,7 +40,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
       let unit  = contextCity ? contextCity : getInsightsCity;
       let dept = profileType ? profileType : "";
       let rating = sidebarRating ? sidebarRating : "";
-      let speciality = specialityContext ? specialityContext : "";
+      let speciality = contextSpeciality ? contextSpeciality : "";
 
       const location = contextHospitals ? contextHospitals : unit;
       const cluster = contextHospitals ? "" : region;
