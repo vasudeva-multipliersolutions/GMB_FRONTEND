@@ -66,10 +66,12 @@ export default function Login(props) {
     }
   }
 
-  return (
-    <>
-      {showPopup && (
-        <div style={{
+return (
+  <>
+    {/* Error Popup */}
+    {showPopup && (
+      <div
+        style={{
           position: "fixed",
           top: "20px",
           left: "50%",
@@ -80,50 +82,82 @@ export default function Login(props) {
           borderRadius: "8px",
           zIndex: 1000,
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-        }}>
-          {errorMessage}
-        </div>
-      )}
+        }}
+      >
+        {errorMessage}
+      </div>
+    )}
 
-      <div className="login-page p-4">
-        <div className="login-container p-5">
-          <div className="login-main p-2">
-            <div className="login-main-content">
-              <span>Sign In to</span>
-              <br />
-              <span>your</span>
-              <br />
-              <span>GOOGLE MY</span>&nbsp;<span> BUSINESS PERFORMANCE</span>
-            </div>
-            <div className="login-content p-2">
-              <label className="p-2">Username</label>
-              <input
-                className="p-2 m-2"
-                type="text"
-                name="username"
-                placeholder="Username"
-                value={cred.username}
-                onChange={getCredentials}
-              />
-              <label className="p-2">Password</label>
-              <input
-                className="p-2 m-2"
-                type="password"
-                name="psw"
-                placeholder="Password"
-                value={cred.psw}
-                onChange={getCredentials}
-              />
-            </div>
-            <div className="login-button">
-              <button type="button" onClick={signin}>
-                Sign In
-              </button>
-            </div>
+    {/* Full Screen Split */}
+    <div className="flex h-screen border shadow-lg rounded-lg overflow-hidden">
+      {/* Left Side - Image */}
+      <div className="hidden md:flex w-1/2">
+        <img
+          src="https://multiplierai.co/gmbtest/loginpageimage.png"
+          alt="Login Visual"
+          className="w-full h-full object-cover mx-16"
+        />
+      </div>
+
+      {/* Right Side - Login */}
+      <div className="flex w-full md:w-1/2 flex-col justify-center px-48 bg-white mx-16">
+        {/* Heading */}
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-800">Sign In</h2>
+          <p className="text-gray-500 text-[0.9rem]">
+            Access your{" "}
+            <span className="font-semibold">Google My Business Performance</span>
+          </p>
+        </div>
+
+        {/* Form */}
+        <div className="space-y-6">
+          <div>
+            <label className="block text-gray-700 font-medium mb-2 text-[0.9rem]">
+              Username
+            </label>
+            <input
+              type="text"
+              name="username"
+              placeholder="Enter your username"
+              value={cred.username}
+              onChange={getCredentials}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-[0.9rem] focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 font-medium mb-2 text-[0.9rem]">
+              Password
+            </label>
+            <input
+              type="password"
+              name="psw"
+              placeholder="Enter your password"
+              value={cred.psw}
+              onChange={getCredentials}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-[0.9rem] focus:ring-2 focus:ring-blue-500 outline-none"
+            />
           </div>
         </div>
-        <footer>© Copyright 2025, Multiplier AI. All rights reserved.</footer>
+
+        {/* Sign In Button */}
+        <button
+          type="button"
+          onClick={signin}
+          className="w-full bg-blue-600 text-white py-3 rounded-lg mt-8 hover:bg-blue-700 transition"
+        >
+          Sign In
+        </button>
+
+        {/* Footer */}
+        <p className="text-center text-gray-400 text-xs mt-10">
+          © Copyright 2025, <span className="font-semibold">Multiplier AI</span>. All rights reserved.
+        </p>
       </div>
-    </>
-  );
+    </div>
+  </>
+);
+
+
+
 }

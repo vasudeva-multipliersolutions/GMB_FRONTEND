@@ -54,50 +54,49 @@ export default function BasicDetailsComponent() {
   const { doctorAnalysis, profileType } = useContext(SidebarContext);
 
 
-  useEffect(() => {
-    if (getDrName) {
-      async function getDocData() {
-        try {
-          const response = await fetch(`${api}/docData`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ "businessName": getDrName })
-          });
+ useEffect(() => {
+  if (getDrName) {
+    async function getDocData() {
+      setIsLoading(true); // ✅ Show loader before request
 
-          if (response.status === 403 || response.status === 404) {
-            localStorage.clear();
-            window.location.reload();
-          }
+      try {
+        const response = await fetch(`${api}/docData`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ "businessName": getDrName })
+        });
 
-
-          if (!response.ok) {
-            // If response status is not OK, set docData to null
-            setDocData(null);
-            setIsLoading(false);
-            return;
-          }
-
-          const data = await response.json();
-          if (!data || Object.keys(data).length === 0 || data.cRank.length === 0) {
-            // If data is empty or invalid, set docData to null
-            setDocData(null);
-          } else {
-            setDocData(data);
-          }
-        } catch (error) {
-          console.error("Error fetching docData:", error);
-          setDocData(null);
-        } finally {
-          setIsLoading(false);
+        if (response.status === 403 || response.status === 404) {
+          localStorage.clear();
+          window.location.reload();
         }
-      }
 
-      getDocData();
+        if (!response.ok) {
+          setDocData(null);
+          return;
+        }
+
+        const data = await response.json();
+        if (!data || Object.keys(data).length === 0 || data.cRank.length === 0) {
+          setDocData(null);
+        } else {
+          setDocData(data);
+        }
+      } catch (error) {
+        console.error("Error fetching docData:", error);
+        setDocData(null);
+      } finally {
+        setIsLoading(false); // ✅ Hide loader after fetch completes
+      }
     }
-  }, [getDrName]);
+
+    getDocData();
+  }
+}, [getDrName]);
+
 
   console.log("Doctor Analysis Data-----------45:", doctorAnalysis);
 
@@ -179,9 +178,9 @@ export default function BasicDetailsComponent() {
     //   alert(topreview_body.length)
     // }
   }
-  setTimeout(() => {
-    setIsLoading(false)
-  }, 2000);
+  // setTimeout(() => {
+  //   setIsLoading(false)
+  // }, 2000);
 
 
 
@@ -301,8 +300,8 @@ export default function BasicDetailsComponent() {
   return docData && Object.keys(docData).length > 0 ? (
     <>
       {docData && isLoading ?
-        <div>
-          <ShimmerThumbnail className="m-2 p-2" height={200} rounded />
+        <div >
+          <ShimmerThumbnail className="mr-48 m-2 p-2" height={200} rounded  />
           <ShimmerTitle line={2} gap={10} variant="primary" />
         </div> :
         getDrName &&

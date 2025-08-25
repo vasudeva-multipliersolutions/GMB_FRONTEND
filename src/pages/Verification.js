@@ -14,6 +14,7 @@ const Verification = () => {
 
   // console.log("userId--------->", userId);
 
+
   const handleChange = (e, index) => {
     const value = e.target.value;
     if (!/^[0-9]?$/.test(value)) return;
@@ -64,109 +65,138 @@ const Verification = () => {
         token
       });
 
-      if (res){
-      localStorage.setItem("username", res.data.user.username);
-      localStorage.setItem("psw", res.data.user.psw);
-      localStorage.setItem("mail", res.data.user.mail);
-      localStorage.setItem("logo", res.data.user.Logo);
-      localStorage.setItem("API", res.data.user.API);
-      localStorage.setItem("user", res.data.user.user);
-      localStorage.setItem("Branch", res.data.user.Branch);
-      localStorage.setItem("Cluster", res.data.user.Cluster);
-      localStorage.setItem("loginEmail", res.data.user.orgEmail);
-      navigate("/Dashboard");
-      window.location.reload();
-      //console.log("---------------------", res.data.user.psw);
-      //console.log("token--------->", res.data.token);
-      localStorage.setItem("token", res.data.token);
-      navigate("/Dashboard");
-      } else if (res.status === 404)  {
+      if (res) {
+        localStorage.setItem("username", res.data.user.username);
+        localStorage.setItem("psw", res.data.user.psw);
+        localStorage.setItem("mail", res.data.user.mail);
+        localStorage.setItem("logo", res.data.user.Logo);
+        localStorage.setItem("API", res.data.user.API);
+        localStorage.setItem("user", res.data.user.user);
+        localStorage.setItem("Branch", res.data.user.Branch);
+        localStorage.setItem("Cluster", res.data.user.Cluster);
+        localStorage.setItem("loginEmail", res.data.user.orgEmail);
+        navigate("/Dashboard");
+        window.location.reload();
+        //console.log("---------------------", res.data.user.psw);
+        //console.log("token--------->", res.data.token);
+        localStorage.setItem("token", res.data.token);
+        navigate("/Dashboard");
+      } else if (res.status === 404) {
         showError("User not found");
       } else if (res.status === 400) {
         showError("Invalid OTP Code. Please try again.");
       }
     } catch (error) {
-      showError("Try again. " + (error.response?.data?.message || error.message));
+      showError((error.response?.data?.message || error.message) + ". Please try again.");
     }
   };
 
   return (
     <>
-    <div className="login-page ">
-     {showPopup && (
-        <div style={{
-          position: "fixed",
-          top: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          backgroundColor: "#f44336",
-          color: "white",
-          padding: "10px 20px",
-          borderRadius: "8px",
-          zIndex: 1000,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-        }}>
-          {errorMessage}
-        </div>
-      )}
 
-    <div className="  d-flex flex-column justify-content-center align-items-center min-vh-100">
-      {/* <div className="mb-3">
-        <img
-          src="https://multipliersolutions.in/manipalhospitals/manipallogo2.png"
-          alt="manipalhospitals"
-          style={{ width: '200px' }}
-        />
-      </div> */}
-      <div className="bg-white p-4 rounded shadow-lg text-center" style={{ maxWidth: "400px", width: "100%" }}>
-        <div className="mb-3 text-center">
+
+      {/* Full Screen Split Layout */}
+      <div className="flex h-screen">
+        {/* Left Side - Image */}
+        <div className="hidden md:flex w-1/2">
           <img
-            src="https://multipliersolutions.in/manipalhospitals/manipallogo2.png"
-            alt="manipalhospitals"
-            style={{ width: '200px' }}
+            src="https://multiplierai.co/gmbtest/otpvalidation.png"
+            alt="Verification Visual"
+            className="w-full h-full mx-28  object-cover"
           />
         </div>
-        <p className="text-muted mb-4">Your code was sent to you via email</p>
 
-        <form
-          className="d-flex justify-content-center gap-2 mb-4"
-          onPaste={handlePaste}
-          onSubmit={(e) => {
-            e.preventDefault();
-            verify2FA();
-          }}
-        >
-          {[...Array(6)].map((_, i) => (
-            <input
-              key={i}
-              type="text"
-              maxLength="1"
-              ref={(el) => (inputsRef.current[i] = el)}
-              onChange={(e) => handleChange(e, i)}
-              onKeyDown={(e) => handleKeyDown(e, i)}
-              className="form-control text-center fw-bold"
-              style={{ width: "40px", height: "40px", fontSize: "1.25rem" }}
+        {/* Right Side - OTP Verification */}
+        <div className="flex w-full md:w-1/2 flex-col justify-start pt-64  bg-white ">
+          {/* Logo */}
+          <div className="mb-2 flex justify-center">
+            <img
+              src="https://multipliersolutions.in/manipalhospitals/manipallogo2.png"
+              alt="manipalhospitals"
+              className=" w-28"
             />
-          ))}
-        </form>
+          </div>
 
-        <button
-          onClick={verify2FA}
-          className="verify-btn btn btn-primary w-75 fw-semibold"
-        >
-          Verify
-        </button>
+          {/* Heading */}
 
-        <p className="mt-3 text-muted">
-          Didn't receive code?{" "}
-          <Link to="/"  className="text-primary text-decoration-none">Request again</Link>
-        </p>
+          <h2 className="text-4xl font-bold text-gray-800 mb-2 flex justify-center">Verify Code</h2>
+          <p className="text-gray-500 text-[0.9rem] mb-6 flex justify-center">
+            Your code was sent to you via email
+          </p>
+
+          {/* OTP Input Boxes */}
+          <form
+            className="flex justify-center gap-3 mb-6"
+            onPaste={handlePaste}
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!token || token.length < 6) {
+                showError("Please enter OTP");
+                return;
+              }
+              verify2FA();  // Trigger on Enter
+            }}
+          >
+            {[...Array(6)].map((_, i) => (
+              <input
+                key={i}
+                type="text"
+                maxLength="1"
+                ref={(el) => (inputsRef.current[i] = el)}
+                onChange={(e) => handleChange(e, i)}
+                onKeyDown={(e) => handleKeyDown(e, i)}
+                className="w-16 h-16 border border-gray-300 rounded-lg text-center text-xl font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            ))}
+          </form>
+
+
+
+          {/* Verify Button */}
+          <div className="flex justify-center">
+            <button
+              onClick={verify2FA}
+              className="flex justify-center px-52 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+            >
+              Verify
+            </button>
+          </div>
+
+          {/* Resend Link */}
+          <p className=" flex justify-center mt-6 text-gray-500 text-[0.9rem]">
+            Didn't receive code? {" "}
+            <Link to="/" className="text-blue-600 font-medium hover:underline">
+              Request again
+            </Link>
+          </p>
+
+
+        </div>
+        {/* Error Popup */}
+        {showPopup && (
+          <div
+            style={{
+              position: "fixed",
+              top: "40px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              backgroundColor: "White",
+              color: "#f44336",
+              padding: "20px 40px",
+              borderRadius: "2px",
+              borderBlockColor: "#f44336",
+              zIndex: 1000,
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            }}
+          >
+            {errorMessage}
+          </div>
+        )}
       </div>
-    </div>
-    </div>
+
+
     </>
   );
-
 };
 
 export default Verification;

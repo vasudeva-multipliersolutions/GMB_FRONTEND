@@ -942,7 +942,7 @@ export default function Navbar(props) {
               </Box>
             </Box>
 
-            {/* Updated Specialty Section for Doc Reports */}
+            {/* Updated Specialty Section for Dashboard */}
             <Box sx={{ px: 2, py: 1 }}>
               <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
                 Specialty
@@ -1028,6 +1028,7 @@ export default function Navbar(props) {
               <button
                 onClick={() => {
                   setSpeciality([]);
+                  setContextSpeciality([]);
                   if (window.location.pathname === "/Dashboard") {
                     setContextSpeciality([]);
                   }
@@ -1332,6 +1333,7 @@ export default function Navbar(props) {
               <button
                 onClick={() => {
                   setSpeciality([]);
+                  setContextSpeciality([]);
                   if (window.location.pathname === "/Dashboard") {
                     setContextSpeciality([]);
                   }
@@ -1602,6 +1604,7 @@ export default function Navbar(props) {
               <button
                 onClick={() => {
                   setSpeciality([]);
+                  setContextSpeciality([]);
                   if (window.location.pathname === "/Dashboard") {
                     setContextSpeciality([]);
                   }
