@@ -674,31 +674,32 @@ export default function Navbar(props) {
   //   }
   // }, [selectedYear]);
 
-  useEffect(() => {
-    const monthNames = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    ];
-    const today = new Date();
+ useEffect(() => {
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+  const today = new Date();
 
-    // helper -> last 7 months including current, only month names
-    const lastSevenMonths = () => {
-      const arr = [];
-      for (let i = 7; i >= 0; i--) {
-        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-        arr.push(monthNames[d.getMonth()]); // ✅ only "Mon"
-      }
-      return arr;
-    };
-
-    if (!selectedYear) {
-      // default: last 7 month labels
-      setFilteredMonths(lastSevenMonths());
-    } else {
-      // when a year is chosen: all 12 months of that year (still only names)
-      setFilteredMonths(monthNames.map(m => `${m}`));
+  // ✅ helper -> last 7 months excluding current
+  const lastSevenMonths = () => {
+    const arr = [];
+    for (let i = 8; i >= 1; i--) {  // ✅ start 7 months ago, stop at 1 (exclude current)
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      arr.push(monthNames[d.getMonth()]);
     }
-  }, [selectedYear]);
+    return arr;
+  };
+
+  if (!selectedYear) {
+    // default: last 7 month labels excluding current
+    setFilteredMonths(lastSevenMonths());
+  } else {
+    // when a year is chosen: all 12 months of that year (still only names)
+    setFilteredMonths(monthNames.map(m => `${m}`));
+  }
+}, [selectedYear]);
+
 
 
 
@@ -2013,7 +2014,7 @@ export default function Navbar(props) {
                         <button
                           type="button"
                           onClick={nameseter}
-                          className="bg-[#1565C0] hover:bg-[#7A76A8] text-white 
+                          className="bg-[#1565C0] hover:bg-[#0086e6] text-white 
                    rounded-r-md px-3 flex items-center transition-colors"
                         >
                           <FaSearch />

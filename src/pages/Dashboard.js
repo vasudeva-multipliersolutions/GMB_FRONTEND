@@ -154,8 +154,6 @@ export default function Dashboard(props) {
       const data = await response.json();
       // console.log("1234🎉✨🎉🎉 : " + response.status);
 
-
-
       setAllData(data);
 
       //console.log( "+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
@@ -499,103 +497,63 @@ export default function Dashboard(props) {
     //getMonthData("");
   }, [reload]);
 
-  const downloadPDF = async () => {
-    const content = document.getElementById('mainDashboardContent');
-    const cloneContainer = document.getElementById('pdf-clone-container');
+const downloadPDF = async () => {
+  const content = document.getElementById('mainDashboardContent');
+  if (!content) {
+    console.error("Dashboard content not found");
+    return;
+  }
 
-    if (!content || !cloneContainer) {
-      console.error("Missing elements for PDF generation.");
-      return;
-    }
-
-    // Clone the content
-    const clone = content.cloneNode(true);
-    clone.style.marginLeft = '0';
-    clone.style.width = '100%';
-
-    const elementsWithStyles = clone.querySelectorAll('[style]');
-    elementsWithStyles.forEach(el => {
-      el.style.marginLeft = '0';
-      el.style.width = '100%';
+  try {
+    const canvas = await html2canvas(content, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff'
     });
 
-    cloneContainer.innerHTML = '';
-    cloneContainer.appendChild(clone);
-    cloneContainer.style.display = 'block';
+    const imgData = canvas.toDataURL('image/png');
 
-    const scale = 4;
-    const pdf = new jsPDF('p', 'mm', 'a2');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
 
-    // Padding values
-    const topPadding = 10;     // mm
-    const leftPadding = 10;    // mm
-    const rightPadding = 0;   // mm
+    const imgWidth = pdfWidth;
+    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
-    try {
-      const canvas = await html2canvas(clone, {
-        scale,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-      });
+    let heightLeft = imgHeight;
+    let position = 0;
 
-      const imgData = canvas.toDataURL('image/png');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
+    // Add first page
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
 
-      const imgWidth = canvas.width / scale;
-      const imgHeight = canvas.height / scale;
-
-      // Available space inside the PDF considering paddings
-      const availableWidth = pdfWidth - leftPadding - rightPadding;
-      const availableHeight = pdfHeight - topPadding;
-
-      const ratio = Math.min(availableWidth / imgWidth, availableHeight / imgHeight);
-
-      const scaledWidth = imgWidth * ratio;
-      const scaledHeight = imgHeight * ratio;
-
-      let remainingHeight = scaledHeight;
-      let pageIndex = 0;
-
-      while (remainingHeight > 0) {
-        if (pageIndex > 0) pdf.addPage();
-
-        const offsetY = pageIndex * pdfHeight;
-        const imgY = topPadding;
-        const imgX = leftPadding;
-
-        pdf.addImage(
-          imgData,
-          'PNG',
-          imgX,
-          imgY,
-          scaledWidth,
-          scaledHeight,
-          undefined,
-          'FAST'
-        );
-
-        remainingHeight -= pdfHeight;
-        pageIndex++;
-      }
-
-      const parts = [
-        getInsightState || "",
-        getInsightsCity || "",
-        newMonthContext || "",
-        contextSpeciality || "",
-        // Optional: add speciality if available e.g., `speciality || ""`
-      ].filter(Boolean); // removes empty strings
-
-      const filename = parts.length > 0 ? `GMB_Performance_Report_${parts.join("_")}.xlsx` : "GMB Performance Report.xlsx";
-
-      pdf.save(`${filename}.pdf`);
-    } catch (error) {
-      console.error("PDF generation failed:", error);
-    } finally {
-      cloneContainer.style.display = 'none';
+    // Loop for remaining pages
+    while (heightLeft > 0) {
+      position -= pdfHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
     }
-  };
+
+    // Dynamic filename
+    const parts = [
+      getInsightState || "",
+      getInsightsCity || "",
+      newMonthContext || "",
+      contextSpeciality || ""
+    ].filter(Boolean);
+
+    const filename = parts.length > 0
+      ? `GMB_Performance_Report_${parts.join("_")}.pdf`
+      : "GMB_Performance_Report.pdf";
+
+    pdf.save(filename);
+  } catch (error) {
+    console.error("PDF generation failed:", error);
+  }
+};
+
+
 
 
   // const downloadDataAsExcel = () => {

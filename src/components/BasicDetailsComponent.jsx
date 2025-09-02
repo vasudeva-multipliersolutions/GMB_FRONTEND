@@ -300,7 +300,10 @@ export default function BasicDetailsComponent() {
   return docData && Object.keys(docData).length > 0 ? (
     <>
       {docData && isLoading ?
-        <div >
+        <div style={{
+          marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
+          transition: "margin-left 0.5s ease",
+        }} >
           <ShimmerThumbnail className="mr-48 m-2 p-2" height={200} rounded  />
           <ShimmerTitle line={2} gap={10} variant="primary" />
         </div> :
