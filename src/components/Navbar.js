@@ -84,8 +84,8 @@ export default function Navbar(props) {
 
   // New state for MUI sidebar
   const [openDashboard, setOpenDashboard] = useState(false);
-  const [openProfileType, setOpenProfileType] = useState(false);
-  const [openRatingFilter, setOpenRatingFilter] = useState(false);
+  // const [openProfileType, setOpenProfileType] = useState(false);
+  // const [openRatingFilter, setOpenRatingFilter] = useState(false);
   const [openDocReport, setOpenDocReport] = useState(false);
   const [openPhonemetrics, setOpenPhonemetrics] = useState(false);
   const [unitOpen, setUnitOpen] = useState(false);
@@ -98,16 +98,16 @@ export default function Navbar(props) {
   };
 
   // add at top
-  const debounceTimer = useRef(null);
+  // const debounceTimer = useRef(null);
 
-  const triggerFilterApi = () => {
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-    debounceTimer.current = setTimeout(() => {
-      filterApi();
-    }, 200); // wait 200ms for state updates
-  };
+  // const triggerFilterApi = () => {
+  //   if (debounceTimer.current) {
+  //     clearTimeout(debounceTimer.current);
+  //   }
+  //   debounceTimer.current = setTimeout(() => {
+  //     filterApi();
+  //   }, 200); // wait 200ms for state updates
+  // };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -130,18 +130,6 @@ export default function Navbar(props) {
     }
     setOpenDashboard(!openDashboard);
   };
-
-
-  const handleProfileTypeClick = () => {
-    setOpenProfileType(!openProfileType);
-  };
-
-  const handleRatingFilterClick = () => {
-    setOpenRatingFilter(!openRatingFilter);
-  };
-
-
-
 
   useEffect(() => {
     if (location.pathname === "/Insights" || location.pathname === "/Doc-report") {
@@ -331,37 +319,37 @@ export default function Navbar(props) {
       setState("");
       setSpeciality("");
       setSelectedYear("");
-      setCity("")
+      setCity("");
       setMonth("");
       setRating("");
       // filterApi();
-
     } else {
       setState(e.target.value)
     }
     //filterApi()
   }
-  function getCityHandeler(e) {
-    setMonth("");
-    setSpeciality("");
-    setSelectedMonths([]);
-    setSelectedYear("");
-    setRating("");
-    setCity(e.target.value)
-    if (e.target.value === "All") {
-      setSpeciality("");
-      setSelectedYear("");
-      setCity("")
-      setMonth("");
-      setRating("");
-    } else {
-      setCity(e.target.value)
-    }
-  }
-  function monthHandelar(e) {
-    setSpeciality("");
-    setMonth(e.target.value)
-  }
+  // function getCityHandeler(e) {
+  //   setMonth("");
+  //   setSpeciality("");
+  //   setSelectedMonths([]);
+  //   setSelectedYear("");
+  //   setRating("");
+  //   setCity(e.target.value)
+  //   if (e.target.value === "All") {
+  //     setSpeciality("");
+  //     setSelectedYear("");
+  //     setCity("")
+  //     setMonth("");
+  //     setRating("");
+  //   } else {
+  //     setCity(e.target.value)
+  //   }
+  // }
+
+  // function monthHandelar(e) {
+  //   setSpeciality("");
+  //   setMonth(e.target.value)
+  // }
 
   useEffect(() => {
     if (selectedMonths) {
@@ -484,7 +472,7 @@ export default function Navbar(props) {
         branch: cityToSend,
         month: monthToSend,
         speciality,
-        rating
+        rating: sidebarRating,
       }),
     });
 
@@ -674,31 +662,31 @@ export default function Navbar(props) {
   //   }
   // }, [selectedYear]);
 
- useEffect(() => {
-  const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
-  const today = new Date();
+  useEffect(() => {
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    const today = new Date();
 
-  // ✅ helper -> last 7 months excluding current
-  const lastSevenMonths = () => {
-    const arr = [];
-    for (let i = 8; i >= 1; i--) {  // ✅ start 7 months ago, stop at 1 (exclude current)
-      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
-      arr.push(monthNames[d.getMonth()]);
+    // ✅ helper -> last 7 months excluding current
+    const lastSevenMonths = () => {
+      const arr = [];
+      for (let i = 8; i >= 1; i--) {  // ✅ start 7 months ago, stop at 1 (exclude current)
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        arr.push(monthNames[d.getMonth()]);
+      }
+      return arr;
+    };
+
+    if (!selectedYear) {
+      // default: last 7 month labels excluding current
+      setFilteredMonths(lastSevenMonths());
+    } else {
+      // when a year is chosen: all 12 months of that year (still only names)
+      setFilteredMonths(monthNames.map(m => `${m}`));
     }
-    return arr;
-  };
-
-  if (!selectedYear) {
-    // default: last 7 month labels excluding current
-    setFilteredMonths(lastSevenMonths());
-  } else {
-    // when a year is chosen: all 12 months of that year (still only names)
-    setFilteredMonths(monthNames.map(m => `${m}`));
-  }
-}, [selectedYear]);
+  }, [selectedYear]);
 
 
 
@@ -735,8 +723,8 @@ export default function Navbar(props) {
   // }, [contextCity]);
 
   useEffect(() => {
-    triggerFilterApi();
-  }, [speciality, rating, profileType, contextState, contextCity, selectedMonths]);
+    filterApi();
+  }, [speciality, rating, department, contextState, contextCity, selectedMonths]);
 
 
 
@@ -856,8 +844,6 @@ export default function Navbar(props) {
                             setdepartment(newSelection);
                             setContextProfileType(newSelection);
                             setContextDepartment(newSelection);
-
-
                             // ✅ trigger filter with latest selections
                             // filterApi();
                           }}
@@ -1862,7 +1848,7 @@ export default function Navbar(props) {
                   </div>
 
                   {/* Unit Filter */}
-                  <div className="flex flex-col flex-1 min-w-[260px] relative" ref={dropdownRef}>
+                  <div className="flex flex-col flex-1  relative" ref={dropdownRef}>
                     <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Unit</label>
 
                     {/* Dropdown Box */}
@@ -2042,7 +2028,6 @@ export default function Navbar(props) {
                         setContextMonth([]);
                         setContextState([]);
                         setContextCity([]);
-
                         filterApi();
                       }}
                       className="bg-red-100 hover:bg-red-200 text-red-600 px-6 py-3 rounded-md text-sm font-medium"

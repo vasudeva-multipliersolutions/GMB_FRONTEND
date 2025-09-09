@@ -27,6 +27,8 @@ export const SidebarProvider = ({ children }) => {
     }
   };
 
+  console.log("SidebarContext rendered---------------", sidebarRating);
+
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;

@@ -59,9 +59,10 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
                         overflowY: "auto",
                         zIndex: 999,
                         marginTop: "4px",
-                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" // optional for nicer look
+                        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)" // optional for nicer look 
                     }}
                 >
+                    
                     <div style={{ padding: "10px" }}>
                         {/* Month Options */}
                         {filteredMonths

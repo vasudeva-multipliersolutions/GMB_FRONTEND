@@ -153,9 +153,7 @@ export default function Dashboard(props) {
 
       const data = await response.json();
       // console.log("1234🎉✨🎉🎉 : " + response.status);
-
       setAllData(data);
-
       //console.log( "+++++++++++++++++ data:" + data.reviewRating[0].averagerating);
     } catch (error) {
       console.error("Error fetching all data:", error);
@@ -165,7 +163,6 @@ export default function Dashboard(props) {
   //console.log("SetContextYear : " + contextYear);
   async function getMonthData(months) {
     try {
-
       let region = contextState ? contextState : getInsightState ;
       let unit  = contextCity ? contextCity : getInsightsCity;
       let dept = profileType ? profileType : "";
@@ -352,17 +349,17 @@ export default function Dashboard(props) {
 
 
   useEffect(() => {
-    if (locationProfiles && locationProfiles[0]) {
-      const verificationData = [
-        {
-          "Total Profiles": locationProfiles[0]["Total Profiles"]
-        },
-        { "Verified Profiles": locationProfiles[0]["Verified Profiles"] },
-        { "Unverified Profiles": locationProfiles[0]["Unverfied Profiles"] },
-        { "Need Access": locationProfiles[0]["Need Access"] },
-        { "Not Intrested": locationProfiles[0]["Not Intrested"] },
-        { "Out of Organization": locationProfiles[0]["Out Of Organization"] },
-      ];
+  if (locationProfiles && locationProfiles[0]) {
+  const profile = locationProfiles[0];
+
+  const verificationData = [
+    { "Total Profiles": profile["Total Profiles"] ?? 0 },
+    { "Verified Profiles": profile["Verified Profiles"] ?? 0 },
+    { "Unverified Profiles": profile["Unverfied Profiles"] ?? 0 },
+    { "Need Access": profile["Need Access"] ?? 0 },
+    { "Not Intrested": profile["Not Intrested"] ?? 0 },
+    { "Out of Organization": profile["Out Of Organization"] ?? 0 }
+  ];
 
       const deptDetails = [
         { "Department": locationProfiles[0]["Department"] },
