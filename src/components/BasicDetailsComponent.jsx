@@ -54,48 +54,48 @@ export default function BasicDetailsComponent() {
   const { doctorAnalysis, profileType } = useContext(SidebarContext);
 
 
- useEffect(() => {
-  if (getDrName) {
-    async function getDocData() {
-      setIsLoading(true); // ✅ Show loader before request
+  useEffect(() => {
+    if (getDrName) {
+      async function getDocData() {
+        setIsLoading(true); // ✅ Show loader before request
 
-      try {
-        const response = await fetch(`${api}/docData`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ "businessName": getDrName })
-        });
+        try {
+          const response = await fetch(`${api}/docData`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ "businessName": getDrName })
+          });
 
-        if (response.status === 403 || response.status === 404) {
-          localStorage.clear();
-          window.location.reload();
-        }
+          if (response.status === 403 || response.status === 404) {
+            localStorage.clear();
+            window.location.reload();
+          }
 
-        if (!response.ok) {
+          if (!response.ok) {
+            setDocData(null);
+            return;
+          }
+
+          const data = await response.json();
+          if (!data || Object.keys(data).length === 0 || data.cRank.length === 0) {
+            setDocData(null);
+          } else {
+            setDocData(data);
+          }
+        } catch (error) {
+          console.error("Error fetching docData:", error);
           setDocData(null);
-          return;
+        } finally {
+          setIsLoading(false); // ✅ Hide loader after fetch completes
         }
-
-        const data = await response.json();
-        if (!data || Object.keys(data).length === 0 || data.cRank.length === 0) {
-          setDocData(null);
-        } else {
-          setDocData(data);
-        }
-      } catch (error) {
-        console.error("Error fetching docData:", error);
-        setDocData(null);
-      } finally {
-        setIsLoading(false); // ✅ Hide loader after fetch completes
       }
-    }
 
-    getDocData();
-  }
-}, [getDrName]);
+      getDocData();
+    }
+  }, [getDrName]);
 
 
   console.log("Doctor Analysis Data-----------45:", doctorAnalysis);
@@ -304,7 +304,7 @@ export default function BasicDetailsComponent() {
           marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
           transition: "margin-left 0.5s ease",
         }} >
-          <ShimmerThumbnail className="mr-48 m-2 p-2" height={200} rounded  />
+          <ShimmerThumbnail className="mr-48 m-2 p-2" height={200} rounded />
           <ShimmerTitle line={2} gap={10} variant="primary" />
         </div> :
         getDrName &&
@@ -475,22 +475,32 @@ export default function BasicDetailsComponent() {
                       <div className="col-6">
                         <div className="review_rating m-2 ">
                           <div class="graphs">Total Rating</div>
-                          {docData.basicDetails &&
-                            <>
-                              <span>{docData.basicDetails[0].averageRating.toFixed(1)}</span><br />
-                              <span>{ratingsuggestion}</span>
-                              <h6 className='mt-3'>Total Reviews</h6>
-                              <span>{docData.basicDetails[0].totalReviewCount}</span><br />
-                              <span>
-                                <a
-                                  href={`https://www.google.com/search?q=${docData.finalDetails[0].name.replace(/ /g, '+')}+reviews+rating`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  Click Here
-                                </a> to see a complete log of Reviews and Rating
-                              </span>                          </>
+                          {docData.basicDetails && docData.finalDetails?.length > 0 &&
+                            (() => {
+                              const details = docData.finalDetails[0];
+                              const avgRating = details.averageRating ? details.averageRating.toFixed(1) : "0.0";
+                              const totalReviews = details.totalReviewCount ?? 0;
+
+                              return (
+                                <>
+                                  <span>{avgRating}</span><br />
+                                  <span>{ratingsuggestion}</span>
+                                  <h6 className='mt-3'>Total Reviews</h6>
+                                  <span>{totalReviews}</span><br />
+                                  <span>
+                                    <a
+                                      href={`https://www.google.com/search?q=${details.name?.replace(/ /g, '+')}+reviews+rating`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                    >
+                                      Click Here
+                                    </a> to see a complete log of Reviews and Rating
+                                  </span>
+                                </>
+                              );
+                            })()
                           }
+
                         </div>
                       </div>
                     </div>
