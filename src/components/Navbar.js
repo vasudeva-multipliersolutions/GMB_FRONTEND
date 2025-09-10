@@ -1193,9 +1193,9 @@ export default function Navbar(props) {
                           ? [...rating, val]
                           : rating.filter((r) => r !== val);
                         setRating(newSelection);
+                        setSidebarRating(newSelection);
                         if (window.location.pathname === "/Dashboard") {
                           setContextRating(newSelection);
-                          setSidebarRating(newSelection);
                         }
 
                         // ✅ instant apply
