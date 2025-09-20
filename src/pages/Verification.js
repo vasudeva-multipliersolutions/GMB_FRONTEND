@@ -126,7 +126,7 @@ const Verification = () => {
 
           {/* OTP Input Boxes */}
           <form
-            className="flex justify-center gap-3 mb-6"
+            className="flex flex-col items-center gap-3 mb-6"
             onPaste={handlePaste}
             onSubmit={(e) => {
               e.preventDefault();
@@ -134,33 +134,32 @@ const Verification = () => {
                 showError("Please enter OTP");
                 return;
               }
-              verify2FA();  // Trigger on Enter
+              verify2FA();  // Trigger on Enter or button click
             }}
           >
-            {[...Array(6)].map((_, i) => (
-              <input
-                key={i}
-                type="text"
-                maxLength="1"
-                ref={(el) => (inputsRef.current[i] = el)}
-                onChange={(e) => handleChange(e, i)}
-                onKeyDown={(e) => handleKeyDown(e, i)}
-                className="w-16 h-16 border border-gray-300 rounded-lg text-center text-xl font-bold focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-            ))}
-          </form>
-
-
-
-          {/* Verify Button */}
-          <div className="flex justify-center">
+            <div className="flex gap-3">
+              {[...Array(6)].map((_, i) => (
+                <input
+                  key={i}
+                  type="text"
+                  maxLength="1"
+                  ref={(el) => (inputsRef.current[i] = el)}
+                  onChange={(e) => handleChange(e, i)}
+                  onKeyDown={(e) => handleKeyDown(e, i)}
+                  className="w-16 h-16 border border-gray-300 rounded-lg text-center text-xl font-bold focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              ))}
+            </div>
+            {/* Verify Button inside the form */}
             <button
-              onClick={verify2FA}
-              className="flex justify-center px-52 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+              type="submit"
+              className="flex justify-center px-52 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition mt-4"
             >
               Verify
             </button>
-          </div>
+          </form>
+
+
 
           {/* Resend Link */}
           <p className=" flex justify-center mt-6 text-gray-500 text-[0.9rem]">

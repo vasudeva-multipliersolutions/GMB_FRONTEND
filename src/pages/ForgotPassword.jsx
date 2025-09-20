@@ -1,69 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../stylesheets/login.css";
-import { useNavigate, Link } from "react-router-dom";
 
-export default function Login(props) {
-  const navigate = useNavigate();
-
-  const [cred, setCred] = useState({ username: "", psw: "" });
+export default function ForgotPassword() {
+  const [email, setEmail] = useState("");
   const [popup, setPopup] = useState({ show: false, type: "", message: "" });
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (localStorage.getItem("username") && localStorage.getItem("psw")) {
-      navigate("/Dashboard");
-    }
-  }, []);
-
-  function getCredentials(event) {
-    const { name, value } = event.target;
-    setCred({
-      ...cred,
-      [name]: value,
-    });
-  }
-
-  const showPopupMsg = (type, msg) => {
-    setPopup({ show: true, type, message: msg });
+  const showPopup = (type, message) => {
+    setPopup({ show: true, type, message });
     setTimeout(() => {
       setPopup({ show: false, type: "", message: "" });
     }, 4000);
   };
 
-  async function signin(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-
+    setLoading(true);
     try {
-      const loginHandeler = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/forgot-password`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username: cred.username, psw: cred.psw }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
 
-      if (loginHandeler.ok) {
-        const response = await loginHandeler.json();
-
-        if (response && response[0]._id) {
-          navigate("/verification", { state: { userId: response[0]._id } });
-        } else {
-          showPopupMsg("error", "User ID not found in response.");
-        }
-
-      } else if (loginHandeler.status === 401) {
-        showPopupMsg("error", "Incorrect username or password.");
-      } else if (loginHandeler.status === 500) {
-        showPopupMsg("error", "Server error. Please try again later.");
+      const data = await res.json();
+      if (res.ok) {
+        showPopup("success", "Reset link sent! Check your email.");
+        setEmail(""); // Clear email field on success
       } else {
-        showPopupMsg("error", `Unexpected error: ${loginHandeler.status}`);
+        // Show actual backend message if available
+        showPopup("error", data.message || data.error || "Failed to send reset link.");
       }
-
-    } catch (error) {
-      showPopupMsg("error", "Network error. Please check your connection.");
+    } catch (err) {
+      showPopup("error", "Network error.");
     }
+    setLoading(false);
   }
 
-  // Notification color and icon logic (same as ForgotPassword.jsx)
+  // Notification color and icon logic
   const getPopupStyle = (type) => {
     switch (type) {
       case "success":
@@ -144,66 +118,64 @@ export default function Login(props) {
         {/* Left Side - Image */}
         <div className="hidden md:flex w-1/2">
           <img
-            src="https://multiplierai.co/gmbtest/loginpageimage.png"
-            alt="Login Visual"
+            src="https://multiplierai.co/gmbtest/forgotpassword.png"
+            alt="Forgot Password Visual"
             className="w-full h-full object-cover mx-16"
           />
         </div>
 
-        {/* Right Side - Login */}
+        {/* Right Side - Forgot Password */}
         <div className="flex w-full md:w-1/2 flex-col justify-center px-48 bg-white mx-16">
           {/* Heading */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-800">Sign In</h2>
+            <h2 className="text-3xl font-bold text-gray-800">Forgot Password</h2>
             <p className="text-gray-500 text-[0.9rem]">
-              Access your{" "}
-              <span className="font-semibold">Google My Business Performance</span>
+              Enter your registered email to receive a{" "}
+              <span className="font-semibold">password reset link</span>
             </p>
           </div>
 
           {/* Form */}
-          <form className="space-y-6" onSubmit={signin}>
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-gray-700 font-medium mb-2 text-[0.9rem]">
-                Username
+                Email Address
               </label>
               <input
-                type="text"
-                name="username"
-                placeholder="Enter your username"
-                value={cred.username}
-                onChange={getCredentials}
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-[0.9rem] focus:ring-2 focus:ring-blue-500 outline-none"
+                required
+                disabled={loading}
               />
             </div>
-            <div>
-              <label className="block text-gray-700 font-medium mb-2 text-[0.9rem]">
-                Password
-              </label>
-              <input
-                type="password"
-                name="psw"
-                placeholder="Enter your password"
-                value={cred.psw}
-                onChange={getCredentials}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-[0.9rem] focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-              {/* Forgot Password Link */}
-              <div className="flex justify-end mt-2">
-                <Link
-                  to="/forgot-password"
-                  className="text-blue-600 text-sm hover:underline font-medium"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-            </div>
-            {/* Sign In Button */}
+            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-3 rounded-lg mt-8 hover:bg-blue-700 transition"
+              className={`w-full bg-blue-600 text-white py-3 rounded-lg mt-8 hover:bg-blue-700 transition flex items-center justify-center ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
+              disabled={loading}
             >
-              Sign In
+              {loading && (
+                <svg className="animate-spin mr-2 h-5 w-5 text-white" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  />
+                </svg>
+              )}
+              {loading ? "Processing..." : "Send Reset Link"}
             </button>
           </form>
 
@@ -216,4 +188,6 @@ export default function Login(props) {
     </>
   );
 }
+
+
 

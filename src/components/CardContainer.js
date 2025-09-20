@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SlidePreloader from "../components/SlidePreloader";
-import { Skeleton } from "@mui/material";
+import { Skeleton, Tooltip } from "@mui/material";
 
 export default function CardContainer(props) {
   const [loading, setLoading] = useState(true);
@@ -34,26 +34,60 @@ export default function CardContainer(props) {
     'Need Access': 'bi-exclamation-circle text-[#66D2DF]',
   };
 
+  // Add your descriptions here
+  const descMap = {
+    "Total Profiles": "Total number of profiles in the system.",
+    "Verified Profiles": "Profiles that have been verified.",
+    "Unverified Profiles": "Profiles that are not yet verified.",
+    "Not Intrested": "Profiles marked as not interested.",
+    "Out of Organization": "Profiles not part of the organization.",
+    "Google Search Mobile": "Searches performed on Google using mobile devices.",
+    "Google Search Desktop": "Searches performed on Google using desktop devices.",
+    "Google Maps Mobile": "Searches on Google Maps using mobile devices.",
+    "Google Maps Desktop": "Searches on Google Maps using desktop devices.",
+    "Calls": "Number of calls made from the profile.",
+    "Directions": "Number of times directions were requested.",
+    "Website Clicks": "Number of clicks to the website.",
+    "Searches": "Total number of searches.",
+    "Department": "Total departments listed.",
+    "Hospitals": "Total hospitals listed.",
+    "Doctor": "Total doctors listed.",
+    "Clinic": "Total clinics listed.",
+    "MARS": "MARS metric value.",
+    "Need Access": "Profiles that need access.",
+  };
+
+  // Compose tooltip content with logo and description
+  const tooltipContent = (
+    <div className="flex items-center gap-2">
+      <i className={`bi ${logoMap[props.head]} text-lg`} />
+      <span>{descMap[props.head] || props.head}</span>
+    </div>
+  );
+
   return (
-    <div className="bg-white rounded-xl shadow-sm p-4 border border-[#E5E3FF] hover:shadow-md transition-shadow">
-      <div className="flex justify-between items-start">
-        <div className="flex-1">
-          <div className="flex items-center">
-            <i className={`bi ${logoMap[props.head]} text-xl mr-3`}></i>
-            <div className="rate-heading">
-              <span className="text-sm font-medium text-[#6A6792]">{props.head}</span>
+    <Tooltip title={tooltipContent} arrow placement="top" enterDelay={200}>
+      <div className="bg-white rounded-xl shadow-sm p-4 border border-[#E5E3FF] hover:shadow-md transition-shadow cursor-pointer">
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            <div className="flex items-center">
+              <i className={`bi ${logoMap[props.head]} text-xl mr-3 md:text-lg`}></i>
+              <div className="rate-heading">
+                <span className="lg:text-sm md:text-xs lg:font-medium md:font-normal text-[#6A6792]">{props.head}</span>
+              </div>
             </div>
-          </div>
-          
-          <div className="mt-2">
-            {loading ? (
-              <Skeleton/>
-            ) : (
-              <div className="text-2xl font-bold text-[#4A476B]">{props.val}</div>
-            )}
+            <div className="mt-2">
+              {loading ? (
+                <Skeleton />
+              ) : (
+                <div className="lg:text-2xl md:text-xl lg:font-bold md:font-semibold text-[#4A476B]">
+                  {Number(props.val).toLocaleString("en-IN")}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Tooltip>
   );
 }

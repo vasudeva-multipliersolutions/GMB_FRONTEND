@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState, useContext, useRef } from "react"
 
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { SharedContext } from "../context/SharedContext";
-import { FaAlignJustify, FaAnglesLeft, FaChevronDown, FaChevronUp, FaDashcube, FaSquarePhone, FaStar, FaUser, FaUserDoctor } from "react-icons/fa6";
+import { FaAlignJustify, FaAnglesLeft, FaChevronDown, FaChevronUp, FaDashcube, FaFileArrowDown, FaSquarePhone, FaStar, FaUser, FaUserDoctor } from "react-icons/fa6";
 import { FaChartBar, FaHome, FaSearch, FaUserMd } from "react-icons/fa";
 import { Sidebar, Menu, SubMenu } from "react-pro-sidebar";
 import { RxCross2 } from "react-icons/rx";
@@ -88,6 +88,7 @@ export default function Navbar(props) {
   // const [openRatingFilter, setOpenRatingFilter] = useState(false);
   const [openDocReport, setOpenDocReport] = useState(false);
   const [openPhonemetrics, setOpenPhonemetrics] = useState(false);
+  const [openInsights, setOpenInsights] = useState(false);
   const [unitOpen, setUnitOpen] = useState(false);
   const dropdownRef = useRef(null);
   const handleDocReportClick = () => {
@@ -95,6 +96,10 @@ export default function Navbar(props) {
   };
   const handlePhoneMetricsClick = () => {
     setOpenPhonemetrics(!openPhonemetrics);
+  };
+
+  const handleInsightClick = () => {
+    setOpenInsights(!openInsights);
   };
 
   // add at top
@@ -504,7 +509,9 @@ export default function Navbar(props) {
 
     if (data.countOfProfiles?.length > 0) {
       setcountOfProfiles([...data.countOfProfiles]);
-      setLocationProfiles([...data.countOfProfiles]);
+      if (typeof setLocationProfiles === "function") {
+        setLocationProfiles([...data.countOfProfiles]);
+      }
       setContextProfileCounts([...data.countOfProfiles]);
     } else {
       setcountOfProfiles([]);
@@ -1652,19 +1659,21 @@ export default function Navbar(props) {
 
           {/* Insights */}
           <ListItemButton
-            component={Link}
-            to="/Insights"
+             onClick={() => {
+              handleInsightClick();   // 👈 use new handler
+              navigate("/Insights");
+            }}
             sx={{
               borderRadius: "8px",
               mb: 1,
               backgroundColor: isActive("/Insights") ? "#1976d2" : "transparent",
-              color: isActive("/Insights") ? "#fff" : "#000",
+              color: isActive("/Insights") ? "#fff" : "#4a4a4a",
               "&:hover": {
-                backgroundColor: isActive("/Insights") ? "#1565c0" : "#4a4a4a",
+                backgroundColor: isActive("/Insights") ? "#1565c0" : "#f0f0f0",
               },
             }}
           >
-            <ListItemIcon
+            {/* <ListItemIcon
               sx={{
                 minWidth: "40px",
                 color: isActive("/Insights") ? "#fff" : "#000",
@@ -1677,8 +1686,264 @@ export default function Navbar(props) {
                 primary="Insights"
                 primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins", }}
               />
+            )} */}
+
+
+              <ListItemIcon
+              sx={{
+                minWidth: "40px",
+                color: isActive("/Insights") ? "#fff" : "#000",
+              }}
+            >
+              <FaFileArrowDown />
+            </ListItemIcon>
+            {!isCollapsed && (
+              <>
+                <ListItemText primary="Download Data" primaryTypographyProps={{ fontWeight: "400", fontSize: "0.9rem", fontFamily: "Poppins" }} />
+                {openInsights ? <ExpandLess /> : <ExpandMore />}
+              </>
             )}
           </ListItemButton>
+
+           {/* Nested Filters */}
+         {/* Nested Filters */}
+          <Collapse in={openInsights && !isCollapsed} timeout="auto" unmountOnExit>
+            {/* Profile Type */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
+                Profile Type
+              </FormLabel>
+
+              <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+                {getAllDepartments &&
+                  getAllDepartments
+                    .filter((dep) => dep !== "#N/A")
+                    .sort()
+                    .map((dep, index) => (
+                      <label
+                        key={index}
+                        style={{
+                          color: "#000",
+                          fontSize: "14px",
+                          marginBottom: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={department.includes(dep)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...department, dep]
+                              : department.filter((val) => val !== dep);
+
+                            setdepartment(newSelection);
+                            setContextProfileType(newSelection);
+
+                            // ✅ trigger filter with latest selections
+                            // filterApi();
+                          }}
+                        />
+                        {dep}
+                      </label>
+                    ))}
+
+                <button
+                  onClick={() => {
+                    setdepartment([]);
+                    if (window.location.pathname === "/Dashboard") {
+                      setContextProfileType([]);
+                      setContextDepartment([]);
+                    }
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box>
+
+
+            {/* Rating */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
+                Rating
+              </FormLabel>
+              <Box sx={{ display: "flex", flexDirection: "column", mt: 1 }}>
+                {["1", "2", "3", "4", "5"].map((val) => (
+                  <label key={val} style={{ color: "#000", fontSize: "14px", marginBottom: "4px", display: "flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={rating.includes(val)}
+                      onChange={(e) => {
+                        let newSelection = e.target.checked
+                          ? [...rating, val]
+                          : rating.filter((r) => r !== val);
+                        setRating(newSelection);
+                        setSidebarRating(newSelection);
+                        if (window.location.pathname === "/Dashboard") {
+                          setContextRating(newSelection);
+                        }
+
+                        // ✅ instant apply
+                        // filterApi();
+                      }}
+                    />
+                    {val === "1" ? "0-1" : `${Number(val) - 1}-${val}`}
+                  </label>
+                ))}
+
+                <button
+                  onClick={() => {
+                    setRating([]);
+                    if (window.location.pathname === "/Dashboard") {
+                      setContextRating([]);
+                    }
+                    setSidebarRating([]);
+                    filterApi();
+                  }}
+                  style={{
+                    color: "#d32f2f",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                    marginTop: "4px",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    padding: "0",
+                  }}
+                >
+                  Clear All
+                </button>
+              </Box>
+            </Box>
+
+            {/* Updated Specialty Section for Doc Reports */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <FormLabel sx={{ color: "#000", fontWeight: 600, fontSize: "0.9rem" }}>
+                Specialty
+              </FormLabel>
+
+              <input
+                type="text"
+                placeholder="Search"
+                value={specialitySearch}
+                onChange={(e) => setSpecialitySearch(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "4px 8px",
+                  fontSize: "14px",
+                  marginBottom: "8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                }}
+              />
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  maxHeight: "200px", // Set maximum height
+                  overflowY: "auto",  // Enable vertical scrolling
+                  paddingRight: "4px", // Add some padding for scrollbar
+                  // Custom scrollbar styling
+                  "&::-webkit-scrollbar": {
+                    width: "6px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    backgroundColor: "#f1f1f1",
+                    borderRadius: "3px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    backgroundColor: "#c1c1c1",
+                    borderRadius: "3px",
+                    "&:hover": {
+                      backgroundColor: "#a8a8a8",
+                    },
+                  },
+                }}
+              >
+                {getSpeciality &&
+                  getSpeciality
+                    .filter((sp) =>
+                      sp !== "#N/A" &&
+                      sp.toLowerCase().includes(specialitySearch.toLowerCase())
+                    )
+                    .sort()
+                    .map((sp, index) => (
+                      <label
+                        key={index}
+                        style={{
+                          color: "#000",
+                          fontSize: "14px",
+                          marginBottom: "4px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          cursor: "pointer",
+                          padding: "2px 0", // Add slight vertical padding for better click area
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={speciality.includes(sp)}
+                          onChange={(e) => {
+                            let newSelection = e.target.checked
+                              ? [...speciality, sp]
+                              : speciality.filter((s) => s !== sp);
+
+                            setSpeciality(newSelection);
+                            if (window.location.pathname === "/Dashboard") {
+                              setContextSpeciality(newSelection);
+                            }
+                          }}
+                        />
+                        {sp}
+                      </label>
+                    ))}
+              </Box>
+
+              <button
+                onClick={() => {
+                  setSpeciality([]);
+                  setContextSpeciality([]);
+                  if (window.location.pathname === "/Dashboard") {
+                    setContextSpeciality([]);
+                  }
+                  filterApi();
+                }}
+                style={{
+                  color: "#d32f2f",
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                  marginTop: "8px",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  padding: "0",
+                }}
+              >
+                Clear All
+              </button>
+            </Box>
+
+          </Collapse>
         </List>
       </Drawer>
 
@@ -1798,13 +2063,13 @@ export default function Navbar(props) {
               )} */}
 
               {/* Filters Section */}
-              <div className="flex flex-col gap-6  w-screen px-4">
+              <div className="flex flex-col gap-6  w-full px-4">
 
 
                 {/* Filters Row */}
                 <div className="flex flex-wrap gap-6 mt-2 w-full ">
                   {/* Region Filter */}
-                  <div className="flex flex-col flex-1 min-w-[300px]">
+                  <div className="flex flex-col flex-1 ">
                     <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Region</label>
                     <div className="flex flex-wrap gap-4">
                       {getStates?.filter((s) => s !== "#N/A").sort().map((region) => {
@@ -1848,7 +2113,7 @@ export default function Navbar(props) {
                   </div>
 
                   {/* Unit Filter */}
-                  <div className="flex flex-col flex-1  relative" ref={dropdownRef}>
+                  <div className="flex flex-col flex-1  w-[300px] relative" ref={dropdownRef}>
                     <label className="font-normal text-[0.9rem] text-gray-700 mb-1">Unit</label>
 
                     {/* Dropdown Box */}

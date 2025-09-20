@@ -24,7 +24,7 @@ const MultiMonthSelector = ({ filteredMonths, selectedMonths, setSelectedMonths 
     }, []);
 
     return (
-        <div className="multi-select" ref={dropdownRef} style={{ position: "relative", width: "100%" }}>
+        <div className="multi-select" ref={dropdownRef} style={{ position: "relative",  }}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
                 style={{

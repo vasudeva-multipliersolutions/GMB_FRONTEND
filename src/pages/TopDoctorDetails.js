@@ -205,7 +205,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
                     bcolor="white"
                     title="Monthly Improvement Report"
                     head={[
-                      "Dr. Name",
+                      "Profile Name",
                       "GS - Mobile",
                       "GS - Desktop",
                       "GM - Mobile",
@@ -227,7 +227,7 @@ export default function TopDoctorDetails({ contextHospitals }) {
                     bcolor="white"
                     title="Monthly Improvement Report"
                     head={[
-                      "Dr. Name",
+                      "Profile Name",
                       "GS - Mobile",
                       "GS - Desktop",
                       "GM - Mobile",
