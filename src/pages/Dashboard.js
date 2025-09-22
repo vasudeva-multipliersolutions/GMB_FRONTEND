@@ -16,6 +16,7 @@ import html2canvas from 'html2canvas'
 import { BsFiletypePdf } from "react-icons/bs";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import jsPDF from 'jspdf'
+import axios from "axios";
 import * as XLSX from "xlsx";
 import CombinedLineChart from "../components/CombinedLineChart";
 
@@ -76,7 +77,8 @@ export default function Dashboard(props) {
   const [contextDepartment, setContextDepartment] = useState();
   const [contextRating, setContextRating] = useState();
   const [deptDetails, setDeptDetails] = useState([]);
-
+  const [insightsData, setInsightsData] = useState([]);
+  const [locationsData, setLocationsData] = useState([]);
 
 
 
@@ -553,83 +555,6 @@ const downloadPDF = async () => {
 
 
 
-  // const downloadDataAsExcel = () => {
-  //   const workbook = XLSX.utils.book_new();
-
-  //   // Sheet 1: ContentContainer
-  //   if (use && use.length > 0) {
-  //     const useSheet = XLSX.utils.json_to_sheet(use.map(obj => {
-  //       const key = Object.keys(obj)[0];
-  //       return { Profiles: key, Counts: obj[key] };
-  //     }));
-  //     XLSX.utils.book_append_sheet(workbook, useSheet, "Profile Counts");
-  //   }
-
-  //   // Sheet 2: ReviewRating
-  //   if (showAllData?.reviewRating?.length > 0) {
-  //     const reviewSheet = XLSX.utils.json_to_sheet(showAllData.reviewRating);
-  //     XLSX.utils.book_append_sheet(workbook, reviewSheet, "ReviewRating");
-  //   }
-
-  //   // Sheet 3: Analysis
-  //   if (showAllData?.analysis?.length > 0) {
-  //     const analysisSheet = XLSX.utils.json_to_sheet(showAllData.analysis);
-  //     XLSX.utils.book_append_sheet(workbook, analysisSheet, "Analysis");
-  //   }
-
-  //   //Sheet 4: Top Doctor Data
-  //   if (Array.isArray(topDoctorData) && topDoctorData.length > 0) {
-  //     const header = [
-  //       "Name / Hospital",
-  //       "GS - Mobile",
-  //       "GS - Desktop",
-  //       "GM - Mobile",
-  //       "GM - Desktop",
-  //       "Website Clicks",
-  //       "Directions Clicks",
-  //       "Phone Calls"
-  //     ];
-
-  //     // Process each row to ensure it's an array of cells
-  //     const dataRows = topDoctorData.map(row => {
-  //       if (Array.isArray(row)) {
-  //         return row; // Already an array, use as-is
-  //       } else if (typeof row === 'string') {
-  //         // Split string by commas to create row array
-  //         return row.split(',');
-  //       } else {
-  //         console.warn('Unexpected data format in row:', row);
-  //         return []; // Fallback to empty array to avoid errors
-  //       }
-  //     });
-
-  //     // Combine header with processed data rows
-  //     const doctorRows = [header, ...dataRows];
-  //     const doctorSheet = XLSX.utils.aoa_to_sheet(doctorRows);
-  //     XLSX.utils.book_append_sheet(workbook, doctorSheet, "TopDoctors");
-  //   }
-
-
-  //   // Build filename dynamically
-  //   const parts = [
-  //     getInsightState || "",
-  //     getInsightsCity || "",
-  //     newMonthContext || "",
-  //     contextSpeciality || "",
-  //     // Optional: add speciality if available e.g., `speciality || ""`
-  //   ].filter(Boolean); // removes empty strings
-
-  //   const filename = parts.length > 0 ? `GMB_Performance_Report_${parts.join("_")}.xlsx` : "GMB Performance Report.xlsx";
-
-  //   // Export Excel file
-  //   XLSX.writeFile(workbook, filename);
-  // };
-
-  //console.log("getContextCity@@@@@@@@******^^^^^^^^^^^^^^^%%%%%%%%%%%%%$$$$$$$$$$#### : " + topDoctorData);
-
-
-
-
   const downloadDataAsExcel = () => {
     const workbook = XLSX.utils.book_new();
 
@@ -715,7 +640,7 @@ const downloadPDF = async () => {
         console.warn("Unexpected format in topDoctorData row:", row);
         return [];
       });
-      createStyledSheet([header, ...rows], "Top 100 Doctor's Data");
+      createStyledSheet([header, ...rows], "Top Doctor's Data");
     }
 
     // Build dynamic filename
@@ -734,6 +659,63 @@ const downloadPDF = async () => {
     XLSX.writeFile(workbook, filename);
   };
 
+
+  const exportInsightsToExcel = () => {
+    const wb = XLSX.utils.book_new();
+    const ws1 = XLSX.utils.json_to_sheet(insightsData);
+    const ws2 = XLSX.utils.json_to_sheet(locationsData);
+    XLSX.utils.book_append_sheet(wb, ws1, "ProfileInsights");
+    XLSX.utils.book_append_sheet(wb, ws2, "ProfileCounts");
+
+    // Build filename from filters
+    const filters = [
+      profileType,
+      contextState,
+      contextCity,
+      newMonthContext,
+      specialityContext,
+      sidebarRating,
+    ];
+    const filterString = filters
+      .map(f =>
+        Array.isArray(f)
+          ? f.join("-")
+          : (f !== undefined && f !== null ? f : "")
+      )
+      .filter(f => f && f.length > 0)
+      .join("_");
+
+    const filename =
+      filterString.length > 0
+        ? `ManipalData_${filterString}.xlsx`
+        : "ManipalData.xlsx";
+
+    XLSX.writeFile(wb, filename);
+  };
+
+
+  // Fetch Insights data when filters change
+  useEffect(() => {
+    const fetchInsightsData = async () => {
+      try {
+        const res = await axios.post(`${api}/exportOverAllData`, {
+          state: contextState || [],
+          branch: contextCity || [],
+          month: newMonthContext || [],
+          speciality: contextSpeciality || [],
+          rating: sidebarRating || [],
+          dept: profileType || [],
+        });
+        if (res.data.success) {
+          setInsightsData(res.data.insightsData || []);
+          setLocationsData(res.data.locationsData || []);
+        }
+      } catch (error) {
+        console.error("❌ Error fetching insights data:", error);
+      }
+    };
+    fetchInsightsData();
+  }, [api, contextState, contextCity, newMonthContext, profileType, contextSpeciality, sidebarRating]);
 
   return (
     <SharedContext.Provider
@@ -786,11 +768,20 @@ const downloadPDF = async () => {
             >
               <BsFiletypePdf className="mr-2" /> Export PDF
             </button>
-            <button
+            {/* <button
               className="flex items-center bg-[#1565C0] text-white rounded-lg px-4 py-2 hover:bg-[#30839f] transition-colors shadow-md"
               onClick={downloadDataAsExcel}
             >
               <RiFileExcel2Fill className="mr-2" /> Export Excel
+            </button> */}
+            <button
+              className="flex items-center bg-[#1565C0] text-white rounded-lg px-4 py-2 hover:bg-[#30839f] transition-colors shadow-md ml-3"
+              onClick={exportInsightsToExcel}
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+  </svg>
+              Download Report
             </button>
           </div>
 

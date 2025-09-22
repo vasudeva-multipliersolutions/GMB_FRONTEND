@@ -135,7 +135,7 @@ export default function ResetPassword() {
     e.preventDefault();
 
     if (psw !== confirmPsw) {
-      showPopupMsg("error", "Passwords do not match.");
+      showPopupMsg("error", "Please make sure both passwords should match.");
       return;
     }
 

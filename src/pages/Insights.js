@@ -15,10 +15,9 @@ export default function ManipalDataExport() {
   const [insightsData, setInsightsData] = useState([]);
   const [locationsData, setLocationsData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [skeletonLoading, setSkeletonLoading] = useState(true);
   const [currentPageInsights, setCurrentPageInsights] = useState(1);
   const [currentPageLocations, setCurrentPageLocations] = useState(1);
-  const [rowsPerPage] = useState(10);
+  const [rowsPerPage] = useState(5);
   const api = localStorage.getItem("API");
   const { isCollapsed, windowWidth } = useContext(SidebarContext);
   const {
@@ -49,7 +48,6 @@ export default function ManipalDataExport() {
 
   const fetchData = async (filters = {}) => {
     setLoading(true);
-    setSkeletonLoading(true);
     try {
       const res = await axios.post(`${api}/exportOverAllData`, filters);
       if (res.data.success) {
@@ -60,7 +58,6 @@ export default function ManipalDataExport() {
       console.error("❌ Error fetching data:", error);
     } finally {
       setLoading(false);
-      setSkeletonLoading(false);
     }
   };
 
@@ -71,32 +68,7 @@ export default function ManipalDataExport() {
     const ws2 = XLSX.utils.json_to_sheet(locationsData);
     XLSX.utils.book_append_sheet(wb, ws1, "ProfileInsights");
     XLSX.utils.book_append_sheet(wb, ws2, "ProfileCounts");
-
-    // Build filename from filters
-    const filters = [
-      profileType,
-      contextState,
-      contextCity,
-      newMonthContext,
-      specialityContext,
-      sidebarRating,
-    ];
-    // Convert arrays to string and remove empty/undefined
-    const filterString = filters
-      .map(f =>
-        Array.isArray(f)
-          ? f.join("-")
-          : (f !== undefined && f !== null ? f : "")
-      )
-      .filter(f => f && f.length > 0)
-      .join("_");
-
-    const filename =
-      filterString.length > 0
-        ? `GMB_Insights_&_Counts_of_${filterString}.xlsx`
-        : "GMB_Insights_&_Counts.xlsx";
-
-    XLSX.writeFile(wb, filename);
+    XLSX.writeFile(wb, "ManipalData.xlsx");
   };
 
   // Pagination logic for Insights
@@ -128,20 +100,6 @@ export default function ManipalDataExport() {
   const insightsColumns = getAllColumns(insightsData);
   const locationsColumns = getAllColumns(locationsData);
 
-  useEffect(() => {
-    setCurrentPageInsights(1);
-  }, [insightsData]);
-
-  useEffect(() => {
-    setCurrentPageLocations(1);
-  }, [locationsData]);
-
-  useEffect(() => {
-    setSkeletonLoading(true);
-    const timer = setTimeout(() => setSkeletonLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, [loading]);
-
   return (
     <div>
       <Navbar />
@@ -152,41 +110,10 @@ export default function ManipalDataExport() {
         }}
       >
         <div className="p-4 bg-gradient-to-br from-indigo-100 to-purple-200 min-h-screen">
-          {(loading || skeletonLoading) ? (
-            <div className="space-y-10">
-              {[1, 2].map((tableIdx) => (
-                <div key={tableIdx} className="bg-white shadow-lg rounded-2xl p-4 border border-gray-200">
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse" />
-                    <div className="h-8 w-32 bg-gray-200 rounded animate-pulse" />
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full rounded-xl overflow-hidden border border-gray-200">
-                      <thead className="bg-gray-100 text-center">
-                        <tr>
-                          {Array.from({ length: 8 }).map((_, i) => (
-                            <th key={i} className="font-normal text-[0.9rem] text-gray-700 p-2">
-                              <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Array.from({ length: 8 }).map((_, rowIdx) => (
-                          <tr key={rowIdx} className={rowIdx % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                            {Array.from({ length: 8 }).map((_, colIdx) => (
-                              <td key={colIdx} className="font-normal text-[0.9rem] text-gray-700 p-2 border-t text-center">
-                                <div className="h-4 w-16 bg-gray-200 rounded animate-pulse" />
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ))}
-            </div>
+
+
+          {loading ? (
+            <div className="text-center text-lg text-gray-600 py-10">Loading....</div>
           ) : (
             <div className="space-y-10">
               {/* Insights Table */}

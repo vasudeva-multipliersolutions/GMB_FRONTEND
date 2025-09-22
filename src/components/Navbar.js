@@ -1009,7 +1009,6 @@ export default function Navbar(props) {
                             let newSelection = e.target.checked
                               ? [...speciality, sp]
                               : speciality.filter((s) => s !== sp);
-
                             setSpeciality(newSelection);
                             setContextSpeciality(newSelection);
                           }}
@@ -1908,6 +1907,7 @@ export default function Navbar(props) {
                               : speciality.filter((s) => s !== sp);
 
                             setSpeciality(newSelection);
+                            setSpecialityContext(newSelection)
                             if (window.location.pathname === "/Dashboard") {
                               setContextSpeciality(newSelection);
                             }
@@ -1921,7 +1921,7 @@ export default function Navbar(props) {
               <button
                 onClick={() => {
                   setSpeciality([]);
-                  setContextSpeciality([]);
+                  setSpecialityContext([]);
                   if (window.location.pathname === "/Dashboard") {
                     setContextSpeciality([]);
                   }

@@ -44,10 +44,28 @@ export const SidebarProvider = ({ children }) => {
     };
   }, []);
 
+  const resetSidebarContext = () => {
+    setIsCollapsed(window.innerWidth < 1250);
+    setWindowWidth(window.innerWidth);
+    setDrNameContext([]);
+    setSpecialityContext([]);
+    setContextProfileType([]);
+    setContextProfileCounts("");
+    setSidebarRating("");
+    setContextState([]);
+    setContextCity([]);
+    setContextMonth([]);
+    setNewMonthContext([]);
+    setDoctorAnalysis([]);
+    // Add any other context resets here
+  };
+
+  console.log("specialityContext-------------", specialityContext);
+
   return (
     <SidebarContext.Provider value={{
       isCollapsed, toggleSidebar, windowWidth, drNameContext, setDrNameContext, specialityContext, setSpecialityContext, profileType, setContextProfileType, profileCounts, setContextProfileCounts, sidebarRating, setSidebarRating, contextState, setContextState,
-      contextCity, setContextCity, getCitys, setCitys, contextMonth, setContextMonth, newMonthContext, setNewMonthContext, doctorAnalysis, setDoctorAnalysis, populateState, setPopulateState
+      contextCity, setContextCity, getCitys, setCitys, contextMonth, setContextMonth, newMonthContext, setNewMonthContext, doctorAnalysis, setDoctorAnalysis, populateState, setPopulateState, resetSidebarContext
     }}>
       {children}
     </SidebarContext.Provider>

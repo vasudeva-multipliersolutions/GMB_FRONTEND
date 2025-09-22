@@ -15,6 +15,9 @@ import Verification from "./pages/Verification";
 import Phone from "./pages/PhoneMetrics";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import { useEffect, useContext } from "react";
+import { useLocation } from "react-router-dom";
+import { SidebarContext } from "./SidebarContext";
 
 
 
@@ -23,8 +26,9 @@ function App() {
 
   return (
     <SidebarProvider>
-
       <HashRouter>
+        <ResetContextOnRouteChange
+        />
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -65,4 +69,17 @@ function App() {
   );
 }
 
+function ResetContextOnRouteChange() {
+  const location = useLocation();
+  const { resetSidebarContext } = useContext(SidebarContext);
+
+  useEffect(() => {
+    resetSidebarContext && resetSidebarContext();
+    // eslint-disable-next-line
+  }, [location.pathname]);
+
+  return null;
+}
+
 export default App;
+

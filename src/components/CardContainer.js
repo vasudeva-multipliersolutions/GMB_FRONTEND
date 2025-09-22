@@ -37,10 +37,10 @@ export default function CardContainer(props) {
   // Add your descriptions here
   const descMap = {
     "Total Profiles": "Total number of profiles in the system.",
-    "Verified Profiles": "Profiles that have been verified.",
-    "Unverified Profiles": "Profiles that are not yet verified.",
-    "Not Intrested": "Profiles marked as not interested.",
-    "Out of Organization": "Profiles not part of the organization.",
+    "Verified Profiles": "Count of all verified profiles.",
+    "Unverified Profiles": "Profiles awaiting verification (includes Need to Verify & Suspended).",
+    "Not Intrested": "Profiles marked as not interested (Doctors declined to create profiles).",
+    "Out of Organization": "Profiles Out of Organization (Doctors who have left the organization).",
     "Google Search Mobile": "Searches performed on Google using mobile devices.",
     "Google Search Desktop": "Searches performed on Google using desktop devices.",
     "Google Maps Mobile": "Searches on Google Maps using mobile devices.",
@@ -54,7 +54,7 @@ export default function CardContainer(props) {
     "Doctor": "Total doctors listed.",
     "Clinic": "Total clinics listed.",
     "MARS": "MARS metric value.",
-    "Need Access": "Profiles that need access.",
+    "Need Access": "Profiles that need access (Lost access or doctor-claimed profiles).",
   };
 
   // Compose tooltip content with logo and description
