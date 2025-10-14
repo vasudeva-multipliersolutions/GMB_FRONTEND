@@ -3,7 +3,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 export default function CombinedLineChart({ data }) {
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun" , "Jul", "Aug" ];
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun" , "Jul", "Aug", "Sep" ];
 
   // Build series for Highcharts
   const series = Object.entries(data).map(([name, values]) => ({
