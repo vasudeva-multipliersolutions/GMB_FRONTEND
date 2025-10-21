@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SharedContext } from "../context/SharedContext";
 import { SidebarContext } from "../SidebarContext";
 import Navbar from "../components/Navbar";
@@ -11,10 +11,6 @@ export default function PhoneMetrics() {
   const [rowsPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
   const api = localStorage.getItem("API");
-  
-  // Track the last successful fetch parameters
-  const lastFetchParams = useRef(null);
-  const isFirstRender = useRef(true);
 
   const {
     contextState,
@@ -22,10 +18,10 @@ export default function PhoneMetrics() {
     newMonthContext,
     profileType,
     specialityContext,
-    sidebarRating
+    sidebarRating,
+    isCollapsed,
+    windowWidth
   } = useContext(SidebarContext);
-
-  const { isCollapsed, windowWidth } = useContext(SidebarContext);
 
   // ✅ Export function to download data as CSV
   const exportToCSV = () => {
@@ -36,78 +32,61 @@ export default function PhoneMetrics() {
 
     const sortedData = [...locationProfiles].sort((a, b) => a.unit.localeCompare(b.unit));
     const headers = ["S.No", "Name", "Unit", "Speciality", "Phone"];
-    
+
     const csvContent = [
       headers.join(","),
-      ...sortedData.map((item, index) => [
-        index + 1,
-        `"${item.name}"`,
-        `"${item.unit}"`,
-        `"${item.speciality}"`,
-        `"${item.phone}"`
-      ].join(","))
+      ...sortedData.map((item, index) =>
+        [
+          index + 1,
+          `"${item.name}"`,
+          `"${item.unit}"`,
+          `"${item.speciality}"`,
+          `"${item.phone}"`
+        ].join(",")
+      )
     ].join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
-    
+
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
-      
-      const date = new Date().toISOString().split('T')[0];
-      const filters = [
-        contextState,
-        contextCity,
-        newMonthContext,
-        profileType
-      ].filter(Boolean).join('_');
-      
+
+      const date = new Date().toISOString().split("T")[0];
+      const filters = [contextState, contextCity, newMonthContext, profileType]
+        .filter(Boolean)
+        .join("_");
+
       const filename = `phone_metrics_${filters}_${date}.csv`;
       link.setAttribute("download", filename);
       link.style.visibility = "hidden";
-      
+
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
   };
 
-  // ✅ Fetch data only when filters actually change
+  // ✅ FIXED EFFECT — NO MORE FLASHING ISSUE
   useEffect(() => {
-    // Skip first render to let context values load
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-
-    // Create a unique key for current parameters
-    const currentParams = JSON.stringify({
-      state: contextState,
-      branch: contextCity,
-      month: newMonthContext,
-      dept: profileType,
-      speciality: contextSpeciality || specialityContext,
-      rating: sidebarRating
-    });
-
-    // Don't fetch if parameters haven't changed
-    if (lastFetchParams.current === currentParams) {
-      return;
-    }
-
-    // Don't fetch if all critical filters are empty
-    if (!contextState && !contextCity && !newMonthContext) {
-      return;
-    }
-
     let isMounted = true;
     const controller = new AbortController();
 
     async function fetchPhoneMetrics() {
-      setLoading(true);
-
       try {
+        const hasValidFilters = contextState || contextCity || newMonthContext;
+
+        if (!hasValidFilters) {
+          if (isMounted) {
+            setLocationProfiles([]);
+            setLoading(false);
+          }
+          return;
+        }
+
+        setLoading(true);
+
         const response = await fetch(`${api}/phonemetrics`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -118,37 +97,27 @@ export default function PhoneMetrics() {
             month: newMonthContext,
             dept: profileType,
             speciality: contextSpeciality || specialityContext,
-            rating: sidebarRating
+            rating: sidebarRating,
           }),
         });
 
         const data = await response.json();
 
         if (isMounted) {
-          if (data.success && data.result) {
-            setLocationProfiles(data.result);
-            setCurrentPage(1);
-            lastFetchParams.current = currentParams; // Save successful fetch params
-          } else {
-            // Only clear data if this was a valid attempt (had filters)
-            if (contextState || contextCity || newMonthContext) {
-              setLocationProfiles([]);
-            }
-          }
+          setLocationProfiles(data?.result || []);
+          setCurrentPage(1);
         }
       } catch (error) {
         if (error.name !== "AbortError") {
           console.error("Error fetching phone metrics:", error);
+          if (isMounted) setLocationProfiles([]);
         }
       } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
+        if (isMounted) setLoading(false);
       }
     }
 
-    // Debounce to avoid rapid-fire requests
-    const timeout = setTimeout(fetchPhoneMetrics, 500);
+    const timeout = setTimeout(fetchPhoneMetrics, 300);
 
     return () => {
       isMounted = false;
@@ -172,13 +141,8 @@ export default function PhoneMetrics() {
   const currentRows = locationProfiles.slice(indexOfFirstRow, indexOfLastRow);
   const totalPages = Math.ceil(locationProfiles.length / rowsPerPage);
 
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
+  const handlePrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+  const handleNextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
 
   return (
     <SharedContext.Provider
@@ -193,32 +157,33 @@ export default function PhoneMetrics() {
     >
       <Navbar />
 
-      <div className="p-4" style={{
+      <div
+        className="p-4"
+        style={{
           marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
           transition: "margin-left 0.5s ease",
-        }}>
-        
-        {/* Header with Title and Export Button */}
+        }}
+      >
+        {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl text-gray-700 font-semibold">Phone Metrics</h2>
-          
-          {/* Export Button */}
+
           <button
             onClick={exportToCSV}
             disabled={loading || locationProfiles.length === 0}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center gap-2"
           >
-            <svg 
-              className="w-4 h-4" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
               />
             </svg>
             Export Data ({locationProfiles.length} records)
@@ -229,15 +194,14 @@ export default function PhoneMetrics() {
           <div className="text-center py-4">Loading...</div>
         ) : (
           <>
-            {/* Table */}
             <table className="w-full rounded-xl overflow-hidden border border-gray-200">
               <thead className="bg-gray-100 text-center">
                 <tr>
-                  <th className="font-normal text-[0.9rem] text-gray-700 p-2 rounded-tl-xl">S.No</th>
-                  <th className="font-normal text-[0.9rem] text-gray-700 p-2">Name</th>
-                  <th className="font-normal text-[0.9rem] text-gray-700 p-2">Unit</th>
-                  <th className="font-normal text-[0.9rem] text-gray-700 p-2">Speciality</th>
-                  <th className="font-normal text-[0.9rem] text-gray-700 p-2 rounded-tr-xl">Phone</th>
+                  <th className="p-2 text-gray-700 text-sm">S.No</th>
+                  <th className="p-2 text-gray-700 text-sm">Name</th>
+                  <th className="p-2 text-gray-700 text-sm">Unit</th>
+                  <th className="p-2 text-gray-700 text-sm">Speciality</th>
+                  <th className="p-2 text-gray-700 text-sm">Phone</th>
                 </tr>
               </thead>
               <tbody>
@@ -245,41 +209,26 @@ export default function PhoneMetrics() {
                   [...currentRows]
                     .sort((a, b) => a.unit.localeCompare(b.unit))
                     .map((item, index) => (
-                      <tr
-                        key={item.id || `row-${index}`}
-                        className="text-center cursor-pointer hover:bg-gray-100"
-                      >
-                        <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+                      <tr key={index} className="text-center hover:bg-gray-100">
+                        <td className="p-2 text-sm text-gray-700">
                           {indexOfFirstRow + index + 1}
                         </td>
-                        <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-                          {item.name}
-                        </td>
-                        <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-                          {item.unit}
-                        </td>
-                        <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-                          {item.speciality}
-                        </td>
-                        <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-                          {item.phone}
-                        </td>
+                        <td className="p-2 text-sm text-gray-700">{item.name}</td>
+                        <td className="p-2 text-sm text-gray-700">{item.unit}</td>
+                        <td className="p-2 text-sm text-gray-700">{item.speciality}</td>
+                        <td className="p-2 text-sm text-gray-700">{item.phone}</td>
                       </tr>
                     ))
                 ) : (
                   <tr>
-                    <td
-                      className="font-normal text-[0.9rem] text-gray-700 p-2 text-center"
-                      colSpan="5"
-                    >
-                      {lastFetchParams.current ? "No data available" : "Please select filters to view data"}
+                    <td colSpan="5" className="p-2 text-center text-gray-700">
+                      No data available
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
 
-            {/* Pagination Controls */}
             {locationProfiles.length > rowsPerPage && (
               <div className="flex justify-center items-center mt-4 gap-2 text-gray-700">
                 <button
