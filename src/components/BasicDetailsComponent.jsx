@@ -98,7 +98,7 @@ export default function BasicDetailsComponent() {
   }, [getDrName]);
 
 
-  console.log("Doctor Analysis Data-----------45:", doctorAnalysis);
+  // console.log("Doctor Analysis Data-----------45:", doctorAnalysis);
 
   const doctorHead = [
     "S.No",
