@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { SharedContext } from "../context/SharedContext";
 import { SidebarContext } from "../SidebarContext";
 import Navbar from "../components/Navbar";
@@ -9,9 +9,12 @@ export default function PhoneMetrics() {
   const [contextSpeciality, setContextSpeciality] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(10);
-  const [loading, setLoading] = useState(true); // ✅ Start with loading true
-  const [initialLoad, setInitialLoad] = useState(true); // ✅ Track first load
+  const [loading, setLoading] = useState(false);
   const api = localStorage.getItem("API");
+  
+  // Track the last successful fetch parameters
+  const lastFetchParams = useRef(null);
+  const isFirstRender = useRef(true);
 
   const {
     contextState,
@@ -22,8 +25,6 @@ export default function PhoneMetrics() {
     sidebarRating
   } = useContext(SidebarContext);
 
-  console.log("contextSpeciality⚔⚔⚔⚔:", contextSpeciality);
-
   const { isCollapsed, windowWidth } = useContext(SidebarContext);
 
   // ✅ Export function to download data as CSV
@@ -33,25 +34,20 @@ export default function PhoneMetrics() {
       return;
     }
 
-    // Sort data before exporting (same as display)
     const sortedData = [...locationProfiles].sort((a, b) => a.unit.localeCompare(b.unit));
-
-    // Create CSV headers
     const headers = ["S.No", "Name", "Unit", "Speciality", "Phone"];
     
-    // Create CSV content
     const csvContent = [
-      headers.join(","), // Header row
+      headers.join(","),
       ...sortedData.map((item, index) => [
         index + 1,
-        `"${item.name}"`, // Wrap in quotes to handle commas in names
+        `"${item.name}"`,
         `"${item.unit}"`,
         `"${item.speciality}"`,
         `"${item.phone}"`
       ].join(","))
     ].join("\n");
 
-    // Create and download the file
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     
@@ -59,7 +55,6 @@ export default function PhoneMetrics() {
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
       
-      // Generate filename with current date and filters
       const date = new Date().toISOString().split('T')[0];
       const filters = [
         contextState,
@@ -78,33 +73,41 @@ export default function PhoneMetrics() {
     }
   };
 
-  // ✅ Fetch data with proper initial load handling
+  // ✅ Fetch data only when filters actually change
   useEffect(() => {
+    // Skip first render to let context values load
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    // Create a unique key for current parameters
+    const currentParams = JSON.stringify({
+      state: contextState,
+      branch: contextCity,
+      month: newMonthContext,
+      dept: profileType,
+      speciality: contextSpeciality || specialityContext,
+      rating: sidebarRating
+    });
+
+    // Don't fetch if parameters haven't changed
+    if (lastFetchParams.current === currentParams) {
+      return;
+    }
+
+    // Don't fetch if all critical filters are empty
+    if (!contextState && !contextCity && !newMonthContext) {
+      return;
+    }
+
     let isMounted = true;
     const controller = new AbortController();
 
     async function fetchPhoneMetrics() {
+      setLoading(true);
+
       try {
-        // ✅ Check if we have at least some filter context
-        const hasValidFilters = contextState || contextCity || newMonthContext;
-        
-        // ✅ On initial load, wait for filters to be set
-        if (initialLoad && !hasValidFilters) {
-          setLoading(false);
-          return;
-        }
-
-        // ✅ If filters are cleared after initial load, clear data
-        if (!initialLoad && !hasValidFilters) {
-          if (isMounted) {
-            setLocationProfiles([]);
-            setLoading(false);
-          }
-          return;
-        }
-
-        setLoading(true);
-
         const response = await fetch(`${api}/phonemetrics`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -125,25 +128,27 @@ export default function PhoneMetrics() {
           if (data.success && data.result) {
             setLocationProfiles(data.result);
             setCurrentPage(1);
+            lastFetchParams.current = currentParams; // Save successful fetch params
           } else {
-            setLocationProfiles([]);
+            // Only clear data if this was a valid attempt (had filters)
+            if (contextState || contextCity || newMonthContext) {
+              setLocationProfiles([]);
+            }
           }
-          setInitialLoad(false); // ✅ Mark initial load as complete
         }
       } catch (error) {
         if (error.name !== "AbortError") {
           console.error("Error fetching phone metrics:", error);
-          if (isMounted) {
-            setLocationProfiles([]);
-          }
         }
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
 
-    // ✅ Debounce fetch to avoid multiple calls during quick changes
-    const timeout = setTimeout(fetchPhoneMetrics, 300);
+    // Debounce to avoid rapid-fire requests
+    const timeout = setTimeout(fetchPhoneMetrics, 500);
 
     return () => {
       isMounted = false;
@@ -158,8 +163,7 @@ export default function PhoneMetrics() {
     profileType,
     contextSpeciality,
     specialityContext,
-    sidebarRating,
-    initialLoad
+    sidebarRating
   ]);
 
   // ✅ Pagination Logic
@@ -268,7 +272,7 @@ export default function PhoneMetrics() {
                       className="font-normal text-[0.9rem] text-gray-700 p-2 text-center"
                       colSpan="5"
                     >
-                      No data available
+                      {lastFetchParams.current ? "No data available" : "Please select filters to view data"}
                     </td>
                   </tr>
                 )}
