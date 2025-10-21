@@ -9,7 +9,8 @@ export default function PhoneMetrics() {
   const [contextSpeciality, setContextSpeciality] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(10);
-  const [loading, setLoading] = useState(false); // ✅ Loading state
+  const [loading, setLoading] = useState(true); // ✅ Start with loading true
+  const [initialLoad, setInitialLoad] = useState(true); // ✅ Track first load
   const api = localStorage.getItem("API");
 
   const {
@@ -77,15 +78,30 @@ export default function PhoneMetrics() {
     }
   };
 
-  // ✅ Fetch data with debounce and check for valid filters
+  // ✅ Fetch data with proper initial load handling
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
 
     async function fetchPhoneMetrics() {
       try {
-        // ✅ Avoid fetching when filters are empty
-        if (!contextState && !contextCity && !newMonthContext) return;
+        // ✅ Check if we have at least some filter context
+        const hasValidFilters = contextState || contextCity || newMonthContext;
+        
+        // ✅ On initial load, wait for filters to be set
+        if (initialLoad && !hasValidFilters) {
+          setLoading(false);
+          return;
+        }
+
+        // ✅ If filters are cleared after initial load, clear data
+        if (!initialLoad && !hasValidFilters) {
+          if (isMounted) {
+            setLocationProfiles([]);
+            setLoading(false);
+          }
+          return;
+        }
 
         setLoading(true);
 
@@ -105,13 +121,21 @@ export default function PhoneMetrics() {
 
         const data = await response.json();
 
-        if (isMounted && data.success && data.result) {
-          setLocationProfiles(data.result);
-          setCurrentPage(1);
+        if (isMounted) {
+          if (data.success && data.result) {
+            setLocationProfiles(data.result);
+            setCurrentPage(1);
+          } else {
+            setLocationProfiles([]);
+          }
+          setInitialLoad(false); // ✅ Mark initial load as complete
         }
       } catch (error) {
         if (error.name !== "AbortError") {
           console.error("Error fetching phone metrics:", error);
+          if (isMounted) {
+            setLocationProfiles([]);
+          }
         }
       } finally {
         if (isMounted) setLoading(false);
@@ -134,7 +158,8 @@ export default function PhoneMetrics() {
     profileType,
     contextSpeciality,
     specialityContext,
-    sidebarRating
+    sidebarRating,
+    initialLoad
   ]);
 
   // ✅ Pagination Logic
@@ -199,82 +224,80 @@ export default function PhoneMetrics() {
         {loading ? (
           <div className="text-center py-4">Loading...</div>
         ) : (
-       <>
-  {/* Table */}
-  <table className="w-full rounded-xl overflow-hidden border border-gray-200">
-    <thead className="bg-gray-100 text-center">
-      <tr>
-        <th className="font-normal text-[0.9rem] text-gray-700 p-2 rounded-tl-xl">S.No</th>
-        <th className="font-normal text-[0.9rem] text-gray-700 p-2">Name</th>
-        <th className="font-normal text-[0.9rem] text-gray-700 p-2">Unit</th>
-        <th className="font-normal text-[0.9rem] text-gray-700 p-2">Speciality</th>
-        <th className="font-normal text-[0.9rem] text-gray-700 p-2 rounded-tr-xl">Phone</th>
-      </tr>
-    </thead>
-    <tbody>
-  {currentRows.length > 0 ? (
-    [...currentRows] // spread to avoid mutating original array
-      .sort((a, b) => a.unit.localeCompare(b.unit)) // ✅ Sort by unit alphabetically
-      .map((item, index) => (
-        <tr
-          key={item.id}
-          className="text-center cursor-pointer hover:bg-gray-100"
-        >
-          <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-            {indexOfFirstRow + index + 1}
-          </td>
-          <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-            {item.name}
-          </td>
-          <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-            {item.unit}
-          </td>
-          <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-            {item.speciality}
-          </td>
-          <td className="font-normal text-[0.9rem] text-gray-700 p-2">
-            {item.phone}
-          </td>
-        </tr>
-      ))
-  ) : (
-    <tr>
-      <td
-        className="font-normal text-[0.9rem] text-gray-700 p-2 text-center"
-        colSpan="5"
-      >
-        No data available
-      </td>
-    </tr>
-  )}
-</tbody>
+          <>
+            {/* Table */}
+            <table className="w-full rounded-xl overflow-hidden border border-gray-200">
+              <thead className="bg-gray-100 text-center">
+                <tr>
+                  <th className="font-normal text-[0.9rem] text-gray-700 p-2 rounded-tl-xl">S.No</th>
+                  <th className="font-normal text-[0.9rem] text-gray-700 p-2">Name</th>
+                  <th className="font-normal text-[0.9rem] text-gray-700 p-2">Unit</th>
+                  <th className="font-normal text-[0.9rem] text-gray-700 p-2">Speciality</th>
+                  <th className="font-normal text-[0.9rem] text-gray-700 p-2 rounded-tr-xl">Phone</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentRows.length > 0 ? (
+                  [...currentRows]
+                    .sort((a, b) => a.unit.localeCompare(b.unit))
+                    .map((item, index) => (
+                      <tr
+                        key={item.id || `row-${index}`}
+                        className="text-center cursor-pointer hover:bg-gray-100"
+                      >
+                        <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+                          {indexOfFirstRow + index + 1}
+                        </td>
+                        <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+                          {item.name}
+                        </td>
+                        <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+                          {item.unit}
+                        </td>
+                        <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+                          {item.speciality}
+                        </td>
+                        <td className="font-normal text-[0.9rem] text-gray-700 p-2">
+                          {item.phone}
+                        </td>
+                      </tr>
+                    ))
+                ) : (
+                  <tr>
+                    <td
+                      className="font-normal text-[0.9rem] text-gray-700 p-2 text-center"
+                      colSpan="5"
+                    >
+                      No data available
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
 
-  </table>
-
-  {/* Pagination Controls */}
-  {locationProfiles.length > rowsPerPage && (
-    <div className="flex justify-center items-center mt-4 gap-2 text-gray-700">
-      <button
-        onClick={handlePrevPage}
-        disabled={currentPage === 1}
-        className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-      >
-        Prev
-      </button>
-      <span className="px-4 py-2">
-        Page {currentPage} of {totalPages}
-      </span>
-      <button
-        onClick={handleNextPage}
-        disabled={currentPage === totalPages}
-        className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-      >
-        Next
-      </button>
-    </div>
-  )}
-</>
-
+            {/* Pagination Controls */}
+            {locationProfiles.length > rowsPerPage && (
+              <div className="flex justify-center items-center mt-4 gap-2 text-gray-700">
+                <button
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                >
+                  Prev
+                </button>
+                <span className="px-4 py-2">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </SharedContext.Provider>

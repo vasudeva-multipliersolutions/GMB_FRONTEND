@@ -246,9 +246,9 @@ export default function Navbar(props) {
   //console.log("Speciality24567: ", selectedSpeciaity);
 
 
-  useEffect(() => {
-    setAllSpeciality(specialityContext)
-  }, [specialityContext]);
+  // useEffect(() => {
+  //   setAllSpeciality(specialityContext)
+  // }, [specialityContext]);
 
   // useEffect(() => {
   //   setCitys(contextState)
@@ -476,7 +476,7 @@ export default function Navbar(props) {
         state: stateToSend,
         branch: cityToSend,
         month: monthToSend,
-        speciality,
+        speciality: specialityContext,
         rating: sidebarRating,
       }),
     });
@@ -1011,6 +1011,7 @@ export default function Navbar(props) {
                               : speciality.filter((s) => s !== sp);
                             setSpeciality(newSelection);
                             setContextSpeciality(newSelection);
+                            setSpecialityContext(newSelection);
                           }}
                         />
                         {sp}
@@ -1024,6 +1025,7 @@ export default function Navbar(props) {
                   setContextSpeciality([]);
                   if (window.location.pathname === "/Dashboard") {
                     setContextSpeciality([]);
+                    setSpecialityContext([]);
                   }
                   filterApi();
                 }}
