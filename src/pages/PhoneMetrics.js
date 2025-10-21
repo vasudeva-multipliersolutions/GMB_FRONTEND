@@ -7,6 +7,8 @@ export default function PhoneMetrics() {
   const [locationProfiles, setLocationProfiles] = useState([]);
   const [contextDepartment, setContextDepartment] = useState();
   const [contextSpeciality, setContextSpeciality] = useState();
+  const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(10);
   const [loading, setLoading] = useState(false); // ✅ Loading state
@@ -107,9 +109,13 @@ export default function PhoneMetrics() {
 
         if (isMounted && data.success && data.result) {
           setLocationProfiles(data.result);
+          setHasFetchedOnce(true);
+
           setCurrentPage(1);
         }
       } catch (error) {
+        setHasFetchedOnce(true);
+
         if (error.name !== "AbortError") {
           console.error("Error fetching phone metrics:", error);
         }
@@ -196,11 +202,17 @@ export default function PhoneMetrics() {
           </button>
         </div>
 
-        {loading ? (
+{/* === Render Logic === */}
+{loading ? (
   <div className="text-center py-4">Loading...</div>
+) : !hasFetchedOnce ? (
+  // ⛔ Nothing has been fetched yet → don’t show anything
+  <div className="text-center py-4 text-gray-500">
+    Select filters to load phone metrics
+  </div>
 ) : locationProfiles.length > 0 ? (
   <>
-    {/* ✅ Table (only if data exists) */}
+    {/* ✅ Table Section */}
     <table className="w-full rounded-xl overflow-hidden border border-gray-200">
       <thead className="bg-gray-100 text-center">
         <tr>
@@ -252,11 +264,10 @@ export default function PhoneMetrics() {
     )}
   </>
 ) : (
-  /* ✅ Show “No Data” only if filters are active */
-  (contextState || contextCity || newMonthContext) && (
-    <div className="text-center text-gray-500 py-4">No data available</div>
-  )
+  // ✅ Show No Data *only* after first fetch
+  <div className="text-center text-gray-500 py-4">No data available</div>
 )}
+
 
       </div>
     </SharedContext.Provider>
