@@ -18,6 +18,8 @@ export const SidebarProvider = ({ children }) => {
   const [doctorAnalysis, setDoctorAnalysis] = useState([]); 
   const [getCitys, setCitys] = useState([]);
   const [populateState, setPopulateState] = useState([]);
+ const [phoneMetricsData, setPhoneMetricsData] = useState([]);
+const [isPhoneMetricsDataLoaded, setIsPhoneMetricsDataLoaded] = useState(false);
 
   const toggleSidebar = () => {
     if (windowWidth >= 1250) {
@@ -65,7 +67,7 @@ export const SidebarProvider = ({ children }) => {
   return (
     <SidebarContext.Provider value={{
       isCollapsed, toggleSidebar, windowWidth, drNameContext, setDrNameContext, specialityContext, setSpecialityContext, profileType, setContextProfileType, profileCounts, setContextProfileCounts, sidebarRating, setSidebarRating, contextState, setContextState,
-      contextCity, setContextCity, getCitys, setCitys, contextMonth, setContextMonth, newMonthContext, setNewMonthContext, doctorAnalysis, setDoctorAnalysis, populateState, setPopulateState, resetSidebarContext
+      contextCity, setContextCity, getCitys, setCitys, contextMonth, setContextMonth, newMonthContext, setNewMonthContext, doctorAnalysis, setDoctorAnalysis, populateState, setPopulateState, resetSidebarContext,  phoneMetricsData, setPhoneMetricsData, isPhoneMetricsDataLoaded, setIsPhoneMetricsDataLoaded,
     }}>
       {children}
     </SidebarContext.Provider>
