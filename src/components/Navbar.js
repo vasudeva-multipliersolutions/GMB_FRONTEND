@@ -1589,6 +1589,7 @@ export default function Navbar(props) {
 
                             setSpeciality(newSelection);
                             setContextSpeciality(newSelection);
+                            setSpecialityContext(newSelection);
                           }}
                         />
                         {sp}
@@ -1602,6 +1603,7 @@ export default function Navbar(props) {
                   setContextSpeciality([]);
                   if (window.location.pathname === "/Dashboard") {
                     setContextSpeciality([]);
+                    setSpecialityContext([]);
                   }
                   filterApi();
                 }}
