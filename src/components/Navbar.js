@@ -679,7 +679,7 @@ export default function Navbar(props) {
     // ✅ helper -> last 7 months excluding current
     const lastSevenMonths = () => {
       const arr = [];
-      for (let i = 8; i >= 1; i--) {  // ✅ start 7 months ago, stop at 1 (exclude current)
+      for (let i = 9; i >= 1; i--) {  // ✅ start 7 months ago, stop at 1 (exclude current)
         const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
         arr.push(monthNames[d.getMonth()]);
       }
@@ -2220,7 +2220,7 @@ export default function Navbar(props) {
                       className="font-normal text-[0.9rem] border text-gray-700 border-gray-300 rounded-md px-3 py-2 w-full"
                     >
                       <option value="">Select Year</option>
-                      <option value="2024">2024</option>
+                      {/* <option value="2024">2024</option> */}
                       <option value="2025">2025</option>
                     </select>
                   </div>

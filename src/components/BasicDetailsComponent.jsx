@@ -44,6 +44,9 @@ export default function BasicDetailsComponent() {
   const [docData, setDocData] = useState()
   const { getDrName, setDrName } = useContext(SharedContext)
   const [isLoading, setIsLoading] = useState(true)
+  const [showPreloader, setShowPreloader] = useState(false) // <-- added
+  const [showErrorOverlay, setShowErrorOverlay] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
   var ratingsuggestion = ""
   const api = localStorage.getItem('API')
   const token = localStorage.getItem("token");
@@ -57,7 +60,15 @@ export default function BasicDetailsComponent() {
   useEffect(() => {
     if (getDrName) {
       async function getDocData() {
-        setIsLoading(true); // ✅ Show loader before request
+        setShowPreloader(true); // show overlay immediately
+        setShowErrorOverlay(false);
+        setErrorMessage("");
+        setIsLoading(true); // show loader before request
+        const start = Date.now();
+
+        const controller = new AbortController();
+        const timeout = 10000; // 10s timeout
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
 
         try {
           const response = await fetch(`${api}/docData`, {
@@ -66,30 +77,54 @@ export default function BasicDetailsComponent() {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ "businessName": getDrName })
+            body: JSON.stringify({ "businessName": getDrName }),
+            signal: controller.signal
           });
+
+          clearTimeout(timeoutId);
 
           if (response.status === 403 || response.status === 404) {
             localStorage.clear();
             window.location.reload();
+            return;
           }
 
           if (!response.ok) {
             setDocData(null);
+            setErrorMessage("Data unavailable");
+            setShowErrorOverlay(true);
             return;
           }
 
           const data = await response.json();
-          if (!data || Object.keys(data).length === 0 || data.cRank.length === 0) {
+          if (!data || Object.keys(data).length === 0 || !data.cRank || data.cRank.length === 0) {
             setDocData(null);
+            setErrorMessage("Data unavailable");
+            setShowErrorOverlay(true);
           } else {
             setDocData(data);
           }
         } catch (error) {
+          clearTimeout(timeoutId);
           console.error("Error fetching docData:", error);
+          if (error.name === "AbortError") {
+            setErrorMessage("Request timed out. Data unavailable.");
+          } else {
+            setErrorMessage("Data unavailable");
+          }
           setDocData(null);
+          setShowErrorOverlay(true);
         } finally {
-          setIsLoading(false); // ✅ Hide loader after fetch completes
+          const elapsed = Date.now() - start;
+          const remaining = Math.max(0, 2000 - elapsed); // ensure at least 2s visible
+          await new Promise((res) => setTimeout(res, remaining));
+          setIsLoading(false); // hide loader after fetch completes
+          setShowPreloader(false); // hide spinner overlay
+          // keep showErrorOverlay true so user sees message if there was an error
+          if (showErrorOverlay) {
+            // auto-hide error overlay after 3s
+            setTimeout(() => setShowErrorOverlay(false), 3000);
+          }
         }
       }
 
@@ -299,6 +334,71 @@ export default function BasicDetailsComponent() {
 
   return docData && Object.keys(docData).length > 0 ? (
     <>
+      {/* Preloader overlay */}
+      {showPreloader && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "rgba(0,0,0,0.4)",
+          zIndex: 2000
+        }}>
+          <div style={{
+            background: "#fff",
+            padding: "24px",
+            borderRadius: "12px",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.2)"
+          }}>
+            <div style={{
+              width: 36,
+              height: 36,
+              border: "4px solid #e5e7eb",
+              borderTopColor: "#2563eb",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite"
+            }} />
+            <div style={{ fontSize: 16, color: "#111827", fontWeight: 600 }}>Loading...</div>
+          </div>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      )}
+      {/* Error / Unavailable overlay */}
+      {showErrorOverlay && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "rgba(0,0,0,0.45)",
+          zIndex: 2000
+        }}>
+          <div style={{
+            background: "#fff",
+            padding: "20px 28px",
+            borderRadius: "10px",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+            textAlign: "center",
+            maxWidth: "90%"
+          }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 8 }}>
+              Data Unavailable
+            </div>
+            <div style={{ color: "#374151" }}>{errorMessage || "Unable to load data. Please try again."}</div>
+          </div>
+        </div>
+      )}
       {docData && isLoading ?
         <div style={{
           marginLeft: windowWidth > 768 ? (isCollapsed ? "80px" : "250px") : 0,
@@ -554,7 +654,14 @@ export default function BasicDetailsComponent() {
                 <tr
                   key={index}
                   className="text-center cursor-pointer hover:bg-gray-100"
-                  onClick={() => setDrName(row._id)} // update doctor name
+                  onClick={() => {
+                    // show immediate overlay while request starts
+                    setShowErrorOverlay(false);
+                    setErrorMessage("");
+                    setShowPreloader(true);
+                    setIsLoading(true);
+                    setDrName(row._id);
+                  }}
                 >
                   <td className="font-normal text-[0.9rem] text-gray-700 p-2">
                     {indexOfFirstRow + index + 1}
@@ -662,3 +769,9 @@ const Popup = ({ exportToExcel, downloadPDF, onClose }) => (
     </div>
   </div>
 );
+
+// I am a marketing company,managing and marketing multiple google my business profiles of the doctors in multiple mails around (1600 profiles in 30 mails) now client want a dashboard In which they can see all the profiles performance in one dashboard rather than logging into each mail and checking individual profile performance is it possible to create such dashboard where i can see all profiles performance in one dashboard.
+// Data should be fetched from google my business api or any other way possible. Please suggest.
+// In Dashboard we should be able to see following details of all profiles:
+// Verified / unverified profiles, Suspended profiles, Profile views, Search views, Map views, Calls received, Direction requests, Website clicks, Photos views and photo quantity, Reviews count and ratings etc.
+// Top Performing profiles, Low performing profiles based on views and actions etc.
