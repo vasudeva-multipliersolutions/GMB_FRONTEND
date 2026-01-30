@@ -100,18 +100,18 @@ export default function Dashboard(props) {
   // });
 
 
- useEffect(() => {
-  if (newMonthContext.length > 0) {
-    console.log("Selected months:", newMonthContext);
+  useEffect(() => {
+    if (newMonthContext.length > 0) {
+      console.log("Selected months:", newMonthContext);
 
-    // Example API call
-    fetch(`/api/data?months=${newMonthContext.join(",")}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log("API Response:", data);
-      });
-  }
-}, [newMonthContext]);
+      // Example API call
+      fetch(`/api/data?months=${newMonthContext.join(",")}`)
+        .then(res => res.json())
+        .then(data => {
+          console.log("API Response:", data);
+        });
+    }
+  }, [newMonthContext]);
 
 
 
@@ -165,14 +165,14 @@ export default function Dashboard(props) {
   //console.log("SetContextYear : " + contextYear);
   async function getMonthData(months) {
     try {
-      let region = contextState ? contextState : getInsightState ;
-      let unit  = contextCity ? contextCity : getInsightsCity;
+      let region = contextState ? contextState : getInsightState;
+      let unit = contextCity ? contextCity : getInsightsCity;
       let dept = profileType ? profileType : "";
       let rating = sidebarRating ? sidebarRating : "";
 
       const cityToSend = getInsightsCity === "All" ? "" : unit;
       // const monthToSend = month === "All" ? "" : month;
-        const monthsToSend = Array.isArray(months) ? months : [months];
+      const monthsToSend = Array.isArray(months) ? months : [months];
       const stateToSend = region;
 
       //console.log("000000-----00000000000) : " + stateToSend);
@@ -184,7 +184,7 @@ export default function Dashboard(props) {
         },
         body: JSON.stringify({
           dept: dept,
-          month: monthsToSend ,
+          month: monthsToSend,
           branch: Branch !== "undefined" ? Branch : cityToSend,
           state: Cluster !== "undefined" ? Cluster : stateToSend,
           speciality: contextSpeciality,
@@ -351,17 +351,17 @@ export default function Dashboard(props) {
 
 
   useEffect(() => {
-  if (locationProfiles && locationProfiles[0]) {
-  const profile = locationProfiles[0];
+    if (locationProfiles && locationProfiles[0]) {
+      const profile = locationProfiles[0];
 
-  const verificationData = [
-    { "Total Profiles": profile["Total Profiles"] ?? 0 },
-    { "Verified Profiles": profile["Verified Profiles"] ?? 0 },
-    { "Unverified Profiles": profile["Unverfied Profiles"] ?? 0 },
-    { "Need Access": profile["Need Access"] ?? 0 },
-    { "Not Intrested": profile["Not Intrested"] ?? 0 },
-    { "Out of Organization": profile["Out Of Organization"] ?? 0 }
-  ];
+      const verificationData = [
+        { "Total Profiles": profile["Total Profiles"] ?? 0 },
+        { "Verified Profiles": profile["Verified Profiles"] ?? 0 },
+        { "Unverified Profiles": profile["Unverfied Profiles"] ?? 0 },
+        { "Need Access": profile["Need Access"] ?? 0 },
+        { "Not Intrested": profile["Not Intrested"] ?? 0 },
+        { "Out of Organization": profile["Out Of Organization"] ?? 0 }
+      ];
 
       const deptDetails = [
         { "Department": locationProfiles[0]["Department"] },
@@ -411,9 +411,9 @@ export default function Dashboard(props) {
   //   }
   // }, [contextCity]);
 
-    useEffect(() => {
+  useEffect(() => {
     // console.log("getContextCity@@@@@@@@ : " + contextCity);
-    if ( getInsightsCity) {
+    if (getInsightsCity) {
       getMonthData("");
     }
   }, [getInsightsCity]);
@@ -455,7 +455,7 @@ export default function Dashboard(props) {
   }, [contextDepartment]);
 
 
-  
+
   useEffect(() => {
 
     getMonthData(newMonthContext);
@@ -469,7 +469,7 @@ export default function Dashboard(props) {
 
   }, [specialityContext]);
 
-  
+
   useEffect(() => {
 
     getMonthData(newMonthContext);
@@ -496,61 +496,61 @@ export default function Dashboard(props) {
     //getMonthData("");
   }, [reload]);
 
-const downloadPDF = async () => {
-  const content = document.getElementById('mainDashboardContent');
-  if (!content) {
-    console.error("Dashboard content not found");
-    return;
-  }
-
-  try {
-    const canvas = await html2canvas(content, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff'
-    });
-
-    const imgData = canvas.toDataURL('image/png');
-
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-
-    const imgWidth = pdfWidth;
-    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    // Add first page
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pdfHeight;
-
-    // Loop for remaining pages
-    while (heightLeft > 0) {
-      position -= pdfHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pdfHeight;
+  const downloadPDF = async () => {
+    const content = document.getElementById('mainDashboardContent');
+    if (!content) {
+      console.error("Dashboard content not found");
+      return;
     }
 
-    // Dynamic filename
-    const parts = [
-      getInsightState || "",
-      getInsightsCity || "",
-      newMonthContext || "",
-      contextSpeciality || ""
-    ].filter(Boolean);
+    try {
+      const canvas = await html2canvas(content, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
 
-    const filename = parts.length > 0
-      ? `GMB_Performance_Report_${parts.join("_")}.pdf`
-      : "GMB_Performance_Report.pdf";
+      const imgData = canvas.toDataURL('image/png');
 
-    pdf.save(filename);
-  } catch (error) {
-    console.error("PDF generation failed:", error);
-  }
-};
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
+
+      // Loop for remaining pages
+      while (heightLeft > 0) {
+        position -= pdfHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+      }
+
+      // Dynamic filename
+      const parts = [
+        getInsightState || "",
+        getInsightsCity || "",
+        newMonthContext || "",
+        contextSpeciality || ""
+      ].filter(Boolean);
+
+      const filename = parts.length > 0
+        ? `GMB_Performance_Report_${parts.join("_")}.pdf`
+        : "GMB_Performance_Report.pdf";
+
+      pdf.save(filename);
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+    }
+  };
 
 
 
@@ -660,38 +660,143 @@ const downloadPDF = async () => {
   };
 
 
-  const exportInsightsToExcel = () => {
-    const wb = XLSX.utils.book_new();
-    const ws1 = XLSX.utils.json_to_sheet(insightsData);
-    const ws2 = XLSX.utils.json_to_sheet(locationsData);
-    XLSX.utils.book_append_sheet(wb, ws1, "ProfileInsights");
-    XLSX.utils.book_append_sheet(wb, ws2, "ProfileCounts");
+  const exportInsightsToExcel = async () => {
+    try {
+      const res = await axios.post(`${api}/exportOverAllData`, {
+        state: contextState || [],
+        branch: contextCity || [],
+        month: newMonthContext || [],
+        speciality: contextSpeciality || [],
+        rating: sidebarRating || [],
+        dept: profileType || [],
+      });
 
-    // Build filename from filters
-    const filters = [
-      profileType,
-      contextState,
-      contextCity,
-      newMonthContext,
-      specialityContext,
-      sidebarRating,
-    ];
-    const filterString = filters
-      .map(f =>
-        Array.isArray(f)
-          ? f.join("-")
-          : (f !== undefined && f !== null ? f : "")
-      )
-      .filter(f => f && f.length > 0)
-      .join("_");
+      if (!res.data.success) {
+        alert("❌ Failed to export filtered data.");
+        return;
+      }
 
-    const filename =
-      filterString.length > 0
-        ? `ManipalData_${filterString}.xlsx`
-        : "ManipalData.xlsx";
+      const insights = res.data.insightsData || [];
 
-    XLSX.writeFile(wb, filename);
+      const wb = XLSX.utils.book_new();
+
+
+      // -------------------------------
+      // 📄 Sheet 1 — Insights (unchanged)
+      // -------------------------------
+      if (insights.length > 0) {
+        const wsInsights = XLSX.utils.json_to_sheet(insights);
+        XLSX.utils.book_append_sheet(wb, wsInsights, "Profile Insights");
+      }
+
+      // -------------------------------
+      // 📄 Sheet 2 — Profile Counts (Grouping from insights only)
+      // -------------------------------
+
+      // -------------------------------
+      // 📄 Sheet 2 — Profile Counts
+      // -------------------------------
+
+      if (sidebarRating || contextSpeciality) {
+        // logic from downloadDataAsExcel for 'use' state
+        if (use && use.length > 0) {
+          const rows = [["Profiles", "Counts"]];
+          rows.push(...use.map(obj => {
+            const key = Object.keys(obj)[0];
+            return [key, obj[key]];
+          }));
+
+          const wsCount = XLSX.utils.aoa_to_sheet(rows);
+          // Apply bold header style
+          const headerRow = rows[0];
+          headerRow.forEach((_, i) => {
+            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: i });
+            if (!wsCount[cellAddress]) return;
+            wsCount[cellAddress].s = { font: { bold: true } };
+          });
+
+          wsCount["!cols"] = [{ wch: 30 }, { wch: 10 }];
+          XLSX.utils.book_append_sheet(wb, wsCount, "Profile Counts");
+        }
+      } else {
+        // Existing logic (Grouping from insights)
+        const normalize = (v) => (v || "").toString().trim().toLowerCase();
+        const grouped = {};
+
+        insights.forEach(item => {
+          const key = `${normalize(item.Month)}|${normalize(item.Cluster)}|${normalize(item.Branch)}|${normalize(item.Department)}|${normalize(item.Speciality)}`;
+
+          if (!grouped[key]) {
+            grouped[key] = {
+              Month: item.Month || "",
+              Cluster: item.Cluster || "",
+              Branch: item.Branch || "",
+              Department: item.Department || "",
+              Speciality: item.Speciality || "",
+              count: 0
+            };
+          }
+
+          grouped[key].count++;
+        });
+
+        const rows = [
+          [
+            "Month",
+            "Cluster",
+            "Branch",
+            "Department",
+            "Speciality",
+            "Total Profiles",
+            "Verified Profiles",
+            "Unverified Profiles",
+            "Need Access",
+            "Not Interested",
+            "Out Of Organization"
+          ]
+        ];
+
+        Object.values(grouped).forEach(row => {
+          rows.push([
+            row.Month,
+            row.Cluster,
+            row.Branch,
+            row.Department,
+            row.Speciality,
+            row.count,
+            row.count, // verified = total
+            0,
+            0,
+            0,
+            0
+          ]);
+        });
+
+        const wsCount = XLSX.utils.aoa_to_sheet(rows);
+        wsCount["!cols"] = rows[0].map(h => ({ wch: h.length + 6 }));
+
+        XLSX.utils.book_append_sheet(wb, wsCount, "Profile Counts");
+      }
+
+      // -------------------------------
+      // 📁 File Name
+      // -------------------------------
+
+      const filename = [
+        contextState,
+        contextCity,
+        newMonthContext,
+        contextSpeciality,
+        profileType
+      ].filter(Boolean).join("_") || "GMB_Report";
+
+      XLSX.writeFile(wb, `${filename}.xlsx`);
+
+    } catch (err) {
+      console.error("❌ Export Error:", err);
+    }
   };
+
 
 
   // Fetch Insights data when filters change
@@ -779,8 +884,8 @@ const downloadPDF = async () => {
               onClick={exportInsightsToExcel}
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-  </svg>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
               Download Report
             </button>
           </div>
@@ -929,3 +1034,5 @@ const downloadPDF = async () => {
     </SharedContext.Provider>
   );
 }
+
+

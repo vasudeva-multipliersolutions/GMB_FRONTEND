@@ -679,7 +679,7 @@ export default function Navbar(props) {
     // ✅ helper -> last 7 months excluding current
     const lastSevenMonths = () => {
       const arr = [];
-      for (let i = 10; i >= 1; i--) {  // ✅ start 7 months ago, stop at 1 (exclude current)
+      for (let i = 12; i >= 1; i--) {  // ✅ start 7 months ago, stop at 1 (exclude current)
         const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
         arr.push(monthNames[d.getMonth()]);
       }

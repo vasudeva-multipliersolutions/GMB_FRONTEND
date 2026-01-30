@@ -28,7 +28,7 @@ const MultiMonthSelector = ({
   const isMonthDisabled = (month) => {
     // if no selectedYear provided, default behaviour: allow months up to previous month of current year
     if (!selectedYear && typeof selectedYear !== "number") {
-      return previousMonthIndex < 0 ? true : monthsAll.indexOf(month) > previousMonthIndex;
+      return previousMonthIndex < 0 ? false : monthsAll.indexOf(month) > previousMonthIndex;
     }
 
     const selYearNum = Number(selectedYear);
